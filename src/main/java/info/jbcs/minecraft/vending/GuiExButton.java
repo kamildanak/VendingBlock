@@ -1,6 +1,10 @@
 package info.jbcs.minecraft.vending;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiExButton extends GuiElement {
 	protected String caption;
@@ -68,8 +72,9 @@ public class GuiExButton extends GuiElement {
 		if (!isMouseOver(ev)) {
 			return;
 		}
-
-		gui.playSound("random.click", 1.0f, 1.0f);
+		Minecraft mc = Minecraft.getMinecraft();
+		SoundHandler soundHandler = new SoundHandler(mc.getResourceManager(), mc.gameSettings);
+		soundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
 		onClick();
 	}
 }
