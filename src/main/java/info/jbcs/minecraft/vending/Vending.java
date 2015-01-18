@@ -22,13 +22,17 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-@Mod(modid="Vending", name="Vending", version="1.1.0", dependencies = "required-after:Autoutils")
-@NetworkMod(clientSideRequired=true, serverSideRequired=true)
+@Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {
+	public static final String MOD_ID = "vending";
+	public static final String MOD_NAME = "vending";
+	public static final String VERSION = "1.2.0b";
+
+	public static FMLEventChannel Channel;
+
 	public static Block blockVendingMachine;
 	public static Block blockAdvancedVendingMachine;
 	public static Item itemWrench;
