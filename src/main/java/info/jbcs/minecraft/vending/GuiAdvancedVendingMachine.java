@@ -1,12 +1,11 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.gui.GuiPickBlock;
-import info.jbcs.minecraft.gui.IPickBlockHandler;
-import info.jbcs.minecraft.utilities.packets.PacketData;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,18 +44,20 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 
 	@Override
 	public void blockPicked(final ItemStack stack) {
-		Packets.advancedMachine.sendToServer(new PacketData() {
-			@Override
-			public void data(DataOutputStream stream) throws IOException {
-				if (stack == null) {
-					stream.writeInt(0);
-				} else {
-					stream.writeInt(stack.itemID);
-					stream.writeInt(stack.stackSize);
-					stream.writeInt(stack.getItemDamage());
-				}
-			}
-		});
+		int type = 1;
+		ByteBuf buffer = Unpooled.buffer();
+		buffer.writeInt(type);
+
+		if (stack == null) {
+			buffer.writeInt(0);
+		} else {
+			buffer.writeInt(General.getItemId(stack.getItem()));
+			buffer.writeInt(stack.stackSize);
+			buffer.writeInt(stack.getItemDamage());
+		}
+		FMLProxyPacket packet = new FMLProxyPacket(buffer.copy(), "Vending");
+
+		Vending.Channel.sendToServer(packet);
 	}
 
 	@Override
