@@ -117,7 +117,7 @@ public class BlockVendingMachine extends BlockContainer {
 		if (tileEntity == null)
 			return;
 
-		if (! entityplayer.username.equals(tileEntity.ownerName) || ! tileEntity.inventory.isEmpty()){
+		if (! entityplayer.getDisplayName().equals(tileEntity.ownerName) || ! tileEntity.inventory.isEmpty()){
 			vend(world, i, j, k, entityplayer);
 			return;
 		}
@@ -137,10 +137,10 @@ public class BlockVendingMachine extends BlockContainer {
 			Vending.guiWrench.open(entityplayer, world, i, j, k);
 			return true;
 		}
-		
-		if (entityplayer.username.equals(tileEntity.ownerName) && !entityplayer.isSneaking()) {
+
+		if (entityplayer.getDisplayName().equals(tileEntity.ownerName) && !entityplayer.isSneaking()) {
 			Vending.guiVending.open(entityplayer, world, i, j, k);
-			
+
 			return true;
 		}
 
@@ -160,10 +160,10 @@ public class BlockVendingMachine extends BlockContainer {
 		TileEntityVendingMachine e = new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
 
-		if (entityliving instanceof EntityLivingBase) {
+		if (entityliving != null) {
 			EntityPlayer player = (EntityPlayer) entityliving;
-			e.ownerName = player.username;
-			world.setBlockTileEntity(i, j, k, e);
+			e.ownerName = player.getDisplayName();
+			world.setTileEntity(i, j, k, e);
 		}
 	}
 
@@ -189,7 +189,7 @@ public class BlockVendingMachine extends BlockContainer {
 	public void breakBlock(World world, int i, int j, int k, Block a, int b) {
 		TileEntityVendingMachine tileentitychest = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
 
-		if (!(tileentitychest instanceof TileEntityVendingMachine))
+		if (tileentitychest == null)
 			return;
 
 

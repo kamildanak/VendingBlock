@@ -62,8 +62,5 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 	@Override
 	protected void drawGuiContainerForegroundLayer(int a, int b) {
 		super.drawGuiContainerForegroundLayer(a, b);
-
-		drawSlotInventory(container.advSlot);
 	}
-
 }

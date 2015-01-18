@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.ContainerTileEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
@@ -19,5 +18,6 @@ public class ContainerAdvancedVendingMachine extends ContainerTileEntity<TileEnt
 		addSlotToContainer(new Slot(machine, 9, 26, 35));
 
 		advSlot = new SlotAdvancedVendingMachine(machine, 10, 134, 35);
+		addSlotToContainer(advSlot);
 	}
 }
