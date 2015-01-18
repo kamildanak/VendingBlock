@@ -1,0 +1,17 @@
+[
+{
+  "modid": "Vending",
+  "name": "Vending",
+  "description": "Adds a vending block that lets you sell items.",
+  "version": "1.1.0",
+  "credits": "",
+  "logoFile": "/icon.png",
+  "mcversion": "1.6.4",
+  "url": "",
+  "updateUrl": "",
+  "authors": [ "AUTOMATIC_MAIDEN" ],
+  "parent":"",
+  "screenshots": [],
+  "dependencies": []
+}
+]
