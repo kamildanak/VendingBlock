@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -28,7 +28,7 @@ public class SlotPickBlock extends Slot
             return;
         }
 
-        putStack(new ItemStack(itemstack.itemID, itemstack.stackSize, itemstack.getItemDamage()));
+        putStack(new ItemStack(itemstack.getItem(), itemstack.stackSize, itemstack.getItemDamage()));
         int newSize;
 
         if (container.resultSlot == this)
@@ -40,7 +40,7 @@ public class SlotPickBlock extends Slot
             newSize = itemstack.stackSize;
             ItemStack otherstack = container.resultSlot.getStack();
 
-            if (otherstack != null && otherstack.itemID == itemstack.itemID && otherstack.getItemDamage() == itemstack.getItemDamage())
+            if (otherstack != null && otherstack.getItem() == itemstack.getItem() && otherstack.getItemDamage() == itemstack.getItemDamage())
             {
                 newSize = otherstack.stackSize + count;
             }
@@ -55,7 +55,7 @@ public class SlotPickBlock extends Slot
             newSize = 64;
         }
 
-        container.resultSlot.putStack(newSize <= 0 ? null : new ItemStack(itemstack.itemID, newSize, itemstack.getItemDamage()));
+        container.resultSlot.putStack(newSize <= 0 ? null : new ItemStack(itemstack.getItem(), newSize, itemstack.getItemDamage()));
     }
 
     @Override

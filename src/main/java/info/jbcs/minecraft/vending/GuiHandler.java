@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.utilities;
+package info.jbcs.minecraft.vending;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +38,7 @@ public abstract class GuiHandler implements Comparable {
 			h.index = index++;
 		}
 
-		NetworkRegistry.instance().registerGuiHandler(mod, new IGuiHandler() {
+		NetworkRegistry.INSTANCE.registerGuiHandler(mod, new IGuiHandler() {
 			@Override
 			public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 				if (id < 0 || id >= items.size()) {

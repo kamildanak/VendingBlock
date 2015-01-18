@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.utilities;
+package info.jbcs.minecraft.vending;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

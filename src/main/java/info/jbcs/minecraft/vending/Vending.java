@@ -1,8 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.DummyContainer;
-import info.jbcs.minecraft.utilities.GuiHandler;
-import info.jbcs.minecraft.utilities.ItemMetaBlock;
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;

@@ -1,7 +1,5 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.DummyContainer;
-import info.jbcs.minecraft.utilities.GeneralClient;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -160,18 +158,22 @@ public class GuiScreenPlus extends GuiContainer {
 	}
 
 	public void drawString(String text, int sx, int sy, int color) {
+		FontRenderer fontRenderer = this.fontRendererObj;
 		fontRenderer.drawString(text, sx, sy, color);
 	}
 
 	public void drawCenteredString(String text, int sx, int sy, int color) {
+		FontRenderer fontRenderer = this.fontRendererObj;
 		fontRenderer.drawString(text, sx - fontRenderer.getStringWidth(text) / 2, sy - fontRenderer.FONT_HEIGHT / 2, color);
 	}
 
 	public void drawStringWithShadow(String text, int sx, int sy, int color) {
+		FontRenderer fontRenderer = this.fontRendererObj;
 		fontRenderer.drawStringWithShadow(text, sx, sy, color);
 	}
 
 	public void drawCenteredStringWithShadow(String text, int sx, int sy, int color) {
+		FontRenderer fontRenderer = this.fontRendererObj;
 		fontRenderer.drawStringWithShadow(text, sx - fontRenderer.getStringWidth(text) / 2, sy - fontRenderer.FONT_HEIGHT / 2, color);
 	}
 
@@ -224,9 +226,5 @@ public class GuiScreenPlus extends GuiContainer {
 
 	public void bindTexture(String tex) {
 		GeneralClient.bind(tex);
-	}
-
-	public void playSound(String sound, float volume, float pitch) {
-		mc.sndManager.playSoundFX(sound, volume, pitch);
 	}
 }

@@ -1,6 +1,5 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.GeneralClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
@@ -70,7 +69,7 @@ public abstract class Scrollbar extends GuiButton {
 		}
 
 		int bottom = yPosition + height;
-		GeneralClient.bind("/gui/allitems.png");
+		//GeneralClient.bind("/gui/icons");
 		drawTexturedModalRect(xPosition, yPosition + (int) ((height - elementHeight) * offset), active ? 232 : 244, 0, 12, elementHeight);
 	}
 

@@ -1,4 +1,6 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
+
+import net.minecraft.client.gui.FontRenderer;
 
 public class GuiExButton extends GuiElement {
 	protected String caption;
@@ -51,9 +53,9 @@ public class GuiExButton extends GuiElement {
 			box = boxOver;
 			color = 0xffffff70;
 		}
-
+		FontRenderer fontRenderer = gui.fontRenderer();
 		box.render(gui, x, y, w, h);
-		gui.drawCenteredStringWithShadow(caption, x + w / 2, y + h / 2, color);
+		gui.drawCenteredString(fontRenderer, caption, x + w / 2, y + h / 2, color);
 	}
 
 	@Override

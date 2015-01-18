@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.InventoryStatic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -22,7 +21,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 	InventoryStatic inventory = new InventoryStatic(11) {
 		@Override
-		public String getInvName() {
+		public String getInventoryName() {
 			return "Vending Machine";
 		}
 
@@ -49,8 +48,13 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		}
 
 		@Override
+		public void markDirty() {
+
+		}
+
+		@Override
 		public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-			if (worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) != TileEntityVendingMachine.this) {
+			if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != TileEntityVendingMachine.this) {
 				return false;
 			} else {
 				return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
@@ -86,7 +90,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 				return true;
 			}
 
-			if (inventory.items[i].itemID != itemstack.itemID && inventory.items[i].isStackable()) {
+			if (inventory.items[i].getItem() != itemstack.getItem() && inventory.items[i].isStackable()) {
 				continue;
 			}
 
@@ -119,8 +123,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public String getInvName() {
-		return inventory.getInvName();
+	public String getInventoryName() {
+		return inventory.getInventoryName();
 	}
 
 	@Override
@@ -156,12 +160,12 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public Packet getDescriptionPacket() {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
-		return new Packet132TileEntityData(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, var1);
 	}
 
 	@Override
-	public void onDataPacket(INetworkManager net, Packet132TileEntityData pkt) {
-		readFromNBT(pkt.data);
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+		readFromNBT(pkt.func_148857_g());
 	}
 
 	@Override
@@ -170,15 +174,15 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public void openChest() {
+	public void openInventory() {
 	}
 
 	@Override
-	public void closeChest() {
+	public void closeInventory() {
 	}
 
 	@Override
-	public boolean isInvNameLocalized() {
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 

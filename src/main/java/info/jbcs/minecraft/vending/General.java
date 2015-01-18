@@ -1,12 +1,13 @@
-package info.jbcs.minecraft.utilities;
+package info.jbcs.minecraft.vending;
 
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -45,30 +46,24 @@ public class General {
 	public static Item getItem(ItemStack stack) {
 		if (stack == null)
 			return null;
-		if (stack.itemID < 0)
-			return null;
-		if (stack.itemID >= Item.itemsList.length)
-			return null;
 
-		return Item.itemsList[stack.itemID];
+		return stack.getItem();
 	}
-
+/*
 	public static Block getBlock(int blockId) {
 		if (blockId < 0)
-			return null;
-		if (blockId >= Block.blocksList.length)
 			return null;
 		
 		return Block.blocksList[blockId];
 	}
-
+*/
 	public static Item getItem(int itemId) {
-		if (itemId < 0)
-			return null;
-		if (itemId >= Item.itemsList.length)
-			return null;
-		
-		return Item.itemsList[itemId];
+		Item item = GameData.getItemRegistry().getObjectById(itemId);
+		return item;
+	}
+
+	public static Integer getItemId(Item item){
+		return GameData.getItemRegistry().getId(item);
 	}
 
 	public static String getUnlocalizedName(Block block) {
@@ -80,14 +75,20 @@ public class General {
 	
 	static HashMap<String,Block> blockMapping;
 	public static Block getBlock(String s,Block fallback){
+		Set blockReg = GameData.getBlockRegistry().getKeys();
+		List<String> blockList = new ArrayList<String>();
+		blockList.addAll(blockReg);
+		String[] blockNames = blockList.toArray(new String[0]);
+
 		if(blockMapping==null){
 			blockMapping=new HashMap<String,Block>();
-			
-			for(Block block: Block.blocksList){
+
+			for(int i = 0;i<blockList.size();i++){
+				Block block = Block.getBlockFromName(blockNames[i]);
 				if(block==null) continue;
 				String name=block.getUnlocalizedName();
 				if(name.startsWith("tile.")) name=name.substring(5);
-				
+
 				blockMapping.put(name.toLowerCase(), block);
 			}
 		}
@@ -100,7 +101,7 @@ public class General {
 	
 	
 	public static Block getBlock(String s){
-		return getBlock(s,Block.stone);
+		return getBlock(s, Blocks.stone);
 	}
 
 	public static String getName(Block block){
@@ -116,7 +117,7 @@ public class General {
 		double var7 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * var4;
 		double var9 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * var4 + 1.62D - par2EntityPlayer.yOffset;
 		double var11 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * var4;
-		Vec3 var13 = par1World.getWorldVec3Pool().getVecFromPool(var7, var9, var11);
+		Vec3 var13 = Vec3.createVectorHelper(var7, var9, var11);
 		float var14 = MathHelper.cos(-var6 * 0.017453292F - (float) Math.PI);
 		float var15 = MathHelper.sin(-var6 * 0.017453292F - (float) Math.PI);
 		float var16 = -MathHelper.cos(-var5 * 0.017453292F);
@@ -130,7 +131,8 @@ public class General {
 		}
 
 		Vec3 var23 = var13.addVector(var18 * var21, var17 * var21, var20 * var21);
-		return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
+		return par1World.rayTraceBlocks(var13, var23, par3);
+		//return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
 	}
 
 }

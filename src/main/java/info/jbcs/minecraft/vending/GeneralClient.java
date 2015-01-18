@@ -1,11 +1,11 @@
-package info.jbcs.minecraft.utilities;
+package info.jbcs.minecraft.vending;
 
 import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -17,7 +17,7 @@ public class GeneralClient {
 	}
 
 
-	public static Icon getMissingIcon() {
+	public static IIcon getMissingIcon() {
 		return ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 	}
 

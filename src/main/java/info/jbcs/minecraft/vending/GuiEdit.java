@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
 import net.minecraft.client.gui.GuiTextField;
 

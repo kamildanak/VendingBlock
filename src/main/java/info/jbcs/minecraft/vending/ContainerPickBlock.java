@@ -1,9 +1,10 @@
-package info.jbcs.minecraft.gui;
-
-import info.jbcs.minecraft.utilities.InventoryStatic;
+package info.jbcs.minecraft.vending;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
@@ -21,13 +22,18 @@ public class ContainerPickBlock extends Container
 
     public ContainerPickBlock(EntityPlayer p)
     {
-        for (int i = 0; i < Item.itemsList.length; ++i)
+        Set itemReg = GameData.getItemRegistry().getKeys();
+        List<String> itemList = new ArrayList<String>();
+        itemList.addAll(itemReg);
+        String[] itemNames = itemList.toArray(new String[0]);
+
+        for (int i = 0; i < itemList.size(); ++i)
         {
-            Item item = Item.itemsList[i];
+            Item item = GameData.getItemRegistry().getObject(itemNames[i]);
 
             if (item != null && item.getCreativeTab() != null)
             {
-                item.getSubItems(item.itemID, null, items);
+                item.getSubItems(item, null, items);
             }
         }
 
@@ -48,6 +54,11 @@ public class ContainerPickBlock extends Container
 
     public InventoryStatic inventory = new InventoryStatic(width * height + 1)
     {
+        @Override
+        public void markDirty() {
+
+        }
+
         @Override
         public boolean isItemValidForSlot(int i, ItemStack itemstack)
         {

@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.GeneralClient;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -18,6 +18,7 @@ public class GuiVendingMachine extends GuiContainer {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int a, int b) {
+		FontRenderer fontRenderer = this.fontRendererObj;
 		fontRenderer.drawString("Storage", 69, 6, 0x404040);
 		fontRenderer.drawString("Selling", 18, 20, 0x404040);
 		fontRenderer.drawString("Buying", 126, 20, 0x404040);

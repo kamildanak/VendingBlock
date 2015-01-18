@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
 public class GuiLabel extends GuiElement {
 	String caption;

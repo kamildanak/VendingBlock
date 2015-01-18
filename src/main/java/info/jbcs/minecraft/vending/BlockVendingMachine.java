@@ -1,7 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.General;
-
 import java.util.List;
 
 import net.minecraft.block.Block;

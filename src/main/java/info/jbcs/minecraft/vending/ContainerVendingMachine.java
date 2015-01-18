@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.utilities.ContainerTileEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 

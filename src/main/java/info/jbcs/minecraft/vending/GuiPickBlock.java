@@ -1,7 +1,6 @@
-package info.jbcs.minecraft.gui;
+package info.jbcs.minecraft.vending;
 
 
-import info.jbcs.minecraft.utilities.GeneralClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

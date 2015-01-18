@@ -1,10 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.gui.GuiEdit;
-import info.jbcs.minecraft.gui.GuiExButton;
-import info.jbcs.minecraft.gui.GuiLabel;
-import info.jbcs.minecraft.gui.GuiScreenPlus;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
