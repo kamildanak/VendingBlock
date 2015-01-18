@@ -7,6 +7,8 @@ import info.jbcs.minecraft.utilities.packets.PacketHandler;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -23,7 +25,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {
@@ -45,40 +46,40 @@ public class Vending {
 	static Configuration config;
 
 	static Block[] supports={
-			Block.stone,
-			Block.cobblestone,
-			Block.stoneBrick,
-			Block.planks,
-			Block.workbench,
-			Block.gravel,
-			Block.music,
-			Block.sandStone,
-			Block.blockGold,
-			Block.blockIron,
-			Block.brick,
-			Block.cobblestoneMossy,
-			Block.obsidian,
-			Block.blockDiamond,
-			Block.blockEmerald,
-			Block.blockLapis,
+			Blocks.stone,
+			Blocks.cobblestone,
+			Blocks.stonebrick,
+			Blocks.planks,
+			Blocks.crafting_table,
+			Blocks.gravel,
+			Blocks.noteblock,
+			Blocks.sandstone,
+			Blocks.gold_block,
+			Blocks.iron_block,
+			Blocks.brick_block,
+			Blocks.mossy_cobblestone,
+			Blocks.obsidian,
+			Blocks.diamond_block,
+			Blocks.emerald_block,
+			Blocks.lapis_block,
 	};
 	static Object[] reagents={
-			Block.stone,
-			Block.cobblestone,
-			Block.stoneBrick,
-			Block.planks,
-			Block.workbench,
-			Block.gravel,
-			Block.music,
-			Block.sandStone,
-			Item.ingotGold,
-			Item.ingotIron,
-			Block.brick,
-			Block.cobblestoneMossy,
-			Block.obsidian,
-			Item.diamond,
-			Item.emerald,
-			Block.blockLapis,
+			Blocks.stone,
+			Blocks.cobblestone,
+			Blocks.stonebrick,
+			Blocks.planks,
+			Blocks.crafting_table,
+			Blocks.gravel,
+			Blocks.noteblock,
+			Blocks.sandstone,
+			Items.gold_ingot,
+			Items.iron_ingot,
+			Blocks.brick_block,
+			Blocks.mossy_cobblestone,
+			Blocks.obsidian,
+			Items.diamond,
+			Items.emerald,
+			Blocks.lapis_block,
 	};
 
 	@Instance("Vending")
@@ -94,14 +95,6 @@ public class Vending {
 		
 		proxy.preInit();
 	}
-	
-	int getBlockId(String name,int id){
-		return Vending.config.getBlock(name, id).getInt(id);
-	}
-
-	int getItemId(String name,int id){
-		return Vending.config.getItem(name, id).getInt(id);
-	}
 
 	@Init
 	public void init(FMLInitializationEvent event) {
@@ -114,41 +107,41 @@ public class Vending {
 				public ItemStack getIconItemStack() {
 					return new ItemStack(blockVendingMachine, 1, 4);
 				}
+
+				@Override
+				public Item getTabIconItem() {
+					return new ItemStack(blockVendingMachine, 1, 4).getItem();
+				}
 			};
-			
-			LanguageRegistry.instance().addStringLocalization("itemGroup.tabVending", "en_US", "Vending");
 		} else{
 			tabVending = CreativeTabs.tabDecorations;
 		}
 		
-		blockVendingMachine = new BlockVendingMachine(getBlockId("vendingMachine",2391),supports,false).setUnlocalizedName("vendingMachine");
-		LanguageRegistry.addName(blockVendingMachine, "Vending Block");
+		blockVendingMachine = new BlockVendingMachine(supports,false);
 		GameRegistry.registerBlock(blockVendingMachine, ItemMetaBlock.class, "vendingMachine");
 
-		blockAdvancedVendingMachine = new BlockVendingMachine(getBlockId("vendingMachineAdvanced",2392),supports,true).setUnlocalizedName("vendingMachineAdvanced");
-		LanguageRegistry.addName(blockAdvancedVendingMachine, "Advanced Vending Block");
+		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true).setBlockName("vendingMachineAdvanced");
 		GameRegistry.registerBlock(blockAdvancedVendingMachine, ItemMetaBlock.class, "vendingMachineAdvanced");
 
-		itemWrench = new Item(getItemId("wrench",7820)).setUnlocalizedName("Vending:wrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
-		LanguageRegistry.addName(itemWrench, "Vending Block Wrench");
-
+		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
+		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
 		
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
 
 		for(int i=0;i<supports.length;i++){
 			CraftingManager.getInstance().addRecipe(new ItemStack(blockVendingMachine,1,i),
 					new Object[] { "XXX", "XGX", "*R*",
-					'X', Block.glass,
-					'G', Item.ingotGold,
-					'R', Item.redstone,
+					'X', Blocks.glass,
+					'G', Items.gold_ingot,
+					'R', Items.redstone,
 					'*', reagents[i],
 				});
 			
 			CraftingManager.getInstance().addRecipe(new ItemStack(blockAdvancedVendingMachine,1,i),
 					new Object[] { "XXX", "XGX", "*R*",
-					'X', Block.glass,
-					'G', Item.ingotGold,
-					'R', Item.redstoneRepeater,
+					'X', Blocks.glass,
+					'G', Items.gold_ingot,
+					'R', Items.repeater,
 					'*', reagents[i],
 				});
 		}
@@ -156,7 +149,7 @@ public class Vending {
 		guiVending=new GuiHandler("vending"){
 			@Override
 			public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		        TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+		        TileEntity tileEntity = world.getTileEntity(x, y, z);
 
 		        if(! (tileEntity instanceof TileEntityVendingMachine))
 		        	return null;
@@ -171,7 +164,7 @@ public class Vending {
 
 			@Override
 			public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-                TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+                TileEntity tileEntity = world.getTileEntity(x, y, z);
 
 		        if(! (tileEntity instanceof TileEntityVendingMachine))
 		        	return null;

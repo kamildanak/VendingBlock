@@ -1,0 +1,4 @@
+tile.vendingMachine.name=Vending Block
+tile.vendingMachineAdvanced.name=Advanced Vending Block
+item.vendingMachineWrench.name=Vending Block Wrench
+itemGroup.tabVending=Vending
