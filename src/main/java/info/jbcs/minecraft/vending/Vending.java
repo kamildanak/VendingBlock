@@ -14,12 +14,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -88,7 +87,7 @@ public class Vending {
 	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.ProxyClient", serverSide = "info.jbcs.minecraft.vending.Proxy")
 	public static Proxy proxy;
 
-	@PreInit
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -96,7 +95,7 @@ public class Vending {
 		proxy.preInit();
 	}
 
-	@Init
+	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		proxy.init();
 
@@ -198,8 +197,9 @@ public class Vending {
 		PacketHandler.register(this);
 	}
 
-	@PostInit
+	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+
 	}
 }
 
