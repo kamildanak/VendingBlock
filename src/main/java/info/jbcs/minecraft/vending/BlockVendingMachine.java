@@ -124,7 +124,7 @@ public class BlockVendingMachine extends BlockContainer {
 
 		dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 		world.setBlock(i, j, k, Blocks.air);
-		world.playSoundEffect(i, j, k, "random.cha-ching", 0.3f, 0.6f);
+		world.playSoundEffect(i, j, k, "vending:cha-ching", 0.3f, 0.6f);
 	}
 
 	@Override
