@@ -4,13 +4,20 @@ import info.jbcs.minecraft.gui.GuiEdit;
 import info.jbcs.minecraft.gui.GuiExButton;
 import info.jbcs.minecraft.gui.GuiLabel;
 import info.jbcs.minecraft.gui.GuiScreenPlus;
-import info.jbcs.minecraft.utilities.packets.PacketData;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.IntBuffer;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -26,9 +33,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 		
 		addChild(new GuiLabel(9, 9, "Vending block settings"));
 		addChild(new GuiLabel(9, 29, "Owner name:"));
-		
 		addChild(ownerNameEdit = new GuiEdit(16, 43, 138, 13));
-		
 		addChild(infiniteButton = new GuiExButton(9, 64, 148, 20, "") {
 			@Override
 			public void onClick() {
@@ -36,25 +41,26 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 				caption = "Infinite: " + (infinite ? "YES" : "NO");
 			}
 		});
-		
+
 		addChild(new GuiExButton(9, 91, 148, 20, "Apply") {
 			@Override
 			public void onClick() {
-				Packets.wrench.sendToServer(new PacketData() {
-					@Override
-					public void data(DataOutputStream stream) throws IOException {
-						stream.writeInt(entity.xCoord);
-						stream.writeInt(entity.yCoord);
-						stream.writeInt(entity.zCoord);
-						stream.writeBoolean(infinite);
-						Packet.writeString(ownerNameEdit.getText(), stream);
-					}
-				});
+				int type = 2;
+				ByteBuf buffer = Unpooled.buffer();
+				buffer.writeInt(type);
+				buffer.writeInt(entity.xCoord);
+				buffer.writeInt(entity.yCoord);
+				buffer.writeInt(entity.zCoord);
+				buffer.writeBoolean(infinite);
+				ByteBufUtils.writeUTF8String(buffer, ownerNameEdit.getText());
+				FMLProxyPacket packet = new FMLProxyPacket(buffer.copy(), "Vending");
+
+				Vending.Channel.sendToServer(packet);
 				mc.thePlayer.closeScreen();
 			}
 		});
 		
-		TileEntity tileEntity = world.getBlockTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		if (!(tileEntity instanceof TileEntityVendingMachine)) {
 			return;
 		}

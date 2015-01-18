@@ -3,7 +3,8 @@ package info.jbcs.minecraft.vending;
 import info.jbcs.minecraft.utilities.DummyContainer;
 import info.jbcs.minecraft.utilities.GuiHandler;
 import info.jbcs.minecraft.utilities.ItemMetaBlock;
-import info.jbcs.minecraft.utilities.packets.PacketHandler;
+import cpw.mods.fml.common.network.FMLEventChannel;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -84,20 +85,22 @@ public class Vending {
 	@Instance("Vending")
 	public static Vending instance;
 
-	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.ProxyClient", serverSide = "info.jbcs.minecraft.vending.Proxy")
-	public static Proxy proxy;
+	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.ClientProxy", serverSide = "info.jbcs.minecraft.vending.CommonProxy")
+	public static CommonProxy commonProxy;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		
-		proxy.preInit();
+		commonProxy.preInit();
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		proxy.init();
+		Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("Vending");
+		Vending.Channel.register(new ServerPacketHandler());
+		commonProxy.init();
 
 
 		if(config.get("general", "use custom creative tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)){
@@ -191,10 +194,6 @@ public class Vending {
 		};
 
 		GuiHandler.register(this);
-		
-		Packets.advancedMachine.create();
-		Packets.wrench.create();
-		PacketHandler.register(this);
 	}
 
 	@EventHandler
