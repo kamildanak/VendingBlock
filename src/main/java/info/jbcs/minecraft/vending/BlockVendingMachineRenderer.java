@@ -9,8 +9,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 public class BlockVendingMachineRenderer implements ISimpleBlockRenderingHandler {
 	static int id;
 
-	public BlockVendingMachineRenderer(int i) {
-		id = i;
+	public BlockVendingMachineRenderer() {
 	}
 
 	void drawBlock(Block block, int meta, RenderBlocks renderer) {
@@ -48,7 +47,7 @@ public class BlockVendingMachineRenderer implements ISimpleBlockRenderingHandler
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int var1) {
 		return true;
 	}
 
