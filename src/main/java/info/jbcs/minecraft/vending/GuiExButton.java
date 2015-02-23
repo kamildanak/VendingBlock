@@ -59,7 +59,7 @@ public class GuiExButton extends GuiElement {
 		}
 		FontRenderer fontRenderer = gui.fontRenderer();
 		box.render(gui, x, y, w, h);
-		gui.drawCenteredString(fontRenderer, caption, x + w / 2, y + h / 2, color);
+        gui.drawCenteredString(fontRenderer, caption, x + w / 2, y + h / 4 + 1, color);
 	}
 
 	@Override
