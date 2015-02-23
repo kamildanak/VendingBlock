@@ -27,7 +27,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class Vending {
 	public static final String MOD_ID = "vending";
 	public static final String MOD_NAME = "vending";
-	public static final String VERSION = "1.2.0b";
+	public static final String VERSION = "1.2.1b";
 
 	public static FMLEventChannel Channel;
 

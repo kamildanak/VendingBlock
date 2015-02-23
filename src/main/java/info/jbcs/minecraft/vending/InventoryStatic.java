@@ -129,7 +129,15 @@ public abstract class InventoryStatic implements IInventory {
 					items[i].stackSize < items[i].getMaxStackSize() &&
 					items[i].stackSize < getInventoryStackLimit() &&
 					(!items[i].getHasSubtypes() || items[i].getItemDamage() == itemstack.getItemDamage())) {
-				return i;
+                if(items[i].hasTagCompound() || itemstack.hasTagCompound()){
+                    if(items[i].hasTagCompound() && itemstack.hasTagCompound()) {
+                        if (items[i].getTagCompound().equals(itemstack.getTagCompound())) {
+                            return i;
+                        }
+                    }
+                }else {
+                    return i;
+                }
 			}
 		}
 
@@ -151,6 +159,9 @@ public abstract class InventoryStatic implements IInventory {
 
 		if (items[k] == null) {
 			items[k] = new ItemStack(i, 0, itemstack.getItemDamage());
+            if(itemstack.hasTagCompound()) {
+                items[k].setTagCompound(itemstack.getTagCompound());
+            }
 		}
 
 		int l = j;
@@ -179,7 +190,6 @@ public abstract class InventoryStatic implements IInventory {
 		if (itemstack == null) {
 			return true;
 		}
-
 		if (!itemstack.isItemDamaged()) {
 			int i;
 			do {
@@ -189,11 +199,13 @@ public abstract class InventoryStatic implements IInventory {
 
 			return itemstack.stackSize < i;
 		}
-
 		int j = getFirstEmptyStack(start, end);
 
 		if (j >= 0) {
 			items[j] = ItemStack.copyItemStack(itemstack);
+            if(itemstack.hasTagCompound()){
+                items[j].setTagCompound(itemstack.getTagCompound());
+            }
 			items[j].animationsToGo = 5;
 			itemstack.stackSize = 0;
 			onInventoryChanged();
@@ -216,6 +228,11 @@ public abstract class InventoryStatic implements IInventory {
 				continue;
 			}
 
+            if(itemStack.hasTagCompound()) {
+                if (! itemStack.getTagCompound().equals(items[i].getTagCompound())) {
+                    continue;
+                }
+            }
 			if (res == null) {
 				res = new ItemStack(itemStack.getItem(), 0, damage);
 			}

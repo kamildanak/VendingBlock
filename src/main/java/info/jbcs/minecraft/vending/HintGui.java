@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 
+import static java.lang.Math.max;
+
 
 public class HintGui extends Gui {
     private Minecraft mc;
@@ -82,21 +84,45 @@ public class HintGui extends Gui {
     }
 
     void draw(String seller, ItemStack sold, ItemStack bought) {
+        boolean doubleSize = false;
         if (bought == null && sold == null) {
             return;
         }
-
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int screenwidth = resolution.getScaledWidth();
         FontRenderer fontRenderer = mc.fontRenderer;
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
         int w = 120;
-        int h = 60;
+        int def_h = 60;
+        int h = def_h;
+        int lines_b = 0;
+        int lines_s = 0;
+        int len_b = 0;
+        int len_s = 0;
+        int firstImportantLine = 1;
+        String tooltip;
+        if(bought !=null)
+        for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++){
+            tooltip = bought.getTooltip(null, false).get(i).toString();
+            if(! tooltip.isEmpty())lines_b++;
+            if(tooltip.length()>len_b)len_b=fontRenderer.getStringWidth(tooltip);
+        }
+        if(sold !=null)
+        for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++){
+            tooltip = sold.getTooltip(null, false).get(i).toString();
+            if(! tooltip.isEmpty())lines_s++;
+            if(tooltip.length()>len_s)len_s=fontRenderer.getStringWidth(tooltip);
+        }
+        if(max(lines_b, lines_s)>0 && bought != null && sold != null) doubleSize = true;
+        w = 42 + max(max(76, len_b), max(76, len_s));
+        if(doubleSize) w = 63 + max(76, len_b) + max(76, len_s);
+        h = h + max(max(lines_b-1, lines_s-1), 0) * 16;
+
         int centerYOff = -80;
         int cx = width / 2;
         int x = cx - w / 2;
-        int y = height / 2 - h / 2 + centerYOff;
+        int y = height / 2 - def_h / 2 + centerYOff;
 
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0f, 0.0f, -100.0f);
@@ -107,26 +133,67 @@ public class HintGui extends Gui {
         drawCenteredString(fontRenderer, seller, cx, y + 8, 0xffffff);
 
         if (bought != null && sold != null) {
-            x += 32;
+            x += 18;
             y += 26;
             drawString(fontRenderer, "is selling", x, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, sold, x + 46, y - 4);
-            drawString(fontRenderer, "for", x + 14, y + 16, 0xa0a0a0);
-            drawNumberForItem(fontRenderer, bought, x + 14 + 18, y + 16 - 4);
-            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 + 18, y + 16 - 4);
+            if(!doubleSize){
+                drawString(fontRenderer, "for", x + 14, y + 16, 0xa0a0a0);
+                drawNumberForItem(fontRenderer, bought, x + 14 + 18, y + 16 - 4);
+                render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 + 18, y + 16 - 4);
+            }else {
+                drawString(fontRenderer, "for", x + 14*2 + max(76, len_s), y, 0xa0a0a0);
+                drawNumberForItem(fontRenderer, bought, x + 18 + 14*2 + max(76, len_s), y - 4);
+                String line;
+                int omitted = 0;
+                for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++){
+                    line = sold.getTooltip(null, false).get(i).toString();
+                    if(!line.isEmpty())
+                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
+                    else omitted++;
+                }
+                omitted = 0;
+                for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++){
+                    line = bought.getTooltip(null, false).get(i).toString();
+                    if(!line.isEmpty())
+                        drawString(fontRenderer, line, x + 14*2 + max(76, len_s), y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
+                    else omitted++;
+                }
+                render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 * 2 + 18 + max(76, len_s), y - 4);
+            }
             render.renderItemIntoGUI(fontRenderer, mc.renderEngine, sold, x + 46, y - 4);
-        } else if (bought == null) {
+        } else if (sold != null) {
             x += 18;
             y += 30;
             drawString(fontRenderer, "is giving", x, y, 0xa0a0a0);
             drawString(fontRenderer, "away", x + 60, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, sold, x + 42, y - 4);
+            if(lines_s>0){
+                String line;
+                int omitted = 0;
+                for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++) {
+                    line = sold.getTooltip(null, false).get(i).toString();
+                    if(!line.isEmpty())
+                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
+                    else omitted++;
+                }
+            }
             render.renderItemIntoGUI(fontRenderer, mc.renderEngine, sold, x + 42, y - 4);
-        } else if (sold == null) {
+        } else if (bought != null) {
             x += 22;
             y += 30;
             drawString(fontRenderer, "is accepting", x, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, bought, x + 62, y - 4);
+            if(lines_b>0){
+                String line;
+                int omited = 0;
+                for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++) {
+                    line = bought.getTooltip(null, false).get(i).toString();
+                    if(!line.isEmpty())
+                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omited), 0xa0a0a0);
+                    else omited++;
+                }
+            }
             render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 62, y - 4);
         }
         GL11.glDisable(GL11.GL_LIGHTING);
