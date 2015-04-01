@@ -103,14 +103,14 @@ public class HintGui extends Gui {
         int firstImportantLine = 1;
         String tooltip;
         if(bought !=null)
-        for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++){
-            tooltip = bought.getTooltip(null, false).get(i).toString();
+        for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++){
+            tooltip = bought.getTooltip(mc.thePlayer, false).get(i).toString();
             if(! tooltip.isEmpty())lines_b++;
             if(tooltip.length()>len_b)len_b=fontRenderer.getStringWidth(tooltip);
         }
         if(sold !=null)
-        for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++){
-            tooltip = sold.getTooltip(null, false).get(i).toString();
+        for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++){
+            tooltip = sold.getTooltip(mc.thePlayer, false).get(i).toString();
             if(! tooltip.isEmpty())lines_s++;
             if(tooltip.length()>len_s)len_s=fontRenderer.getStringWidth(tooltip);
         }
@@ -146,15 +146,15 @@ public class HintGui extends Gui {
                 drawNumberForItem(fontRenderer, bought, x + 18 + 14*2 + max(76, len_s), y - 4);
                 String line;
                 int omitted = 0;
-                for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++){
-                    line = sold.getTooltip(null, false).get(i).toString();
+                for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++){
+                    line = sold.getTooltip(mc.thePlayer, false).get(i).toString();
                     if(!line.isEmpty())
                         drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
                     else omitted++;
                 }
                 omitted = 0;
-                for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++){
-                    line = bought.getTooltip(null, false).get(i).toString();
+                for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++){
+                    line = bought.getTooltip(mc.thePlayer, false).get(i).toString();
                     if(!line.isEmpty())
                         drawString(fontRenderer, line, x + 14*2 + max(76, len_s), y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
                     else omitted++;
@@ -171,8 +171,8 @@ public class HintGui extends Gui {
             if(lines_s>0){
                 String line;
                 int omitted = 0;
-                for(int i=firstImportantLine; i<sold.getTooltip(null, false).size(); i++) {
-                    line = sold.getTooltip(null, false).get(i).toString();
+                for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++) {
+                    line = sold.getTooltip(mc.thePlayer, false).get(i).toString();
                     if(!line.isEmpty())
                         drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
                     else omitted++;
@@ -187,8 +187,8 @@ public class HintGui extends Gui {
             if(lines_b>0){
                 String line;
                 int omited = 0;
-                for(int i=firstImportantLine; i<bought.getTooltip(null, false).size(); i++) {
-                    line = bought.getTooltip(null, false).get(i).toString();
+                for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++) {
+                    line = bought.getTooltip(mc.thePlayer, false).get(i).toString();
                     if(!line.isEmpty())
                         drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omited), 0xa0a0a0);
                     else omited++;
