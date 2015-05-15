@@ -1,0 +1,14 @@
+tile.vendingMachine.name=Обменный блок
+tile.vendingMachineAdvanced.name=Улучшенный обменный блок
+item.vendingMachineWrench.name=Ключ обменного блока
+
+gui.vendingButton.select=Выбор...
+gui.vendingBlock.storage=Хранение
+gui.vendingBlock.selling=Покупка
+gui.vendingBlock.buying=Продажа
+gui.vendingBlock.settings=Настройки обменника
+gui.vendingBlock.owner=Ник владельца
+gui.vendingBlock.infinite=Бесконечность
+gui.vendingBlock.yes=да
+gui.vendingBlock.no=нет
+gui.vendingBlock.apply=Применить
