@@ -26,18 +26,18 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 	public GuiWrenchVendingMachine(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		super(166, 120, "vending:textures/wrench-gui.png");
 		
-		addChild(new GuiLabel(9, 9, "Vending block settings"));
-		addChild(new GuiLabel(9, 29, "Owner name:"));
+		addChild(new GuiLabel(9, 9, StatCollector.translateToLocal("gui.vendingBlock.settings"));
+		addChild(new GuiLabel(9, 29, StatCollector.translateToLocal("gui.vendingBlock.owner")));
 		addChild(ownerNameEdit = new GuiEdit(16, 43, 138, 13));
 		addChild(infiniteButton = new GuiExButton(9, 64, 148, 20, "") {
 			@Override
 			public void onClick() {
 				infinite = !infinite;
-				caption = "Infinite: " + (infinite ? "YES" : "NO");
+				caption = StatCollector.translateToLocal("gui.vendingBlock.infinite") + ": " + (infinite ? StatCollector.translateToLocal("gui.vendingBlock.yes") : StatCollector.translateToLocal("gui.vendingBlock.no"));
 			}
 		});
 
-		addChild(new GuiExButton(9, 91, 148, 20, "Apply") {
+		addChild(new GuiExButton(9, 91, 148, 20, StatCollector.translateToLocal("gui.vendingBlock.apply")) {
 			@Override
 			public void onClick() {
 				int type = 2;
