@@ -4,6 +4,7 @@ item.vendingMachineWrench.name=Vending Block Wrench
 itemGroup.tabVending=Vending
 
 # GUI
+gui.vendingBlock.select=Select...
 gui.vendingBlock.storage=Storage
 gui.vendingBlock.selling=Selling
 gui.vendingBlock.buying=Buying
