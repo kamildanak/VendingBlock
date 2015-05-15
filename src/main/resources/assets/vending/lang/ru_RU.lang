@@ -2,7 +2,7 @@ tile.vendingMachine.name=Обменный блок
 tile.vendingMachineAdvanced.name=Улучшенный обменный блок
 item.vendingMachineWrench.name=Ключ обменного блока
 
-gui.vendingButton.select=Выбор...
+gui.vendingBlock.select=Выбор...
 gui.vendingBlock.storage=Хранение
 gui.vendingBlock.selling=Покупка
 gui.vendingBlock.buying=Продажа
