@@ -2,3 +2,14 @@ tile.vendingMachine.name=Vending Block
 tile.vendingMachineAdvanced.name=Advanced Vending Block
 item.vendingMachineWrench.name=Vending Block Wrench
 itemGroup.tabVending=Vending
+
+# GUI
+gui.vendingBlock.storage=Storage
+gui.vendingBlock.selling=Selling
+gui.vendingBlock.buying=Buying
+gui.vendingBlock.settings=Vending block settings
+gui.vendingBlock.owner=Owner nickname
+gui.vendingBlock.infinite=Infinite
+gui.vendingBlock.yes=yes
+gui.vendingBlock.no=no
+gui.vendingBlock.apply=Apply
