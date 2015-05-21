@@ -28,7 +28,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 		super.initGui();
 
 		buttonList.clear();
-		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, "Select..."));
+		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, StatCollector.translateToLocal("gui.vendingBlock.select")));
 	}
 
 	/**
