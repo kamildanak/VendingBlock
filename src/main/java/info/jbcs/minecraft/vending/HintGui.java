@@ -14,8 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+
 import org.lwjgl.opengl.GL11;
 
 import static java.lang.Math.max;
@@ -135,14 +137,14 @@ public class HintGui extends Gui {
         if (bought != null && sold != null) {
             x += 18;
             y += 26;
-            drawString(fontRenderer, "is selling", x, y, 0xa0a0a0);
+            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isselling"), x, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, sold, x + 46, y - 4);
             if(!doubleSize){
-                drawString(fontRenderer, "for", x + 14, y + 16, 0xa0a0a0);
+                drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.for"), x + 14, y + 16, 0xa0a0a0);
                 drawNumberForItem(fontRenderer, bought, x + 14 + 18, y + 16 - 4);
                 render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 + 18, y + 16 - 4);
             }else {
-                drawString(fontRenderer, "for", x + 14*2 + max(76, len_s), y, 0xa0a0a0);
+                drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.for"), x + 14*2 + max(76, len_s), y, 0xa0a0a0);
                 drawNumberForItem(fontRenderer, bought, x + 18 + 14*2 + max(76, len_s), y - 4);
                 String line;
                 int omitted = 0;
@@ -165,8 +167,8 @@ public class HintGui extends Gui {
         } else if (sold != null) {
             x += 18;
             y += 30;
-            drawString(fontRenderer, "is giving", x, y, 0xa0a0a0);
-            drawString(fontRenderer, "away", x + 60, y, 0xa0a0a0);
+            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isgiving"), x, y, 0xa0a0a0);
+            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.away"), x + 60, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, sold, x + 42, y - 4);
             if(lines_s>0){
                 String line;
@@ -182,7 +184,7 @@ public class HintGui extends Gui {
         } else if (bought != null) {
             x += 22;
             y += 30;
-            drawString(fontRenderer, "is accepting", x, y, 0xa0a0a0);
+            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isaccepting"), x, y, 0xa0a0a0);
             drawNumberForItem(fontRenderer, bought, x + 62, y - 4);
             if(lines_b>0){
                 String line;
