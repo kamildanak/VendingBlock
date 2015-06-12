@@ -14,6 +14,7 @@ import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 public class GuiWrenchVendingMachine extends GuiScreenPlus {
@@ -26,7 +27,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 	public GuiWrenchVendingMachine(World world, int x, int y, int z, EntityPlayer entityplayer) {
 		super(166, 120, "vending:textures/wrench-gui.png");
 		
-		addChild(new GuiLabel(9, 9, StatCollector.translateToLocal("gui.vendingBlock.settings"));
+		addChild(new GuiLabel(9, 9, StatCollector.translateToLocal("gui.vendingBlock.settings")));
 		addChild(new GuiLabel(9, 29, StatCollector.translateToLocal("gui.vendingBlock.owner")));
 		addChild(ownerNameEdit = new GuiEdit(16, 43, 138, 13));
 		addChild(infiniteButton = new GuiExButton(9, 64, 148, 20, "") {
