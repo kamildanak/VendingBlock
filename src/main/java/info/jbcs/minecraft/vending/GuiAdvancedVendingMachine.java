@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.StatCollector;
 
 public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPickBlockHandler {
 	ContainerAdvancedVendingMachine container;
