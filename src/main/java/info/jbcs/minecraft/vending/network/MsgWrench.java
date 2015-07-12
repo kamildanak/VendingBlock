@@ -52,12 +52,10 @@ public class MsgWrench extends Message {
 
         @Override
         public IMessage onMessage(MsgWrench message, MessageContext ctx) {
-            System.out.println("MESSAGE GOT");
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
             if (player.inventory.getCurrentItem() == null || player.inventory.getCurrentItem().getItem() != Vending.itemWrench)
                 return null;
-            System.out.println("Processing");
             TileEntity tileEntity = player.worldObj.getTileEntity(message.x, message.y, message.z);
             if (!(tileEntity instanceof TileEntityVendingMachine))
                 return null;
@@ -65,7 +63,6 @@ public class MsgWrench extends Message {
             entity.infinite = message.infinite;
             entity.ownerName = message.ownerName;
             player.worldObj.markBlockForUpdate(message.x, message.y, message.z);
-            System.out.println("Processed");
             return null;
         }
     }
