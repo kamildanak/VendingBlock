@@ -1,9 +1,18 @@
 package info.jbcs.minecraft.vending;
 
 import cpw.mods.fml.common.network.FMLEventChannel;
-import cpw.mods.fml.common.network.NetworkRegistry;
+import info.jbcs.minecraft.vending.block.BlockVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiHandler;
+import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
+import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
+import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
+import info.jbcs.minecraft.vending.inventory.DummyContainer;
+import info.jbcs.minecraft.vending.item.ItemMetaBlock;
 import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +56,7 @@ public class Vending {
 	static Configuration config;
 	public MessagePipeline messagePipeline;
 
-	static Block[] supports={
+	public static Block[] supports={
 			Blocks.stone,
 			Blocks.cobblestone,
 			Blocks.stonebrick,

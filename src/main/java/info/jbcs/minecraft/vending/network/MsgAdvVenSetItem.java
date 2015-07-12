@@ -1,22 +1,14 @@
 package info.jbcs.minecraft.vending.network;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import info.jbcs.minecraft.vending.ContainerAdvancedVendingMachine;
-import info.jbcs.minecraft.vending.TileEntityVendingMachine;
-import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
-import javax.swing.text.html.parser.Entity;
 
 public class MsgAdvVenSetItem extends Message {
     private int                 id, count, damage;

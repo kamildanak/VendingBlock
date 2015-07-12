@@ -2,7 +2,10 @@ package info.jbcs.minecraft.vending.proxy;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 
-import info.jbcs.minecraft.vending.*;
+import info.jbcs.minecraft.vending.gui.HintGui;
+import info.jbcs.minecraft.vending.renderer.BlockVendingMachineRenderer;
+import info.jbcs.minecraft.vending.renderer.TileEntityVendingMachineRenderer;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
 //import net.minecraft.util.EnumMovingObjectType;
 
