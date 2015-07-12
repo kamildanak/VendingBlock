@@ -2,6 +2,8 @@ package info.jbcs.minecraft.vending;
 
 import cpw.mods.fml.common.network.FMLEventChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import info.jbcs.minecraft.vending.network.MessagePipeline;
+import info.jbcs.minecraft.vending.proxy.CommonProxy;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -29,6 +30,9 @@ public class Vending {
 	public static final String MOD_NAME = "vending";
 	public static final String VERSION = "1.2.1b";
 
+	@Instance(MOD_ID)
+	public static Vending	instance;
+
 	public static FMLEventChannel Channel;
 
 	public static Block blockVendingMachine;
@@ -41,6 +45,7 @@ public class Vending {
 	public static CreativeTabs	tabVending;
 	
 	static Configuration config;
+	public MessagePipeline messagePipeline;
 
 	static Block[] supports={
 			Blocks.stone,
@@ -79,26 +84,25 @@ public class Vending {
 			Blocks.lapis_block,
 	};
 
-	@Instance("Vending")
-	public static Vending instance;
-
-	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.ClientProxy", serverSide = "info.jbcs.minecraft.vending.CommonProxy")
+	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
 	public static CommonProxy commonProxy;
+
+	public Vending(){
+		messagePipeline = new MessagePipeline();
+	}
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
-		
-		commonProxy.preInit();
 	}
 
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
-		Channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("Vending");
-		Vending.Channel.register(new ServerPacketHandler());
-		commonProxy.init();
-
+		commonProxy.registerPackets(messagePipeline);
+		commonProxy.registerEventHandlers();
+		commonProxy.registerIcons();
+		commonProxy.registerRenderers();
 
 		if(config.get("general", "use custom creative tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)){
 			tabVending = new CreativeTabs("tabVending") {
@@ -115,7 +119,7 @@ public class Vending {
 		} else{
 			tabVending = CreativeTabs.tabDecorations;
 		}
-		
+
 		blockVendingMachine = new BlockVendingMachine(supports,false);
 		GameRegistry.registerBlock(blockVendingMachine, ItemMetaBlock.class, "vendingMachine");
 

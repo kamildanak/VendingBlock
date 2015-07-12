@@ -7,7 +7,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class BlockVendingMachineRenderer implements ISimpleBlockRenderingHandler {
-	static int id;
+	public static int id;
 
 	public BlockVendingMachineRenderer() {
 	}

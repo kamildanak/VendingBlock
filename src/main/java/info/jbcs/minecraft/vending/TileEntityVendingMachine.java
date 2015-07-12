@@ -15,7 +15,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public ItemStack sold = null;
 	public ItemStack bought = null;
 	boolean advanced = false;
-	boolean infinite = false;
+	public boolean infinite = false;
 
 	private static final int[] side0 = new int[] { };
 

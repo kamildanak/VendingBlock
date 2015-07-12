@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
+import info.jbcs.minecraft.vending.network.MsgWrench;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -45,20 +47,13 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 
 	@Override
 	public void blockPicked(final ItemStack stack) {
-		int type = 1;
-		ByteBuf buffer = Unpooled.buffer();
-		buffer.writeInt(type);
-
+		MsgAdvVenSetItem msg;
 		if (stack == null) {
-			buffer.writeInt(0);
+			msg = new MsgAdvVenSetItem(0, 0, 0);
 		} else {
-			buffer.writeInt(General.getItemId(stack.getItem()));
-			buffer.writeInt(stack.stackSize);
-			buffer.writeInt(stack.getItemDamage());
+			msg = new MsgAdvVenSetItem(General.getItemId(stack.getItem()), stack.stackSize, stack.getItemDamage());
 		}
-		FMLProxyPacket packet = new FMLProxyPacket(buffer.copy(), "Vending");
-
-		Vending.Channel.sendToServer(packet);
+		Vending.instance.messagePipeline.sendToServer(msg);
 	}
 
 	@Override

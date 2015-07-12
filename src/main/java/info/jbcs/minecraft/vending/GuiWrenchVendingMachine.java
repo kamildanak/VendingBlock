@@ -8,6 +8,7 @@ import java.nio.IntBuffer;
 
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import info.jbcs.minecraft.vending.network.MsgWrench;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -41,17 +42,8 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 		addChild(new GuiExButton(9, 91, 148, 20, StatCollector.translateToLocal("gui.vendingBlock.apply")) {
 			@Override
 			public void onClick() {
-				int type = 2;
-				ByteBuf buffer = Unpooled.buffer();
-				buffer.writeInt(type);
-				buffer.writeInt(entity.xCoord);
-				buffer.writeInt(entity.yCoord);
-				buffer.writeInt(entity.zCoord);
-				buffer.writeBoolean(infinite);
-				ByteBufUtils.writeUTF8String(buffer, ownerNameEdit.getText());
-				FMLProxyPacket packet = new FMLProxyPacket(buffer.copy(), "Vending");
-
-				Vending.Channel.sendToServer(packet);
+				MsgWrench msg = new MsgWrench(entity, infinite, ownerNameEdit.getText());
+				Vending.instance.messagePipeline.sendToServer(msg);
 				mc.thePlayer.closeScreen();
 			}
 		});
