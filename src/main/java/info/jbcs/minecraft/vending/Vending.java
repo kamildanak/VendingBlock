@@ -101,7 +101,6 @@ public class Vending {
 	public void init(FMLInitializationEvent event) {
 		commonProxy.registerPackets(messagePipeline);
 		commonProxy.registerEventHandlers();
-		commonProxy.registerIcons();
 		commonProxy.registerRenderers();
 
 		if(config.get("general", "use custom creative tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)){
