@@ -91,7 +91,7 @@ public class HintGui extends Gui {
     void drawItemsWithLabel(FontRenderer fontRenderer, String label, int x, int y, int colour, ItemStack[] itemStacks, boolean drawDescription, int descWidth){
         int w = fontRenderer.getStringWidth(StatCollector.translateToLocal(label))+2;
         int numOfItems = countNotNull(itemStacks);
-        int witdth = (drawDescription? max(w, descWidth):w)+18*numOfItems;
+        int witdth = (drawDescription? max(w+18*numOfItems, descWidth):w+18*numOfItems);
         x-=witdth/2;
         drawString(fontRenderer, StatCollector.translateToLocal(label), x, y, colour);
         for (ItemStack itemStack: itemStacks) {
@@ -153,13 +153,11 @@ public class HintGui extends Gui {
         }
         boolean drawDesc = mc.thePlayer.isSneaking();
         int descHeight = max(linesBought, linesSold)*16;
-        int w = (drawDesc && !isBoughtEmpty && !isSoldEmpty)? 340:120;
-        int h = 60 + (drawDesc? descHeight:0) + ((!isBoughtEmpty && !isSoldEmpty)?16:0);
+        int w = 120;
+        if(drawDesc) w = (!isBoughtEmpty && !isSoldEmpty)? 340:140;
+        int h = 44 + (drawDesc? descHeight:0) + ((!isBoughtEmpty && !isSoldEmpty)?16:0);
         int centerYOff = -80 + (drawDesc? (descHeight)/2:0) + ((!isBoughtEmpty && !isSoldEmpty)?16/2:0);
-        if(drawDesc){
-            h-=((!isBoughtEmpty && !isSoldEmpty)?16+16:16);
-            centerYOff-=((!isBoughtEmpty && !isSoldEmpty)?(16+16)/2:16/2);
-        }
+        if(drawDesc && !isBoughtEmpty && !isSoldEmpty){h-=16; centerYOff-=16/2;}
         int cx = width / 2;
         int x = cx - w / 2;
         int y = height / 2 - h / 2 + centerYOff;
@@ -173,11 +171,11 @@ public class HintGui extends Gui {
 
         if (!isBoughtEmpty && !isSoldEmpty) {
             drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling", cx-(drawDesc? 100:0), y+26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx+(drawDesc? 100:0), y+(drawDesc? 26:46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx + (drawDesc ? 100 : 0), y + (drawDesc ? 26 : 46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
         } else if (!isBoughtEmpty) {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthSold);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthBought);
         } else {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthBought);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
         }
 
         GL11.glDisable(GL11.GL_LIGHTING);
