@@ -1,7 +1,7 @@
 package info.jbcs.minecraft.vending.gui;
 
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.GeneralClient;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;

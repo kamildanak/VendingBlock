@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.proxy;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import info.jbcs.minecraft.vending.gui.HintGui;
 import info.jbcs.minecraft.vending.renderer.BlockVendingMachineRenderer;
@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 
 import net.minecraftforge.common.MinecraftForge;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy{
 	private Minecraft mc;

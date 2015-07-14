@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import cpw.mods.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameData;
 import info.jbcs.minecraft.vending.gui.GuiPickBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;

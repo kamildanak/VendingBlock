@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.proxy;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
 import info.jbcs.minecraft.vending.network.MsgWrench;
