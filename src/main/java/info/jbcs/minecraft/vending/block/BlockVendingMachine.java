@@ -28,8 +28,6 @@ public class BlockVendingMachine extends BlockContainer {
 	Block[] supportBlocks;
 	boolean isAdvanced, isMultiple;
 
-	IIcon IIconTop, IIconSide;
-
 	public BlockVendingMachine(Block[] supports,boolean advanced, boolean multiple) {
 		super(Material.glass);
 		setBlockName("vendingMachine");
@@ -188,15 +186,6 @@ public class BlockVendingMachine extends BlockContainer {
 		}
 	}
 
-	@Override
-	public int getRenderBlockPass() {
-		return 0;
-	}
-
-	@Override
-	public IIcon getIcon(int side, int meta) {
-		return side < 2 ? IIconTop : IIconSide;
-	}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int metadata) {
@@ -253,11 +242,6 @@ public class BlockVendingMachine extends BlockContainer {
 		return i;
 	}
 
-	@Override
-	public void registerBlockIcons(IIconRegister register) {
-		IIconTop = register.registerIcon("Vending:vendor-top");
-		IIconSide = register.registerIcon("Vending:vendor-side");
-	}
 
 	@Override
 	public int getRenderType() {
