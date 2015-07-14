@@ -12,6 +12,8 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.io.IOException;
+
 public class GuiScreenPlus extends GuiContainer {
 	public int screenW;
 	public int screenH;
@@ -49,7 +51,7 @@ public class GuiScreenPlus extends GuiContainer {
 
 	
 	@Override
-	public void handleInput() {
+	public void handleInput() throws IOException {
 		while (Mouse.next()) {
 			this.handleMouseInput();
 		}
@@ -66,7 +68,7 @@ public class GuiScreenPlus extends GuiContainer {
 	boolean[] downButtons = new boolean[12];
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		mouseEvent.handled = false;
 		mouseEvent.x = Mouse.getEventX() * width / mc.displayWidth - this.screenX;
 		mouseEvent.y = height - Mouse.getEventY() * height / mc.displayHeight - 1 - this.screenY;
@@ -116,7 +118,7 @@ public class GuiScreenPlus extends GuiContainer {
 	InputKeyboardEvent keyboardEvent = new InputKeyboardEvent();
 
 	@Override
-	public void handleKeyboardInput() {
+	public void handleKeyboardInput() throws IOException {
 		keyboardEvent.handled = false;
 
 		if (Keyboard.getEventKeyState()) {
@@ -180,7 +182,7 @@ public class GuiScreenPlus extends GuiContainer {
 	}
 
 	public FontRenderer fontRenderer() {
-		return mc.fontRenderer;
+		return mc.fontRendererObj;
 	}
 
 	protected void drawRect(int gx, int gy, int gw, int gh, int c1, int c2) {
@@ -191,8 +193,8 @@ public class GuiScreenPlus extends GuiContainer {
 		if(rw==0 || rh==0 || tw==0 || th==0) return;
 		
 		float pixel = 0.00390625f;
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
+		Tessellator tessellator = Tessellator.getInstance();
+		/*tessellator.startDrawingQuads();
 
 		for (int y = 0; y < rh; y += th) {
 			for (int x = 0; x < rw; x += tw) {
@@ -222,6 +224,7 @@ public class GuiScreenPlus extends GuiContainer {
 				tessellator.addVertexWithUV(x1, y1, this.zLevel, u1, v1);
 			}
 		}
+		*/
 
 		tessellator.draw();
 	}

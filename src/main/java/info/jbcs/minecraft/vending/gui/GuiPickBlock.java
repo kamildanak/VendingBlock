@@ -10,6 +10,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
+import java.io.IOException;
+
 public class GuiPickBlock extends GuiContainer
 {
     Scrollbar scrollbar;
@@ -36,8 +38,7 @@ public class GuiPickBlock extends GuiContainer
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         scrollbar.handleMouseInput();
     }

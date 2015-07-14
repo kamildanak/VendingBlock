@@ -74,7 +74,7 @@ public class GuiExButton extends GuiElement {
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 		SoundHandler soundHandler = new SoundHandler(mc.getResourceManager(), mc.gameSettings);
-		soundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+		soundHandler.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		onClick();
 	}
 }

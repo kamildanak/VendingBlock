@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.network;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -21,9 +22,10 @@ public class MsgWrench extends Message {
     public MsgWrench(TileEntity tileEntityVendingMachine, boolean infinite, String ownerName)
     {
         TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntityVendingMachine;
-        x = entity.xCoord;
-        y = entity.yCoord;
-        z = entity.zCoord;
+        BlockPos blockPos = entity.getPos();
+        x = blockPos.getX();
+        y = blockPos.getY();
+        z = blockPos.getZ();
         this.infinite = infinite;
         this.ownerName = ownerName;
     }
@@ -56,13 +58,13 @@ public class MsgWrench extends Message {
 
             if (player.inventory.getCurrentItem() == null || player.inventory.getCurrentItem().getItem() != Vending.itemWrench)
                 return null;
-            TileEntity tileEntity = player.worldObj.getTileEntity(message.x, message.y, message.z);
+            TileEntity tileEntity = player.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
             if (!(tileEntity instanceof TileEntityVendingMachine))
                 return null;
             TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
             entity.infinite = message.infinite;
             entity.ownerName = message.ownerName;
-            player.worldObj.markBlockForUpdate(message.x, message.y, message.z);
+            player.worldObj.markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
             return null;
         }
     }

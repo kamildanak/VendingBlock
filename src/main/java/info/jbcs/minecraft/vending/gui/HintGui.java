@@ -56,7 +56,7 @@ public class HintGui extends Gui {
             //    return;
             //}
 
-            TileEntity te = world.getTileEntity(mop.blockX, mop.blockY, mop.blockZ);
+            TileEntity te = world.getTileEntity(mop.getBlockPos());
 
             if (te == null) {
                 return;
@@ -73,7 +73,7 @@ public class HintGui extends Gui {
         }
     }
 
-    RenderItem render = new RenderItem();
+    RenderItem render = new RenderItem(Minecraft.getMinecraft().getTextureManager(),Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager());
 
     void drawNumberForItem(FontRenderer fontRenderer, ItemStack stack, int ux, int uy) {
         if (stack == null || stack.stackSize < 2) {
@@ -97,7 +97,7 @@ public class HintGui extends Gui {
         for (ItemStack itemStack: itemStacks) {
             if(itemStack==null) continue;
             drawNumberForItem(fontRenderer, itemStack, x + w, y - 4);
-            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, itemStack, x + w, y - 4);
+            render.renderItemIntoGUI(itemStack, x + w, y - 4);
             GL11.glDisable(GL11.GL_LIGHTING);
             w+=18;
         }
@@ -122,7 +122,7 @@ public class HintGui extends Gui {
         if (isBoughtEmpty && isSoldEmpty) return;
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int screenwidth = resolution.getScaledWidth();
-        FontRenderer fontRenderer = mc.fontRenderer;
+        FontRenderer fontRenderer = mc.fontRendererObj;
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
         String tooltip;

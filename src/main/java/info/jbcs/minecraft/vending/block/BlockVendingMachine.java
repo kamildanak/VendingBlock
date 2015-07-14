@@ -5,11 +5,10 @@ import java.util.List;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.Vending;
-import info.jbcs.minecraft.vending.renderer.BlockVendingMachineRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -19,7 +18,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
@@ -30,7 +30,7 @@ public class BlockVendingMachine extends BlockContainer {
 
 	public BlockVendingMachine(Block[] supports,boolean advanced, boolean multiple) {
 		super(Material.glass);
-		setBlockName("vendingMachine");
+		setUnlocalizedName("vendingMachine");
 
 		supportBlocks = supports;
 
@@ -50,8 +50,8 @@ public class BlockVendingMachine extends BlockContainer {
 	}
 
 
-	void vend(World world, int i, int j, int k, EntityPlayer entityplayer){
-		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
+	void vend(World world, BlockPos blockPos, EntityPlayer entityplayer){
+		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 		if (tileEntity == null)
 			return;
 
@@ -101,15 +101,15 @@ public class BlockVendingMachine extends BlockContainer {
 						}
 
 
-						EntityItem entityitem = new EntityItem(world, i + 0.5, j + 1.2, k + 0.5, vended);
+						EntityItem entityitem = new EntityItem(world, blockPos.getX() + 0.5, blockPos.getY() + 1.2, blockPos.getZ() + 0.5, vended);
 						General.propelTowards(entityitem, entityplayer, 0.2);
 						entityitem.motionY = 0.2;
-						entityitem.delayBeforeCanPickup = 10;
+						entityitem.setPickupDelay(10);
 						world.spawnEntityInWorld(entityitem);
 					}
 				}
 
-				world.playSoundEffect(i, j, k, "vending:cha-ching", 0.3f, 0.6f);
+				world.playSoundEffect(blockPos.getX(), blockPos.getY(), blockPos.getZ(), "vending:cha-ching", 0.3f, 0.6f);
 
 				if (offered != null) {
 					ItemStack paid = offered.splitStack(bought.stackSize);
@@ -125,64 +125,64 @@ public class BlockVendingMachine extends BlockContainer {
 					tileEntity.inventory.onInventoryChanged();
 			}
 		} else {
-			world.playSoundEffect(i, j, k, "vending:forbidden", 1.0f, 1.0f);
+			world.playSoundEffect(blockPos.getX(), blockPos.getY(), blockPos.getZ(), "vending:forbidden", 1.0f, 1.0f);
 		}
 	}
 
 	@Override
-	public void onBlockClicked(World world, int i, int j, int k, EntityPlayer entityplayer) {
-		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
+	public void onBlockClicked(World world, BlockPos blockPos, EntityPlayer entityplayer) {
+		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 		if (tileEntity == null)
 			return;
 
-		if (! entityplayer.getDisplayName().equals(tileEntity.ownerName) || ! tileEntity.inventory.isEmpty()){
-			vend(world, i, j, k, entityplayer);
+		if (! entityplayer.getDisplayName().equals(tileEntity.ownerName) || !tileEntity.inventory.isEmpty()){
+			vend(world, blockPos, entityplayer);
 			return;
 		}
 
-		dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
-		world.setBlock(i, j, k, Blocks.air);
-		world.playSoundEffect(i, j, k, "vending:cha-ching", 0.3f, 0.6f);
+		dropBlockAsItem(world, blockPos, world.getBlockState(blockPos), 0);
+		world.setBlockToAir(blockPos);
+		world.playSoundEffect(blockPos.getX(), blockPos.getY(), blockPos.getZ(), "vending:cha-ching", 0.3f, 0.6f);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int a, float b, float x, float y) {
-		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
+	public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState state, EntityPlayer entityPlayer, EnumFacing side, float hitX, float hitY, float hitZ){
+		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 		if (tileEntity == null)
 			return false;
 
-		if(entityplayer.inventory.getCurrentItem()!=null && entityplayer.inventory.getCurrentItem().getItem()==Vending.itemWrench){
-			Vending.guiWrench.open(entityplayer, world, i, j, k);
+		if(entityPlayer.inventory.getCurrentItem()!=null && entityPlayer.inventory.getCurrentItem().getItem()==Vending.itemWrench){
+			Vending.guiWrench.open(entityPlayer, world, blockPos);
 			return true;
 		}
 
-		if (entityplayer.getDisplayName().equals(tileEntity.ownerName) && !entityplayer.isSneaking()) {
-			Vending.guiVending.open(entityplayer, world, i, j, k);
-
-			return true;
-		}
-
-		if (entityplayer.capabilities.isCreativeMode && !entityplayer.isSneaking()) {
-			Vending.guiVending.open(entityplayer, world, i, j, k);
+		if (entityPlayer.getDisplayName().equals(tileEntity.ownerName) && !entityPlayer.isSneaking()) {
+			Vending.guiVending.open(entityPlayer, world, blockPos);
 
 			return true;
 		}
 
-		vend(world, i, j, k, entityplayer);
+		if (entityPlayer.capabilities.isCreativeMode && !entityPlayer.isSneaking()) {
+			Vending.guiVending.open(entityPlayer, world, blockPos);
+
+			return true;
+		}
+
+		vend(world, blockPos, entityPlayer);
 
 		return true;
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
+	public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack){
 		TileEntityVendingMachine e = new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
 		e.multiple=isMultiple;
 
-		if (entityliving != null) {
-			EntityPlayer player = (EntityPlayer) entityliving;
-			e.ownerName = player.getDisplayName();
-			world.setTileEntity(i, j, k, e);
+		if (entityLiving != null) {
+			EntityPlayer player = (EntityPlayer) entityLiving;
+			e.ownerName = player.getDisplayNameString();
+			world.setTileEntity(blockPos, e);
 		}
 	}
 
@@ -197,8 +197,8 @@ public class BlockVendingMachine extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, Block a, int b) {
-		TileEntityVendingMachine tileentitychest = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
+	public void breakBlock(World world, BlockPos blockPos, IBlockState state) {
+		TileEntityVendingMachine tileentitychest = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 
 		if (tileentitychest == null)
 			return;
@@ -220,7 +220,7 @@ public class BlockVendingMachine extends BlockContainer {
 				}
 
 				itemstack.stackSize -= i1;
-				EntityItem entityitem = new EntityItem(world, i + f, j + f1, k + f2, new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage()));
+				EntityItem entityitem = new EntityItem(world, blockPos.getX() + f, blockPos.getY() + f1, blockPos.getZ() + f2, new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage()));
 				float f3 = 0.05F;
 				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
 				entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 0.2F;
@@ -229,7 +229,7 @@ public class BlockVendingMachine extends BlockContainer {
 			}
 		}
 
-		super.breakBlock(world, i, j, k, a, b);
+		super.breakBlock(world, blockPos, state);
 	}
 
 	@Override
@@ -238,16 +238,16 @@ public class BlockVendingMachine extends BlockContainer {
 	}
 
 	@Override
-	public int damageDropped(int i) {
-		return i;
+	public int damageDropped(IBlockState state) {
+		return 0; //state
 	}
 
-
+/*
 	@Override
 	public int getRenderType() {
 		return BlockVendingMachineRenderer.id;
 	}
-
+*/
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List list) {
 		for (int i = 0; i < supportBlocks.length; ++i) {

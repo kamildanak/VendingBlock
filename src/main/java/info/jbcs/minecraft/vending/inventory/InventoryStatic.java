@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -18,8 +19,18 @@ public abstract class InventoryStatic implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName(){
 		return null;
+	}
+
+	@Override
+	public IChatComponent getDisplayName(){
+		return null;
+	}
+
+	@Override
+	public boolean hasCustomName(){
+		return true;
 	}
 
 	@Override
@@ -262,21 +273,31 @@ public abstract class InventoryStatic implements IInventory {
 		return null;
 	}
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return true;
-	}
-
 	//@Override
 	public void onInventoryChanged() {
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
+	}
+
+	@Override
+	public int getFieldCount(){
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value){
+
+	}
+
+	@Override
+	public int getField(int id){
+		return 0;
 	}
 
 	@Override

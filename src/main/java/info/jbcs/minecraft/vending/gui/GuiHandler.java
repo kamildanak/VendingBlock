@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -20,8 +21,8 @@ public abstract class GuiHandler implements Comparable {
 		name = n;
 	}
 
-	public void open(EntityPlayer player, World world, int x, int y, int z) {
-		player.openGui(mod, index, world, x, y, z);
+	public void open(EntityPlayer player, World world, BlockPos blockPos) {
+		player.openGui(mod, index, world, blockPos.getX(), blockPos.getY(), blockPos.getZ());
 	}
 
 	@Override

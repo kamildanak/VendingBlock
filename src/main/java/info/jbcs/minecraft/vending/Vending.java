@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending;
 
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.gui.*;
@@ -130,13 +131,13 @@ public class Vending {
 		blockVendingMachine = new BlockVendingMachine(supports,false,false);
 		GameRegistry.registerBlock(blockVendingMachine, ItemMetaBlock.class, "vendingMachine");
 
-		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true,false).setBlockName("vendingMachineAdvanced");
+		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true,false).setUnlocalizedName("vendingMachineAdvanced");
 		GameRegistry.registerBlock(blockAdvancedVendingMachine, ItemMetaBlock.class, "vendingMachineAdvanced");
 
-		blockMultipleVendingMachine = new BlockVendingMachine(supports,false,true).setBlockName("vendingMachineMultiple");
+		blockMultipleVendingMachine = new BlockVendingMachine(supports,false,true).setUnlocalizedName("vendingMachineMultiple");
 		GameRegistry.registerBlock(blockMultipleVendingMachine, ItemMetaBlock.class, "vendingMachineMultiple");
 
-		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
+		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setContainerItem(itemWrench);
 		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
 		
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
@@ -170,7 +171,7 @@ public class Vending {
 		guiVending=new GuiHandler("vending"){
 			@Override
 			public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		        TileEntity tileEntity = world.getTileEntity(x, y, z);
+		        TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 		        if(! (tileEntity instanceof TileEntityVendingMachine))
 		        	return null;
@@ -188,7 +189,7 @@ public class Vending {
 
 			@Override
 			public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-                TileEntity tileEntity = world.getTileEntity(x, y, z);
+                TileEntity tileEntity = world.getTileEntity(new BlockPos(x, y, z));
 
 		        if(! (tileEntity instanceof TileEntityVendingMachine))
 		        	return null;
@@ -214,7 +215,7 @@ public class Vending {
 			@Override
 			public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
                
-                return new GuiWrenchVendingMachine(world,x,y,z,player);
+                return new GuiWrenchVendingMachine(world, new BlockPos(x,y,z) ,player);
 			}
 		};
 

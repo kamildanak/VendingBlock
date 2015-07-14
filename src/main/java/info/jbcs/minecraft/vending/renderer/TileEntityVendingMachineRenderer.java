@@ -13,16 +13,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer {
-	RenderItem renderer = new RenderItem();
+	RenderItem renderer = new RenderItem(Minecraft.getMinecraft().getTextureManager(),Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager());
 
 	public TileEntityVendingMachineRenderer() {
-		renderer.setRenderManager(RenderManager.instance);
+		//renderer.setRenderManager(RenderManager.instance);
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-
-		TileEntityVendingMachine machine = (TileEntityVendingMachine) tileentity;
+	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f, int p_180535_9_) {
+		TileEntityVendingMachine machine = (TileEntityVendingMachine) tileEntity;
 
 		if (machine == null || machine.getBlockType() == null) {
 			return;
@@ -39,13 +38,13 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
 			entity.hoverStart = 0;
 
 			if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null) {
-				entity.age = Minecraft.getMinecraft().thePlayer.ticksExisted;
+				//entity.age = Minecraft.getMinecraft().thePlayer.ticksExisted;
 			}
 
-			int meta = tileentity.getBlockMetadata();
+			int meta = tileEntity.getBlockMetadata();
 
 			try {
-				renderer.doRender(entity, -0.1+(A%2)*0.2, 0, -0.1+(A<2?0:1)*0.2, f, f);
+				renderer.renderItemModel(itemStack);// doRender(entity, -0.1+(A%2)*0.2, 0, -0.1+(A<2?0:1)*0.2, f, f);
 			} catch (Throwable e) {
 			}
 			A=A+1;
