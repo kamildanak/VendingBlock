@@ -20,6 +20,10 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import org.lwjgl.opengl.GL11;
 
+import java.util.Objects;
+
+import static info.jbcs.minecraft.vending.General.countNotNull;
+import static info.jbcs.minecraft.vending.General.getNotNull;
 import static java.lang.Math.max;
 
 
@@ -63,7 +67,7 @@ public class HintGui extends Gui {
             }
 
             TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-            draw(tileEntity.ownerName, tileEntity.getSoldItem(), tileEntity.getBoughtItem());
+            draw(tileEntity.ownerName, tileEntity.getSoldItems(), tileEntity.getBoughtItems());
 
             GeneralClient.bind("textures/gui/icons.png");
         }
@@ -84,120 +88,98 @@ public class HintGui extends Gui {
         drawString(fontRenderer, line, x, y, 0xffffff);
         GL11.glTranslatef(0.0f, 0.0f, -50.0f);
     }
-
-    void draw(String seller, ItemStack sold, ItemStack bought) {
-        boolean doubleSize = false;
-        if (bought == null && sold == null) {
-            return;
+    void drawItemsWithLabel(FontRenderer fontRenderer, String label, int x, int y, int colour, ItemStack[] itemStacks, boolean drawDescription, int descWidth){
+        int w = fontRenderer.getStringWidth(StatCollector.translateToLocal(label))+2;
+        int numOfItems = countNotNull(itemStacks);
+        int witdth = (drawDescription? max(w, descWidth):w)+18*numOfItems;
+        x-=witdth/2;
+        drawString(fontRenderer, StatCollector.translateToLocal(label), x, y, colour);
+        for (ItemStack itemStack: itemStacks) {
+            if(itemStack==null) continue;
+            drawNumberForItem(fontRenderer, itemStack, x + w, y - 4);
+            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, itemStack, x + w, y - 4);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            w+=18;
         }
+        y+=20;
+        if(drawDescription){
+            ItemStack itemStack=getNotNull(itemStacks, ((int) mc.thePlayer.worldObj.getWorldTime() / 50) % numOfItems);
+            if(itemStack!=null) {
+                String line;
+                for(Object object: itemStack.getTooltip(mc.thePlayer, false).toArray()){
+                    line = object.toString();
+                    if(!line.isEmpty()) {
+                        drawString(fontRenderer, line, x, y, 0xa0a0a0);
+                        y+=16;
+                    }
+                }
+            }
+        }
+    }
+    void draw(String seller, ItemStack[] soldItems, ItemStack[] boughtItems) {
+        boolean isSoldEmpty = countNotNull(soldItems)==0;
+        boolean isBoughtEmpty = countNotNull(boughtItems)==0;
+        if (isBoughtEmpty && isSoldEmpty) return;
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         int screenwidth = resolution.getScaledWidth();
         FontRenderer fontRenderer = mc.fontRenderer;
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();
-        int w = 120;
-        int def_h = 60;
-        int h = def_h;
-        int lines_b = 0;
-        int lines_s = 0;
-        int len_b = 0;
-        int len_s = 0;
-        int firstImportantLine = 1;
         String tooltip;
-        if(bought !=null)
-        for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++){
-            tooltip = bought.getTooltip(mc.thePlayer, false).get(i).toString();
-            if(! tooltip.isEmpty())lines_b++;
-            if(tooltip.length()>len_b)len_b=fontRenderer.getStringWidth(tooltip);
+        int c;
+        int linesBought=0;
+        int lengthBought=0;
+        int linesSold=0;
+        int lengthSold=0;
+        for(ItemStack bought: boughtItems) {
+            if(bought ==null) continue;
+            c=0;
+            for (int i = 0; i < bought.getTooltip(mc.thePlayer, false).size(); i++) {
+                tooltip = bought.getTooltip(mc.thePlayer, false).get(i).toString();
+                if (!tooltip.isEmpty()) c++;
+                if (tooltip.length() > lengthBought) lengthBought = fontRenderer.getStringWidth(tooltip);
+            }
+            linesBought=max(linesBought,c);
         }
-        if(sold !=null)
-        for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++){
-            tooltip = sold.getTooltip(mc.thePlayer, false).get(i).toString();
-            if(! tooltip.isEmpty())lines_s++;
-            if(tooltip.length()>len_s)len_s=fontRenderer.getStringWidth(tooltip);
+        for(ItemStack sold: soldItems) {
+            if(sold ==null) continue;
+            c=0;
+            for (int i = 0; i < sold.getTooltip(mc.thePlayer, false).size(); i++) {
+                tooltip = sold.getTooltip(mc.thePlayer, false).get(i).toString();
+                if (!tooltip.isEmpty()) c++;
+                if (tooltip.length() > lengthSold) lengthSold = fontRenderer.getStringWidth(tooltip);
+            }
+            linesSold=max(linesBought,c);linesBought=max(linesBought,c);
         }
-        if(max(lines_b, lines_s)>0 && bought != null && sold != null) doubleSize = true;
-        w = 42 + max(max(76, len_b), max(76, len_s));
-        if(doubleSize) w = 63 + max(76, len_b) + max(76, len_s);
-        h = h + max(max(lines_b-1, lines_s-1), 0) * 16;
-
-        int centerYOff = -80;
+        boolean drawDesc = mc.thePlayer.isSneaking();
+        int descHeight = max(linesBought, linesSold)*16;
+        int w = (drawDesc && !isBoughtEmpty && !isSoldEmpty)? 340:120;
+        int h = 60 + (drawDesc? descHeight:0) + ((!isBoughtEmpty && !isSoldEmpty)?16:0);
+        int centerYOff = -80 + (drawDesc? (descHeight)/2:0) + ((!isBoughtEmpty && !isSoldEmpty)?16/2:0);
+        if(drawDesc){
+            h-=((!isBoughtEmpty && !isSoldEmpty)?16+16:16);
+            centerYOff-=((!isBoughtEmpty && !isSoldEmpty)?(16+16)/2:16/2);
+        }
         int cx = width / 2;
         int x = cx - w / 2;
-        int y = height / 2 - def_h / 2 + centerYOff;
+        int y = height / 2 - h / 2 + centerYOff;
 
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0f, 0.0f, -100.0f);
-
         GL11.glDisable(GL11.GL_LIGHTING);
 
         drawGradientRect(x, y, x + w, y + h, 0xc0101010, 0xd0101010);
         drawCenteredString(fontRenderer, seller, cx, y + 8, 0xffffff);
 
-        if (bought != null && sold != null) {
-            x += 18;
-            y += 26;
-            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isselling"), x, y, 0xa0a0a0);
-            drawNumberForItem(fontRenderer, sold, x + 46, y - 4);
-            if(!doubleSize){
-                drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.for"), x + 14, y + 16, 0xa0a0a0);
-                drawNumberForItem(fontRenderer, bought, x + 14 + 18, y + 16 - 4);
-                render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 + 18, y + 16 - 4);
-            }else {
-                drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.for"), x + 14*2 + max(76, len_s), y, 0xa0a0a0);
-                drawNumberForItem(fontRenderer, bought, x + 18 + 14*2 + max(76, len_s), y - 4);
-                String line;
-                int omitted = 0;
-                for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++){
-                    line = sold.getTooltip(mc.thePlayer, false).get(i).toString();
-                    if(!line.isEmpty())
-                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
-                    else omitted++;
-                }
-                omitted = 0;
-                for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++){
-                    line = bought.getTooltip(mc.thePlayer, false).get(i).toString();
-                    if(!line.isEmpty())
-                        drawString(fontRenderer, line, x + 14*2 + max(76, len_s), y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
-                    else omitted++;
-                }
-                render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 14 * 2 + 18 + max(76, len_s), y - 4);
-            }
-            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, sold, x + 46, y - 4);
-        } else if (sold != null) {
-            x += 18;
-            y += 30;
-            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isgiving"), x, y, 0xa0a0a0);
-            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.away"), x + 60, y, 0xa0a0a0);
-            drawNumberForItem(fontRenderer, sold, x + 42, y - 4);
-            if(lines_s>0){
-                String line;
-                int omitted = 0;
-                for(int i=firstImportantLine; i<sold.getTooltip(mc.thePlayer, false).size(); i++) {
-                    line = sold.getTooltip(mc.thePlayer, false).get(i).toString();
-                    if(!line.isEmpty())
-                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omitted), 0xa0a0a0);
-                    else omitted++;
-                }
-            }
-            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, sold, x + 42, y - 4);
-        } else if (bought != null) {
-            x += 22;
-            y += 30;
-            drawString(fontRenderer, StatCollector.translateToLocal("gui.vendingBlock.isaccepting"), x, y, 0xa0a0a0);
-            drawNumberForItem(fontRenderer, bought, x + 62, y - 4);
-            if(lines_b>0){
-                String line;
-                int omited = 0;
-                for(int i=firstImportantLine; i<bought.getTooltip(mc.thePlayer, false).size(); i++) {
-                    line = bought.getTooltip(mc.thePlayer, false).get(i).toString();
-                    if(!line.isEmpty())
-                        drawString(fontRenderer, line, x, y + 16 * (i+1-firstImportantLine-omited), 0xa0a0a0);
-                    else omited++;
-                }
-            }
-            render.renderItemIntoGUI(fontRenderer, mc.renderEngine, bought, x + 62, y - 4);
+        if (!isBoughtEmpty && !isSoldEmpty) {
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isselling", cx-(drawDesc? 100:0), y+26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx+(drawDesc? 100:0), y+(drawDesc? 26:46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+        } else if (!isBoughtEmpty) {
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isaccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthSold);
+        } else {
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isgiving", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthBought);
         }
+
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
     }

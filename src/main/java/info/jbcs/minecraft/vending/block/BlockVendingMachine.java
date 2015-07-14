@@ -22,13 +22,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import static info.jbcs.minecraft.vending.General.countNotNull;
+
 public class BlockVendingMachine extends BlockContainer {
 	Block[] supportBlocks;
-	boolean isAdvanced;
+	boolean isAdvanced, isMultiple;
 
 	IIcon IIconTop, IIconSide;
 
-	public BlockVendingMachine(Block[] supports,boolean advanced) {
+	public BlockVendingMachine(Block[] supports,boolean advanced, boolean multiple) {
 		super(Material.glass);
 		setBlockName("vendingMachine");
 
@@ -46,22 +48,24 @@ public class BlockVendingMachine extends BlockContainer {
 		setBlockBounds(0.0625f, 0.125f, 0.0625f, 0.9375f, 0.9375f, 0.9375f);
 
 		isAdvanced=advanced;
+		isMultiple=multiple;
 	}
+
 
 	void vend(World world, int i, int j, int k, EntityPlayer entityplayer){
 		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(i, j, k);
 		if (tileEntity == null)
 			return;
 
-		ItemStack sold = tileEntity.getSoldItem();
-		ItemStack bought = tileEntity.getBoughtItem();
+		ItemStack[] soldItems = tileEntity.getSoldItems();
+		ItemStack bought = tileEntity.getBoughtItems()[0];
 		ItemStack offered = entityplayer.inventory.getCurrentItem();
 
 		boolean fits = true;
 
 		if (bought == null) {
 			offered = null;
-			if (sold == null)
+			if (soldItems == null)
 				fits = false;
 		} else {
 			if(! tileEntity.doesStackFit(bought))
@@ -87,21 +91,24 @@ public class BlockVendingMachine extends BlockContainer {
 
 		if (fits) {
 			if (!world.isRemote) {
-				if (sold != null) {
-					NBTTagCompound tag=new NBTTagCompound();
-					sold.writeToNBT(tag);
-					ItemStack vended = ItemStack.loadItemStackFromNBT(tag);
+				if (countNotNull(soldItems) != 0) {
+					for(ItemStack sold: soldItems) {
+						if(sold==null) continue;
+						NBTTagCompound tag = new NBTTagCompound();
+						sold.writeToNBT(tag);
+						ItemStack vended = ItemStack.loadItemStackFromNBT(tag);
 
-					if(! tileEntity.infinite){
-						tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
+						if (!tileEntity.infinite) {
+							tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
+						}
+
+
+						EntityItem entityitem = new EntityItem(world, i + 0.5, j + 1.2, k + 0.5, vended);
+						General.propelTowards(entityitem, entityplayer, 0.2);
+						entityitem.motionY = 0.2;
+						entityitem.delayBeforeCanPickup = 10;
+						world.spawnEntityInWorld(entityitem);
 					}
-
-
-					EntityItem entityitem = new EntityItem(world, i + 0.5, j + 1.2, k + 0.5, vended);
-					General.propelTowards(entityitem, entityplayer, 0.2);
-					entityitem.motionY = 0.2;
-					entityitem.delayBeforeCanPickup = 10;
-					world.spawnEntityInWorld(entityitem);
 				}
 
 				world.playSoundEffect(i, j, k, "vending:cha-ching", 0.3f, 0.6f);
@@ -172,6 +179,7 @@ public class BlockVendingMachine extends BlockContainer {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		TileEntityVendingMachine e = new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
+		e.multiple=isMultiple;
 
 		if (entityliving != null) {
 			EntityPlayer player = (EntityPlayer) entityliving;
@@ -194,6 +202,7 @@ public class BlockVendingMachine extends BlockContainer {
 	public TileEntity createNewTileEntity(World var1, int metadata) {
 		TileEntityVendingMachine e=new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
+		e.multiple=isMultiple;
 
 		return e;
 	}

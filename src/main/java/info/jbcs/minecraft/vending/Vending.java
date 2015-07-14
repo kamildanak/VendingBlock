@@ -2,11 +2,9 @@ package info.jbcs.minecraft.vending;
 
 import cpw.mods.fml.common.network.FMLEventChannel;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
-import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
-import info.jbcs.minecraft.vending.gui.GuiHandler;
-import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
-import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
+import info.jbcs.minecraft.vending.gui.*;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
+import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import info.jbcs.minecraft.vending.item.ItemMetaBlock;
@@ -46,6 +44,7 @@ public class Vending {
 
 	public static Block blockVendingMachine;
 	public static Block blockAdvancedVendingMachine;
+	public static Block blockMultipleVendingMachine;
 	public static Item itemWrench;
 	
 	public static GuiHandler guiVending;
@@ -128,11 +127,14 @@ public class Vending {
 			tabVending = CreativeTabs.tabDecorations;
 		}
 
-		blockVendingMachine = new BlockVendingMachine(supports,false);
+		blockVendingMachine = new BlockVendingMachine(supports,false,false);
 		GameRegistry.registerBlock(blockVendingMachine, ItemMetaBlock.class, "vendingMachine");
 
-		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true).setBlockName("vendingMachineAdvanced");
+		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true,false).setBlockName("vendingMachineAdvanced");
 		GameRegistry.registerBlock(blockAdvancedVendingMachine, ItemMetaBlock.class, "vendingMachineAdvanced");
+
+		blockMultipleVendingMachine = new BlockVendingMachine(supports,false,true).setBlockName("vendingMachineMultiple");
+		GameRegistry.registerBlock(blockMultipleVendingMachine, ItemMetaBlock.class, "vendingMachineMultiple");
 
 		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
 		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
@@ -155,6 +157,14 @@ public class Vending {
 					'R', Items.repeater,
 					'*', reagents[i],
 				});
+
+			CraftingManager.getInstance().addRecipe(new ItemStack(blockMultipleVendingMachine,1,i),
+					new Object[] { "XXX", "XGX", "*R*",
+							'X', Blocks.glass,
+							'G', Items.gold_ingot,
+							'R', Blocks.dispenser,
+							'*', reagents[i],
+					});
 		}
 		
 		guiVending=new GuiHandler("vending"){
@@ -169,7 +179,10 @@ public class Vending {
 		        
 		        if(e.advanced)
 		        	return new ContainerAdvancedVendingMachine(player.inventory, e);
-		        
+
+				if(e.multiple)
+					return new ContainerMultipleVendingMachine(player.inventory, e);
+
 		        return new ContainerVendingMachine(player.inventory, e);
 			}
 
@@ -184,6 +197,9 @@ public class Vending {
 		        
 		        if(e.advanced)
                     return new GuiAdvancedVendingMachine(player.inventory, e);
+
+				if(e.multiple)
+					return new GuiMultipleVendingMachine(player.inventory, e);
 
                 return new GuiVendingMachine(player.inventory, e);
 			}

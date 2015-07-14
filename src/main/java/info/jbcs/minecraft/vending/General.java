@@ -134,5 +134,19 @@ public class General {
 		return par1World.rayTraceBlocks(var13, var23, par3);
 		//return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
 	}
-
+	public static int countNotNull(ItemStack[] itemStacks){
+		int counter=0;
+		for (ItemStack itemStack: itemStacks) {
+			if(itemStack!=null) counter++;
+		}
+		return counter;
+	}
+	public static ItemStack getNotNull(ItemStack[] itemStacks, int num){
+		int counter=-1;
+		for (ItemStack itemStack: itemStacks) {
+			if(itemStack!=null) counter++;
+			if(counter==num) return itemStack;
+		}
+		return null;
+	}
 }

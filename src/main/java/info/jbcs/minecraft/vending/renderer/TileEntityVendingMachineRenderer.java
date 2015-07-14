@@ -27,31 +27,29 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
 		if (machine == null || machine.getBlockType() == null) {
 			return;
 		}
-
-		ItemStack itemstack = machine.getSoldItem();
-		if (itemstack == null){ //|| itemstack.itemID < 0 || itemstack.itemID >= Item.itemsList.length || Item.itemsList[itemstack.itemID] == null) {
-			return;
-		}
-		EntityItem entity = new EntityItem(null, x, y, z, itemstack);
-		entity.hoverStart = 0;
-
-		if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null) {
-			entity.age = Minecraft.getMinecraft().thePlayer.ticksExisted;
-		}
-
-		int i = (int) x;
-		int j = (int) y;
-		int k = (int) z;
-		int meta = tileentity.getBlockMetadata();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x + 0.5F, (float) y + 0.35F, (float) z + 0.5F);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		int A=0;
+		for(ItemStack itemStack: machine.getSoldItems()) {
+			if (itemStack == null) { //|| itemstack.itemID < 0 || itemstack.itemID >= Item.itemsList.length || Item.itemsList[itemstack.itemID] == null) {
+				continue;
+			}
+			EntityItem entity = new EntityItem(null, x, y, z, itemStack);
+			entity.hoverStart = 0;
 
-		try {
-			renderer.doRender(entity, 0, 0, 0, f, f);	//doRenderItem(entity, 0, 0, 0, 0, f);
-		} catch (Throwable e) {
+			if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null) {
+				entity.age = Minecraft.getMinecraft().thePlayer.ticksExisted;
+			}
+
+			int meta = tileentity.getBlockMetadata();
+
+			try {
+				renderer.doRender(entity, -0.1+(A%2)*0.2, 0, -0.1+(A<2?0:1)*0.2, f, f);
+			} catch (Throwable e) {
+			}
+			A=A+1;
 		}
-
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPopMatrix();
 	}

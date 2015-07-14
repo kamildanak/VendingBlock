@@ -13,14 +13,15 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
 	public String ownerName = "";
-	public ItemStack sold = null;
-	public ItemStack bought = null;
+	public ItemStack[] sold = {null,null,null,null};
+	public ItemStack[] bought = {null,null,null,null};
 	public boolean advanced = false;
 	public boolean infinite = false;
+	public boolean multiple = false;
 
 	private static final int[] side0 = new int[] { };
 
-	public InventoryStatic inventory = new InventoryStatic(11) {
+	public InventoryStatic inventory = new InventoryStatic(14) {
 		@Override
 		public String getInventoryName() {
 			return "Vending Machine";
@@ -31,19 +32,18 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 			if (worldObj == null) {
 				return;
 			}
-
-			if (!ItemStack.areItemStacksEqual(sold, getSoldItem()) || !ItemStack.areItemStacksEqual(bought, getBoughtItem())) {
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				sold = getSoldItem();
-
-				if (sold != null) {
-					sold = sold.copy();
+			for (int i = 0; i < getSoldItems().length; i++){
+				if (!ItemStack.areItemStacksEqual(sold[i], getSoldItems()[i])){
+					sold[i] = getSoldItems()[i];
+					if(sold[i]!=null) sold[i] = sold[i].copy();
+					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				}
-
-				bought = getBoughtItem();
-
-				if (bought != null) {
-					bought = bought.copy();
+			}
+			for (int i = 0; i < getBoughtItems().length; i++){
+				if (!ItemStack.areItemStacksEqual(sold[i], getBoughtItems()[i])){
+					bought[i] = getBoughtItems()[i];
+					if(bought[i]!=null) bought[i] = bought[i].copy();
+					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				}
 			}
 		}
@@ -73,16 +73,19 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		return inventory.getStackInSlot(i);
 	}
 
-	public ItemStack getSoldItem() {
-		return inventory.getStackInSlot(9);
+	public ItemStack[] getSoldItems() {
+		if(multiple)
+			return new ItemStack[]{inventory.getStackInSlot(9), inventory.getStackInSlot(10),
+					inventory.getStackInSlot(11), inventory.getStackInSlot(12)};
+		return new ItemStack[]{inventory.getStackInSlot(9)};
 	}
 
-	public ItemStack getBoughtItem() {
-		return inventory.getStackInSlot(10);
+	public ItemStack[] getBoughtItems() {
+		return new ItemStack[] {inventory.getStackInSlot(multiple? 13 : 10)};
 	}
 
 	public void setBoughtItem(ItemStack stack) {
-		inventory.setInventorySlotContents(10, stack);
+		inventory.setInventorySlotContents(multiple? 13 : 10, stack);
 	}
 
 	public boolean doesStackFit(ItemStack itemstack) {
@@ -116,10 +119,9 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
-		if (advanced && i == 10) {
+		if ((advanced && i == 10) || (advanced && multiple && i == 13))  {
 			return;
 		}
-
 		inventory.setInventorySlotContents(i, itemstack);
 	}
 
@@ -146,6 +148,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		ownerName = nbttagcompound.getString("owner");
 		advanced = nbttagcompound.getBoolean("advanced");
 		infinite = nbttagcompound.getBoolean("infinite");
+		multiple = nbttagcompound.getBoolean("multiple");
 	}
 
 	@Override
@@ -155,6 +158,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		nbttagcompound.setString("owner", ownerName);
 		nbttagcompound.setBoolean("advanced", advanced);
 		nbttagcompound.setBoolean("infinite", infinite);
+		nbttagcompound.setBoolean("multiple", multiple);
 	}
 
 	@Override
@@ -189,10 +193,9 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		if (i == 10) {
+		if ((!multiple && i == 100) || (advanced && multiple && i == 13)) {
 			return false;
 		}
-
 		return true;
 	}
 
