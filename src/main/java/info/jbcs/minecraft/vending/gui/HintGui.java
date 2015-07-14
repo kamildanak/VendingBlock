@@ -172,12 +172,12 @@ public class HintGui extends Gui {
         drawCenteredString(fontRenderer, seller, cx, y + 8, 0xffffff);
 
         if (!isBoughtEmpty && !isSoldEmpty) {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isselling", cx-(drawDesc? 100:0), y+26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling", cx-(drawDesc? 100:0), y+26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
             drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx+(drawDesc? 100:0), y+(drawDesc? 26:46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
         } else if (!isBoughtEmpty) {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isaccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthSold);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthSold);
         } else {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isgiving", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthBought);
+            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthBought);
         }
 
         GL11.glDisable(GL11.GL_LIGHTING);

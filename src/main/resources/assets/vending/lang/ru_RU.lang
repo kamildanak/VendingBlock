@@ -2,7 +2,9 @@ tile.vendingMachine.name=Обменный блок
 tile.vendingMachineAdvanced.name=Улучшенный обменный блок
 tile.vendingMachineMultiple.name=Множественный обменный блок
 item.vendingMachineWrench.name=Ключ обменного блока
+itemGroup.tabVending=Обмен
 
+# GUI
 gui.vendingBlock.select=Выбор...
 gui.vendingBlock.storage=Хранение
 gui.vendingBlock.selling=Продажа
@@ -13,8 +15,7 @@ gui.vendingBlock.infinite=Бесконечность
 gui.vendingBlock.yes=да
 gui.vendingBlock.no=нет
 gui.vendingBlock.apply=Применить
-gui.vendingBlock.isselling=продает
+gui.vendingBlock.isSelling=продает
 gui.vendingBlock.for=за
-gui.vendingBlock.isgiving=отдает
-gui.vendingBlock.away=бесплатно
-gui.vendingBlock.isaccepting=принимает
+gui.vendingBlock.isGivingAway=отдает бесплатно
+gui.vendingBlock.isAccepting=принимает
