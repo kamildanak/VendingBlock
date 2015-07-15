@@ -6,6 +6,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.inventory.Container;
 
 import org.lwjgl.input.Keyboard;
@@ -194,7 +195,8 @@ public class GuiScreenPlus extends GuiContainer {
 		
 		float pixel = 0.00390625f;
 		Tessellator tessellator = Tessellator.getInstance();
-		/*tessellator.startDrawingQuads();
+		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+		worldrenderer.startDrawingQuads();
 
 		for (int y = 0; y < rh; y += th) {
 			for (int x = 0; x < rw; x += tw) {
@@ -218,13 +220,12 @@ public class GuiScreenPlus extends GuiContainer {
 				double u2 = pixel * (u + tw);
 				double v1 = pixel * (v);
 				double v2 = pixel * (v + th);
-				tessellator.addVertexWithUV(x1, y2, this.zLevel, u1, v2);
-				tessellator.addVertexWithUV(x2, y2, this.zLevel, u2, v2);
-				tessellator.addVertexWithUV(x2, y1, this.zLevel, u2, v1);
-				tessellator.addVertexWithUV(x1, y1, this.zLevel, u1, v1);
+				worldrenderer.addVertexWithUV(x1, y2, this.zLevel, u1, v2);
+				worldrenderer.addVertexWithUV(x2, y2, this.zLevel, u2, v2);
+				worldrenderer.addVertexWithUV(x2, y1, this.zLevel, u2, v1);
+				worldrenderer.addVertexWithUV(x1, y1, this.zLevel, u1, v1);
 			}
 		}
-		*/
 
 		tessellator.draw();
 	}
