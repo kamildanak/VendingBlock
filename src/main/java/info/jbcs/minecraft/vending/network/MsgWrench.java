@@ -63,7 +63,7 @@ public class MsgWrench extends Message {
                 return null;
             TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
             entity.infinite = message.infinite;
-            entity.ownerName = message.ownerName;
+            entity.setOwnerName(message.ownerName);
             player.worldObj.markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
             return null;
         }

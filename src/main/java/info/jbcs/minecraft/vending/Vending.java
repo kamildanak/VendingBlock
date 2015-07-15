@@ -1,5 +1,9 @@
 package info.jbcs.minecraft.vending;
 
+import info.jbcs.minecraft.vending.block.EnumSupports;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
@@ -31,6 +35,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {
@@ -56,43 +61,6 @@ public class Vending {
 	static Configuration config;
 	public MessagePipeline messagePipeline;
 
-	public static Block[] supports={
-			Blocks.stone,
-			Blocks.cobblestone,
-			Blocks.stonebrick,
-			Blocks.planks,
-			Blocks.crafting_table,
-			Blocks.gravel,
-			Blocks.noteblock,
-			Blocks.sandstone,
-			Blocks.gold_block,
-			Blocks.iron_block,
-			Blocks.brick_block,
-			Blocks.mossy_cobblestone,
-			Blocks.obsidian,
-			Blocks.diamond_block,
-			Blocks.emerald_block,
-			Blocks.lapis_block,
-	};
-	static Object[] reagents={
-			Blocks.stone,
-			Blocks.cobblestone,
-			Blocks.stonebrick,
-			Blocks.planks,
-			Blocks.crafting_table,
-			Blocks.gravel,
-			Blocks.noteblock,
-			Blocks.sandstone,
-			Items.gold_ingot,
-			Items.iron_ingot,
-			Blocks.brick_block,
-			Blocks.mossy_cobblestone,
-			Blocks.obsidian,
-			Items.diamond,
-			Items.emerald,
-			Blocks.lapis_block,
-	};
-
 	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
 	public static CommonProxy commonProxy;
 
@@ -104,6 +72,12 @@ public class Vending {
 	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
+		blockVendingMachine = new BlockVendingMachine(false, false, "vendingMachine");
+		blockAdvancedVendingMachine = new BlockVendingMachine(true, false, "vendingMachineAdvanced");
+		blockMultipleVendingMachine = new BlockVendingMachine(false, true, "vendingMachineMultiple");
+
+		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setContainerItem(itemWrench);
+		GameRegistry.registerItem(itemWrench, "vendingMachineWrench", Vending.MOD_ID);
 	}
 
 	@EventHandler
@@ -111,6 +85,7 @@ public class Vending {
 		commonProxy.registerPackets(messagePipeline);
 		commonProxy.registerEventHandlers();
 		commonProxy.registerRenderers();
+		commonProxy.registerCraftingRecipes();
 
 		if(config.get("general", "use custom creative tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)){
 			tabVending = new CreativeTabs("tabVending") {
@@ -127,46 +102,12 @@ public class Vending {
 		} else{
 			tabVending = CreativeTabs.tabDecorations;
 		}
+		blockVendingMachine.setCreativeTab(tabVending);
+		blockAdvancedVendingMachine.setCreativeTab(tabVending);
+		blockMultipleVendingMachine.setCreativeTab(tabVending);
+		itemWrench.setCreativeTab(tabVending);
 
-		blockVendingMachine = new BlockVendingMachine(supports,false,false);
-		GameRegistry.registerBlock(blockVendingMachine, ItemMetaBlock.class, "vendingMachine");
-
-		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true,false).setUnlocalizedName("vendingMachineAdvanced");
-		GameRegistry.registerBlock(blockAdvancedVendingMachine, ItemMetaBlock.class, "vendingMachineAdvanced");
-
-		blockMultipleVendingMachine = new BlockVendingMachine(supports,false,true).setUnlocalizedName("vendingMachineMultiple");
-		GameRegistry.registerBlock(blockMultipleVendingMachine, ItemMetaBlock.class, "vendingMachineMultiple");
-
-		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setContainerItem(itemWrench);
-		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
-		
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
-
-		for(int i=0;i<supports.length;i++){
-			CraftingManager.getInstance().addRecipe(new ItemStack(blockVendingMachine,1,i),
-					new Object[] { "XXX", "XGX", "*R*",
-					'X', Blocks.glass,
-					'G', Items.gold_ingot,
-					'R', Items.redstone,
-					'*', reagents[i],
-				});
-			
-			CraftingManager.getInstance().addRecipe(new ItemStack(blockAdvancedVendingMachine,1,i),
-					new Object[] { "XXX", "XGX", "*R*",
-					'X', Blocks.glass,
-					'G', Items.gold_ingot,
-					'R', Items.repeater,
-					'*', reagents[i],
-				});
-
-			CraftingManager.getInstance().addRecipe(new ItemStack(blockMultipleVendingMachine,1,i),
-					new Object[] { "XXX", "XGX", "*R*",
-							'X', Blocks.glass,
-							'G', Items.gold_ingot,
-							'R', Blocks.dispenser,
-							'*', reagents[i],
-					});
-		}
 		
 		guiVending=new GuiHandler("vending"){
 			@Override

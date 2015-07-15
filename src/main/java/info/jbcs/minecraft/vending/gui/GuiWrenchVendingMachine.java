@@ -46,7 +46,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 		}
 
 		entity = (TileEntityVendingMachine) tileEntity;
-		ownerNameEdit.setText(entity.ownerName);
+		ownerNameEdit.setText(entity.getOwnerName());
 		infinite = !entity.infinite;
 		infiniteButton.onClick();
 	}

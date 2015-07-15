@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameData;
 import info.jbcs.minecraft.vending.gui.GuiPickBlock;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,13 +25,11 @@ public class ContainerPickBlock extends Container
     public ContainerPickBlock(EntityPlayer p)
     {
         Set itemReg = GameData.getItemRegistry().getKeys();
-        List<String> itemList = new ArrayList<String>();
+        List<ResourceLocation> itemList = new ArrayList<ResourceLocation>();
         itemList.addAll(itemReg);
-        String[] itemNames = itemList.toArray(new String[0]);
 
-        for (int i = 0; i < itemList.size(); ++i)
-        {
-            Item item = GameData.getItemRegistry().getObject(itemNames[i]);
+        for(ResourceLocation itemName: itemList){
+            Item item = GameData.getItemRegistry().getObject(itemName);
 
             if (item != null && item.getCreativeTab() != null)
             {

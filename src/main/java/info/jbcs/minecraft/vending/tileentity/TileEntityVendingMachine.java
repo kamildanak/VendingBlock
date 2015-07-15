@@ -14,7 +14,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
-	public String ownerName = "";
+	private String ownerName = "";
 	public ItemStack[] sold = {null,null,null,null};
 	public ItemStack[] bought = {null,null,null,null};
 	public boolean advanced = false;
@@ -242,6 +242,13 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	@Override
 	public IChatComponent getDisplayName() {
 		return null;
+	}
+
+	public void setOwnerName(String name){
+		ownerName = name;
+	}
+	public String getOwnerName(){
+		return ownerName;
 	}
 }
 

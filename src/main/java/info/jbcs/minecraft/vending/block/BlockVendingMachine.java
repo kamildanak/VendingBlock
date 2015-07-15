@@ -8,31 +8,40 @@ import info.jbcs.minecraft.vending.Vending;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 
 public class BlockVendingMachine extends BlockContainer {
-	Block[] supportBlocks;
+	public static final PropertyEnum SUPPORT = PropertyEnum.create("support", EnumSupports.class);
 	boolean isAdvanced, isMultiple;
+	private String name;
 
-	public BlockVendingMachine(Block[] supports,boolean advanced, boolean multiple) {
+	public BlockVendingMachine(boolean advanced, boolean multiple, String name) {
 		super(Material.glass);
-		setUnlocalizedName("vendingMachine");
+		setUnlocalizedName(name);
+		this.name=name;
+		this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
+		//GameRegistry.registerBlock(this, ItemMetaBlock.class, "vendingMachine");
+		GameRegistry.registerBlock(this, name);
 
-		supportBlocks = supports;
 
 		setStepSound(Block.soundTypeGlass);
 		setCreativeTab(Vending.tabVending);
@@ -49,6 +58,30 @@ public class BlockVendingMachine extends BlockContainer {
 		isMultiple=multiple;
 	}
 
+	public int getRenderType()
+	{
+		return 3;
+	}
+
+	public boolean isFullCube()
+	{
+		return false;
+	}
+
+	public EnumWorldBlockLayer getBlockLayer()
+	{
+		return EnumWorldBlockLayer.CUTOUT;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public String getLocalizedName()
+	{
+		return StatCollector.translateToLocal("tile." + getName() + ".name");
+	}
 
 	void vend(World world, BlockPos blockPos, EntityPlayer entityplayer){
 		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
@@ -135,7 +168,7 @@ public class BlockVendingMachine extends BlockContainer {
 		if (tileEntity == null)
 			return;
 
-		if (! entityplayer.getDisplayName().equals(tileEntity.ownerName) || !tileEntity.inventory.isEmpty()){
+		if (! entityplayer.getDisplayName().equals(tileEntity.getOwnerName()) || !tileEntity.inventory.isEmpty()){
 			vend(world, blockPos, entityplayer);
 			return;
 		}
@@ -156,7 +189,7 @@ public class BlockVendingMachine extends BlockContainer {
 			return true;
 		}
 
-		if (entityPlayer.getDisplayName().equals(tileEntity.ownerName) && !entityPlayer.isSneaking()) {
+		if (entityPlayer.getDisplayName().equals(tileEntity.getOwnerName()) && !entityPlayer.isSneaking()) {
 			Vending.guiVending.open(entityPlayer, world, blockPos);
 
 			return true;
@@ -175,14 +208,16 @@ public class BlockVendingMachine extends BlockContainer {
 
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack){
+		world.setBlockState(blockPos, getStateFromMeta(stack.getMetadata()));
 		TileEntityVendingMachine e = new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
 		e.multiple=isMultiple;
 
 		if (entityLiving != null) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
-			e.ownerName = player.getDisplayNameString();
+			e.setOwnerName(player.getDisplayNameString());
 			world.setTileEntity(blockPos, e);
+		}else{
 		}
 	}
 
@@ -242,16 +277,26 @@ public class BlockVendingMachine extends BlockContainer {
 		return 0; //state
 	}
 
-/*
-	@Override
-	public int getRenderType() {
-		return BlockVendingMachineRenderer.id;
-	}
-*/
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List list) {
-		for (int i = 0; i < supportBlocks.length; ++i) {
+		for (int i = 0; i < EnumSupports.length; ++i) {
 			list.add(new ItemStack(item, 1, i));
 		}
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return this.getDefaultState().withProperty(SUPPORT, EnumSupports.byMetadata(meta));
+	}
+
+	public int getMetaFromState(IBlockState state)
+	{
+		return ((EnumSupports)state.getValue(SUPPORT)).getMetadata();
+	}
+
+	protected BlockState createBlockState()
+	{
+		return new BlockState(this, new IProperty[] {SUPPORT});
 	}
 }
