@@ -4,6 +4,7 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.EnumSupports;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +28,9 @@ public class CommonProxy {
 	}
 
 	public void registerCraftingRecipes(){
+		Item.getItemFromBlock(Vending.blockVendingMachine).setHasSubtypes(true).setMaxDamage(0);
+		Item.getItemFromBlock(Vending.blockAdvancedVendingMachine).setHasSubtypes(true).setMaxDamage(0);
+		Item.getItemFromBlock(Vending.blockMultipleVendingMachine).setHasSubtypes(true).setMaxDamage(0);
 		for(int i=0;i< EnumSupports.length;i++){
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockVendingMachine, 1, i),
 					new Object[]{"XXX", "XGX", "*R*",
@@ -35,7 +39,6 @@ public class CommonProxy {
 							'R', Items.redstone,
 							'*', EnumSupports.byMetadata(i).getReagent(),
 					});
-
 
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockAdvancedVendingMachine, 1, i),
 					new Object[]{"XXX", "XGX", "*R*",
