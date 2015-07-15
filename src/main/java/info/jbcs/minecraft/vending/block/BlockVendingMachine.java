@@ -26,6 +26,8 @@ import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 
@@ -274,10 +276,11 @@ public class BlockVendingMachine extends BlockContainer {
 
 	@Override
 	public int damageDropped(IBlockState state) {
-		return 0; //state
+		return getMetaFromState(state);
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List list) {
 		for (int i = 0; i < EnumSupports.length; ++i) {
 			list.add(new ItemStack(item, 1, i));
