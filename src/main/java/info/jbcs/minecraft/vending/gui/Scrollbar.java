@@ -69,7 +69,7 @@ public abstract class Scrollbar extends GuiButton {
 		}
 
 		int bottom = yPosition + height;
-		GeneralClient.bind("textures/gui/icons.png");
+		GeneralClient.bind("textures/gui/container/creative_inventory/tabs.png");
 		drawTexturedModalRect(xPosition, yPosition + (int) ((height - elementHeight) * offset), active ? 232 : 244, 0, 12, elementHeight);
 	}
 
