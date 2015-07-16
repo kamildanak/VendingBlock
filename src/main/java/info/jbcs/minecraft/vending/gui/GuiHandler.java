@@ -1,13 +1,13 @@
 package info.jbcs.minecraft.vending.gui;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public abstract class GuiHandler implements Comparable {
 	static ArrayList<GuiHandler> items = new ArrayList<GuiHandler>();

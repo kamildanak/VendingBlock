@@ -1,9 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.network.MsgWrench;
-import jdk.nashorn.internal.ir.Block;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;

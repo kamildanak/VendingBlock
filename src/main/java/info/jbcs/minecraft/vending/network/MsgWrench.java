@@ -1,15 +1,15 @@
 package info.jbcs.minecraft.vending.network;
 
+import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
-import info.jbcs.minecraft.vending.Vending;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
 
 public class MsgWrench extends Message {
     private int				x, y, z;

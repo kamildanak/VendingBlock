@@ -1,10 +1,8 @@
 package info.jbcs.minecraft.vending.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IStringSerializable;
 
 public enum EnumSupports implements IStringSerializable

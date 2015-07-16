@@ -1,14 +1,13 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.inventory.Container;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;

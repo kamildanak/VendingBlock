@@ -2,15 +2,15 @@ package info.jbcs.minecraft.vending.proxy;
 
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.EnumSupports;
+import info.jbcs.minecraft.vending.network.MessagePipeline;
+import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
+import info.jbcs.minecraft.vending.network.MsgWrench;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraftforge.fml.relauncher.Side;
-import info.jbcs.minecraft.vending.network.MessagePipeline;
-import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
-import info.jbcs.minecraft.vending.network.MsgWrench;
 
 public class CommonProxy {
 	public void registerEventHandlers()

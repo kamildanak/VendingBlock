@@ -3,24 +3,17 @@ package info.jbcs.minecraft.vending.proxy;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.block.EnumSupports;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-
 import info.jbcs.minecraft.vending.gui.HintGui;
 import info.jbcs.minecraft.vending.renderer.TileEntityVendingMachineRenderer;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
-//import net.minecraft.util.EnumMovingObjectType;
-
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
+//import net.minecraft.util.EnumMovingObjectType;
 
 public class ClientProxy extends CommonProxy{
 	private Minecraft mc;

@@ -1,10 +1,8 @@
 package info.jbcs.minecraft.vending.block;
 
-import java.util.List;
-
 import info.jbcs.minecraft.vending.General;
-import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -28,6 +26,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 

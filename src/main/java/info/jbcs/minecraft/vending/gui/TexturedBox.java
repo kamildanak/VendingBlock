@@ -1,7 +1,5 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.gui.GuiScreenPlus;
-
 public class TexturedBox {
 	String texture;
 	int u, v, texw, texh;

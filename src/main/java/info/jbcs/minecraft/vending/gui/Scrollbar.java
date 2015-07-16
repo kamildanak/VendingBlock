@@ -3,7 +3,6 @@ package info.jbcs.minecraft.vending.gui;
 import info.jbcs.minecraft.vending.GeneralClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-
 import org.lwjgl.input.Mouse;
 
 public abstract class Scrollbar extends GuiButton {

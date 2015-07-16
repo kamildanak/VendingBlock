@@ -1,12 +1,11 @@
 package info.jbcs.minecraft.vending;
 
-import java.util.HashMap;
-import java.util.Random;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import java.util.HashMap;
+import java.util.Random;
 
 public class GeneralClient {
 	public static Random rand = new Random();

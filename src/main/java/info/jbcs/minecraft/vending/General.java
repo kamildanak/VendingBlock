@@ -1,8 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import java.util.*;
-
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +11,9 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameData;
+
+import java.util.*;
 
 public class General {
 	public static Random rand = new Random();

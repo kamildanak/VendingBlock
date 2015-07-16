@@ -1,30 +1,21 @@
 package info.jbcs.minecraft.vending;
 
-import info.jbcs.minecraft.vending.block.EnumSupports;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.network.FMLEventChannel;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.gui.*;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
-import info.jbcs.minecraft.vending.item.ItemMetaBlock;
 import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -34,8 +25,8 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {

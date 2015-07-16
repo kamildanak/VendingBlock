@@ -1,8 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
 
-import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
 import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;

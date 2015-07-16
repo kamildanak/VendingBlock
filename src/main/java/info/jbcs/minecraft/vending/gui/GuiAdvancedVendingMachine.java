@@ -1,6 +1,7 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.*;
+import info.jbcs.minecraft.vending.General;
+import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;

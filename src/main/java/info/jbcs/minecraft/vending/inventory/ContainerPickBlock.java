@@ -1,16 +1,16 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 import info.jbcs.minecraft.vending.gui.GuiPickBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameData;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class ContainerPickBlock extends Container
 {
