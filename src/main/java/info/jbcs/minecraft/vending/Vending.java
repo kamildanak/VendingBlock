@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class Vending {
 	public static final String MOD_ID = "vending";
 	public static final String MOD_NAME = "vending";
-	public static final String VERSION = "1.2.3";
+	public static final String VERSION = "1.3.0";
 
 	@Instance(MOD_ID)
 	public static Vending	instance;
