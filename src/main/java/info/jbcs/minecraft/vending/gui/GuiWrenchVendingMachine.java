@@ -1,10 +1,11 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.network.MsgWrench;
+import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
@@ -15,7 +16,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 
 	boolean infinite;
 
-	public GuiWrenchVendingMachine(World world, int x, int y, int z, EntityPlayer entityplayer) {
+	public GuiWrenchVendingMachine(World world, BlockPos blockPos, EntityPlayer entityplayer) {
 		super(166, 120, "vending:textures/wrench-gui.png");
 		
 		addChild(new GuiLabel(9, 9, StatCollector.translateToLocal("gui.vendingBlock.settings")));
@@ -38,13 +39,13 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
 			}
 		});
 		
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+		TileEntity tileEntity = world.getTileEntity(blockPos);
 		if (!(tileEntity instanceof TileEntityVendingMachine)) {
 			return;
 		}
 
 		entity = (TileEntityVendingMachine) tileEntity;
-		ownerNameEdit.setText(entity.ownerName);
+		ownerNameEdit.setText(entity.getOwnerName());
 		infinite = !entity.infinite;
 		infiniteButton.onClick();
 	}

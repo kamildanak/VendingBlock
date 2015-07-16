@@ -1,7 +1,5 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.gui.GuiScreenPlus;
-
 public class TexturedBox {
 	String texture;
 	int u, v, texw, texh;
@@ -20,10 +18,8 @@ public class TexturedBox {
 	}
 
 	public void render(GuiScreenPlus gui, int x, int y, int w, int h) {
-		int x1 = x;
 		int x2 = x + borderLeft;
 		int x3 = x + w - borderRight;
-		int y1 = y;
 		int y2 = y + borderTop;
 		int y3 = y + h - borderBottom;
 		int w1 = borderLeft;
@@ -50,20 +46,18 @@ public class TexturedBox {
 		int u3 = u1 + texw - borderRight;
 		int v2 = v1 + borderTop;
 		int v3 = v1 + texh - borderBottom;
-		int texw1 = borderLeft;
 		int texw2 = tw - borderLeft - borderRight;
-		int texw3 = borderRight;
 		int texh1 = borderTop;
 		int texh2 = th - borderTop - borderBottom;
 		int texh3 = borderBottom;
 		gui.bindTexture(texture);
-		gui.drawTexturedModalRect(x1, y1, u1, v1, w1, h1);
-		gui.drawTiledRect(x2, y1, w2, h1, u2, v1, texw2, texh1);
-		gui.drawTexturedModalRect(x3, y1, u3, v1, w3, h1);
-		gui.drawTiledRect(x1, y2, w1, h2, u1, v2, w1, texh2);
+		gui.drawTexturedModalRect(x, y, u1, v1, w1, h1);
+		gui.drawTiledRect(x2, y, w2, h1, u2, v1, texw2, texh1);
+		gui.drawTexturedModalRect(x3, y, u3, v1, w3, h1);
+		gui.drawTiledRect(x, y2, w1, h2, u1, v2, w1, texh2);
 		gui.drawTiledRect(x2, y2, w2, h2, u2, v2, texw2, texh2);
 		gui.drawTiledRect(x3, y2, w3, h2, u3, v2, w3, texh2);
-		gui.drawTexturedModalRect(x1, y3, u1, v3, w1, h3);
+		gui.drawTexturedModalRect(x, y3, u1, v3, w1, h3);
 		gui.drawTiledRect(x2, y3, w2, h3, u2, v3, texw2, texh3);
 		gui.drawTexturedModalRect(x3, y3, u3, v3, w3, h3);
 	}

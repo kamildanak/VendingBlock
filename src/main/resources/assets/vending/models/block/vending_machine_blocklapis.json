@@ -1,0 +1,10 @@
+{
+  "parent": "Vending:block/vending_machine",
+  "textures": {
+    "bottom": "blocks/lapis_block",
+    "top": "blocks/lapis_block",
+    "side": "blocks/lapis_block",
+    "vendor-top": "Vending:blocks/vendor-top",
+    "vendor-side": "Vending:blocks/vendor-side"
+  }
+}

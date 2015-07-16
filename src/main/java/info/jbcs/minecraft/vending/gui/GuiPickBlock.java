@@ -1,14 +1,16 @@
 package info.jbcs.minecraft.vending.gui;
 
 
-import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
 import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+
+import java.io.IOException;
 
 public class GuiPickBlock extends GuiContainer
 {
@@ -36,8 +38,7 @@ public class GuiPickBlock extends GuiContainer
     }
 
     @Override
-    public void handleMouseInput()
-    {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
         scrollbar.handleMouseInput();
     }

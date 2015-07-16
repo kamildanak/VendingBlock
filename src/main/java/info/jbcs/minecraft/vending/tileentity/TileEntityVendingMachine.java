@@ -10,9 +10,11 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
-	public String ownerName = "";
+	private String ownerName = "";
 	public ItemStack[] sold = {null,null,null,null};
 	public ItemStack[] bought = {null,null,null,null};
 	public boolean advanced = false;
@@ -23,7 +25,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 	public InventoryStatic inventory = new InventoryStatic(14) {
 		@Override
-		public String getInventoryName() {
+		public String getName() {
 			return "Vending Machine";
 		}
 
@@ -36,14 +38,14 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 				if (!ItemStack.areItemStacksEqual(sold[i], getSoldItems()[i])){
 					sold[i] = getSoldItems()[i];
 					if(sold[i]!=null) sold[i] = sold[i].copy();
-					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+					worldObj.markBlockForUpdate(pos);
 				}
 			}
 			for (int i = 0; i < getBoughtItems().length; i++){
 				if (!ItemStack.areItemStacksEqual(sold[i], getBoughtItems()[i])){
 					bought[i] = getBoughtItems()[i];
 					if(bought[i]!=null) bought[i] = bought[i].copy();
-					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+					worldObj.markBlockForUpdate(pos);
 				}
 			}
 		}
@@ -55,11 +57,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 		@Override
 		public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-			if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != TileEntityVendingMachine.this) {
-				return false;
-			} else {
-				return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
-			}
+			return worldObj.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 		}
 	};
 
@@ -126,11 +124,6 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inventory.getInventoryName();
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return inventory.getInventoryStackLimit();
 	}
@@ -138,6 +131,16 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return inventory.isUseableByPlayer(entityplayer);
+	}
+
+	@Override
+	public void openInventory(EntityPlayer player) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+
 	}
 
 	@Override
@@ -165,12 +168,12 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public Packet getDescriptionPacket() {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
-		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, 1, var1);
+		return new S35PacketUpdateTileEntity(pos, 1, var1);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
-		readFromNBT(pkt.func_148857_g());
+		readFromNBT(pkt.getNbtCompound());
 	}
 
 	@Override
@@ -178,40 +181,67 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		return null;
 	}
 
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		if ((!multiple && i == 100) || (advanced && multiple && i == 13)) {
-			return false;
-		}
-		return true;
+		return !((!multiple && i == 100) || (advanced && multiple && i == 13));
 	}
 
 	@Override
-	public boolean canInsertItem(int index, ItemStack stack, int par3) {
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+
+	}
+
+	@Override
+	public int[] getSlotsForFace(EnumFacing side) {
+		return side0;
+	}
+
+	@Override
+	public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
 		return this.isItemValidForSlot(index, stack);
 	}
 
 	@Override
-	public boolean canExtractItem(int index, ItemStack stack, int side) {
+	public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
 		return false;
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		return side0;
+	public String getName() {
+		return inventory.getName();
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return null;
+	}
+
+	public void setOwnerName(String name){
+		ownerName = name;
+	}
+	public String getOwnerName(){
+		return ownerName;
 	}
 }
 

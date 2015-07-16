@@ -1,8 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
-import java.util.ArrayList;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
 
 public class GuiElement {
 	public int x;
