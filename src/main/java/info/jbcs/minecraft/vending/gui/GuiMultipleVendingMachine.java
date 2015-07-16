@@ -1,7 +1,6 @@
 package info.jbcs.minecraft.vending.gui;
 
 import info.jbcs.minecraft.vending.GeneralClient;
-import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.gui.FontRenderer;

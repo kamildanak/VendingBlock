@@ -1,0 +1,13 @@
+{
+  "parent": "Vending:block/vending_machine_multi",
+  "textures": {
+    "bottom": "blocks/planks_oak",
+    "top": "blocks/crafting_table_top",
+    "north": "blocks/crafting_table_front",
+    "east": "blocks/crafting_table_side",
+    "south": "blocks/crafting_table_side",
+    "west": "blocks/crafting_table_front",
+    "vendor-top": "Vending:blocks/vendor-top",
+    "vendor-side": "Vending:blocks/vendor-side"
+  }
+}

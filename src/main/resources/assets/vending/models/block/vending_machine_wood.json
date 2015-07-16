@@ -1,0 +1,10 @@
+{
+  "parent": "Vending:block/vending_machine",
+  "textures": {
+    "bottom": "blocks/planks_oak",
+    "top": "blocks/planks_oak",
+    "side": "blocks/planks_oak",
+    "vendor-top": "Vending:blocks/vendor-top",
+    "vendor-side": "Vending:blocks/vendor-side"
+  }
+}

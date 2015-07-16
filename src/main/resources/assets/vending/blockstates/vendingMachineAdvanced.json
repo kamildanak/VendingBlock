@@ -1,0 +1,22 @@
+{
+  "variants": {
+    "normal": { "model": "Vending:vending_machine_stone" },
+    "support=stone":  { "model": "Vending:vending_machine_stone" },
+    "support=stonebrick":  { "model": "Vending:vending_machine_stonebrick" },
+    "support=stonebricksmooth":  { "model": "Vending:vending_machine_stonebricksmooth" },
+    "support=wood":  { "model": "Vending:vending_machine_wood" },
+    "support=workbench":  { "model": "Vending:vending_machine_workbench" },
+    "support=gravel":  { "model": "Vending:vending_machine_gravel" },
+    "support=musicblock":  { "model": "Vending:vending_machine_musicblock" },
+    "support=sandstone":  { "model": "Vending:vending_machine_sandstone" },
+    "support=blockgold":  { "model": "Vending:vending_machine_blockgold" },
+    "support=blockiron":  { "model": "Vending:vending_machine_blockiron" },
+    "support=brick":  { "model": "Vending:vending_machine_brick" },
+    "support=stonemoss":  { "model": "Vending:vending_machine_stonemoss" },
+    "support=obsidian":  { "model": "Vending:vending_machine_obsidian" },
+    "support=blockdiamond":  { "model": "Vending:vending_machine_blockdiamond" },
+    "support=blockemerald":  { "model": "Vending:vending_machine_blockemerald" },
+    "support=blocklapis":  { "model": "Vending:vending_machine_blocklapis" },
+    "inventory": { "model": "Vending:vending_machine_stone" }
+  }
+}

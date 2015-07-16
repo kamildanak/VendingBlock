@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 public class SlotAdvancedVendingMachine extends Slot {
 	public SlotAdvancedVendingMachine(IInventory inventory, int index, int x, int y) {
@@ -16,16 +15,6 @@ public class SlotAdvancedVendingMachine extends Slot {
 		super.onPickupFromSlot(player, itemstack);
 		player.inventory.setItemStack(null);
 		putStack(new ItemStack(itemstack.getItem(), itemstack.stackSize, itemstack.getItemDamage()));
-	}
-
-	@Override
-	public IIcon getBackgroundIconIndex(){
-		if(inventory.getStackInSlot(10) != null){
-			return inventory.getStackInSlot(10).getIconIndex();
-		}else{
-			return null;
-		}
-
 	}
 
 	@Override

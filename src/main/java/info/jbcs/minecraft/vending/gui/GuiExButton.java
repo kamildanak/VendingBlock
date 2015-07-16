@@ -53,7 +53,7 @@ public class GuiExButton extends GuiElement {
 		if (!disabled && !over) {
 			box = boxNormal;
 			color = 0xffffffff;
-		} else if (!disabled && over) {
+		} else if (!disabled) {
 			box = boxOver;
 			color = 0xffffff70;
 		}
@@ -74,7 +74,7 @@ public class GuiExButton extends GuiElement {
 		}
 		Minecraft mc = Minecraft.getMinecraft();
 		SoundHandler soundHandler = new SoundHandler(mc.getResourceManager(), mc.gameSettings);
-		soundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
+		soundHandler.playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		onClick();
 	}
 }

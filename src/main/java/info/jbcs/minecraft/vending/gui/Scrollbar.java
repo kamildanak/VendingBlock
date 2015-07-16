@@ -1,8 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
+import info.jbcs.minecraft.vending.GeneralClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-
 import org.lwjgl.input.Mouse;
 
 public abstract class Scrollbar extends GuiButton {
@@ -69,7 +69,7 @@ public abstract class Scrollbar extends GuiButton {
 		}
 
 		int bottom = yPosition + height;
-		//GeneralClient.bind("/gui/icons");
+		GeneralClient.bind("textures/gui/container/creative_inventory/tabs.png");
 		drawTexturedModalRect(xPosition, yPosition + (int) ((height - elementHeight) * offset), active ? 232 : 244, 0, 12, elementHeight);
 	}
 

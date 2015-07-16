@@ -1,15 +1,16 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import cpw.mods.fml.common.registry.GameData;
 import info.jbcs.minecraft.vending.gui.GuiPickBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.GameData;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class ContainerPickBlock extends Container
 {
@@ -24,13 +25,11 @@ public class ContainerPickBlock extends Container
     public ContainerPickBlock(EntityPlayer p)
     {
         Set itemReg = GameData.getItemRegistry().getKeys();
-        List<String> itemList = new ArrayList<String>();
+        List<ResourceLocation> itemList = new ArrayList<ResourceLocation>();
         itemList.addAll(itemReg);
-        String[] itemNames = itemList.toArray(new String[0]);
 
-        for (int i = 0; i < itemList.size(); ++i)
-        {
-            Item item = GameData.getItemRegistry().getObject(itemNames[i]);
+        for(ResourceLocation itemName: itemList){
+            Item item = GameData.getItemRegistry().getObject(itemName);
 
             if (item != null && item.getCreativeTab() != null)
             {
@@ -90,7 +89,7 @@ public class ContainerPickBlock extends Container
                 }
                 else
                 {
-                    inventory.setInventorySlotContents(x + y * width, (ItemStack) null);
+                    inventory.setInventorySlotContents(x + y * width, null);
                 }
             }
         }
