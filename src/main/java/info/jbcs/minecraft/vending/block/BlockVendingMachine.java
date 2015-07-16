@@ -246,6 +246,8 @@ public class BlockVendingMachine extends BlockContainer {
 			ItemStack itemstack = tileentitychest.getStackInSlot(l);
 			if (itemstack == null)
 				continue;
+			if (l==10 && tileentitychest.advanced)
+				continue;
 
 			float f = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
