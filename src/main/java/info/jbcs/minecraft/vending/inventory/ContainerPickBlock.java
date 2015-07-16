@@ -89,7 +89,7 @@ public class ContainerPickBlock extends Container
                 }
                 else
                 {
-                    inventory.setInventorySlotContents(x + y * width, (ItemStack) null);
+                    inventory.setInventorySlotContents(x + y * width, null);
                 }
             }
         }

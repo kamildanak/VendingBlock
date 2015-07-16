@@ -42,7 +42,6 @@ public class HintGui extends Gui {
     private Minecraft mc;
     public HintGui(Minecraft mc){
         super();
-        // We need this to invoke the render engine.
         this.mc = mc;
     }
 
@@ -97,7 +96,6 @@ public class HintGui extends Gui {
         GL11.glTranslatef(0.0f, 0.0f, -500.0f);
     }
     void drawItemsWithLabel(FontRenderer fontRenderer, String label, int x, int y, int colour, ItemStack[] itemStacks, boolean drawDescription, int descWidth){
-        RenderItem render = Minecraft.getMinecraft().getRenderItem();
         int w = fontRenderer.getStringWidth(StatCollector.translateToLocal(label))+2;
         int numOfItems = countNotNull(itemStacks);
         int witdth = (drawDescription? max(w+18*numOfItems, descWidth):w+18*numOfItems);
@@ -205,11 +203,8 @@ public class HintGui extends Gui {
         worldrenderer.startDrawingQuads();
         worldrenderer.setVertexFormat(DefaultVertexFormats.ITEM);
         EnumFacing[] aenumfacing = EnumFacing.values();
-        int j = aenumfacing.length;
 
-        for (int k = 0; k < j; ++k)
-        {
-            EnumFacing enumfacing = aenumfacing[k];
+        for (EnumFacing enumfacing : aenumfacing) {
             this.renderQuads(worldrenderer, model.getFaceQuads(enumfacing), color, stack);
         }
 
@@ -259,7 +254,6 @@ public class HintGui extends Gui {
         boolean isBoughtEmpty = countNotNull(boughtItems)==0;
         if (isBoughtEmpty && isSoldEmpty) return;
         ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
-        int screenwidth = resolution.getScaledWidth();
         FontRenderer fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();

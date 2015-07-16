@@ -57,11 +57,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 		@Override
 		public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-			if (worldObj.getTileEntity(pos) != TileEntityVendingMachine.this) {
-				return false;
-			} else {
-				return entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
-			}
+			return worldObj.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 		}
 	};
 
@@ -188,10 +184,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		if ((!multiple && i == 100) || (advanced && multiple && i == 13)) {
-			return false;
-		}
-		return true;
+		return !((!multiple && i == 100) || (advanced && multiple && i == 13));
 	}
 
 	@Override

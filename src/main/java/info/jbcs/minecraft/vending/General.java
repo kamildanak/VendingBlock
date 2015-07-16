@@ -58,8 +58,7 @@ public class General {
 	}
 */
 	public static Item getItem(int itemId) {
-		Item item = GameData.getItemRegistry().getObjectById(itemId);
-		return item;
+		return GameData.getItemRegistry().getObjectById(itemId);
 	}
 
 	public static Integer getItemId(Item item){

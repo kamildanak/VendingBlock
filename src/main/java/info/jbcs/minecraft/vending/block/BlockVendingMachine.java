@@ -6,7 +6,6 @@ import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
@@ -41,9 +40,7 @@ public class BlockVendingMachine extends BlockContainer {
 		setUnlocalizedName(name);
 		this.name=name;
 		this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
-		//GameRegistry.registerBlock(this, ItemMetaBlock.class, "vendingMachine");
 		GameRegistry.registerBlock(this, name);
-
 
 		setStepSound(Block.soundTypeGlass);
 		setCreativeTab(Vending.tabVending);
@@ -135,7 +132,6 @@ public class BlockVendingMachine extends BlockContainer {
 							tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
 						}
 
-
 						EntityItem entityitem = new EntityItem(world, blockPos.getX() + 0.5, blockPos.getY() + 1.2, blockPos.getZ() + 0.5, vended);
 						General.propelTowards(entityitem, entityplayer, 0.2);
 						entityitem.motionY = 0.2;
@@ -219,7 +215,6 @@ public class BlockVendingMachine extends BlockContainer {
 			EntityPlayer player = (EntityPlayer) entityLiving;
 			e.setOwnerName(player.getDisplayNameString());
 			world.setTileEntity(blockPos, e);
-		}else{
 		}
 	}
 
@@ -235,18 +230,16 @@ public class BlockVendingMachine extends BlockContainer {
 
 	@Override
 	public void breakBlock(World world, BlockPos blockPos, IBlockState state) {
-		TileEntityVendingMachine tileentitychest = (TileEntityVendingMachine) world.getTileEntity(blockPos);
+		TileEntityVendingMachine tileEntityChest = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 
-		if (tileentitychest == null)
+		if (tileEntityChest == null)
 			return;
 
-
-
-		for (int l = 0; l < tileentitychest.getSizeInventory(); l++) {
-			ItemStack itemstack = tileentitychest.getStackInSlot(l);
+		for (int l = 0; l < tileEntityChest.getSizeInventory(); l++) {
+			ItemStack itemstack = tileEntityChest.getStackInSlot(l);
 			if (itemstack == null)
 				continue;
-			if (l==10 && tileentitychest.advanced)
+			if (l==10 && tileEntityChest.advanced)
 				continue;
 
 			float f = world.rand.nextFloat() * 0.8F + 0.1F;
@@ -284,9 +277,7 @@ public class BlockVendingMachine extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List list) {
-		for (int i = 0; i < EnumSupports.length; ++i) {
-			list.add(new ItemStack(item, 1, i));
-		}
+		for (int i = 0; i < EnumSupports.length; ++i) list.add(new ItemStack(item, 1, i));
 	}
 
 	@Override
@@ -302,6 +293,6 @@ public class BlockVendingMachine extends BlockContainer {
 
 	protected BlockState createBlockState()
 	{
-		return new BlockState(this, new IProperty[] {SUPPORT});
+		return new BlockState(this, SUPPORT);
 	}
 }

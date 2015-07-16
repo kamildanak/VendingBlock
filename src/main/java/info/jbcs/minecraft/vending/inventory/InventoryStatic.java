@@ -306,8 +306,8 @@ public abstract class InventoryStatic implements IInventory {
 	}
 
 	public boolean isEmpty() {
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] != null) {
+		for (ItemStack item : items) {
+			if (item != null) {
 				return false;
 			}
 		}

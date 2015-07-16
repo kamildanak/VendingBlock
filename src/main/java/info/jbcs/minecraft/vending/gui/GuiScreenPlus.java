@@ -3,7 +3,6 @@ package info.jbcs.minecraft.vending.gui;
 import info.jbcs.minecraft.vending.GeneralClient;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -140,7 +139,7 @@ public class GuiScreenPlus extends GuiContainer {
 	}
 
 	public void close() {
-		mc.displayGuiScreen((GuiScreen) null);
+		mc.displayGuiScreen(null);
 		mc.setIngameFocus();
 	}
 

@@ -53,7 +53,7 @@ public class GuiExButton extends GuiElement {
 		if (!disabled && !over) {
 			box = boxNormal;
 			color = 0xffffffff;
-		} else if (!disabled && over) {
+		} else if (!disabled) {
 			box = boxOver;
 			color = 0xffffff70;
 		}

@@ -39,8 +39,6 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
 				entity.readEntityFromNBT(nbtTagCompound);
 			}
 
-			int meta = tileEntity.getBlockMetadata();
-
 			try {
 				Minecraft.getMinecraft().getRenderManager().renderEntityWithPosYaw(entity, (notNullSold==1)?0:-0.1+(A%2)*0.2, -0.2, (notNullSold==1)?0:-0.1+(A<2?0:1)*0.2, f, f);
 			} catch (Throwable e) {

@@ -15,7 +15,6 @@ public class MsgAdvVenSetItem extends Message {
 
     public MsgAdvVenSetItem() { }
 
-    @SuppressWarnings("unchecked")
     public MsgAdvVenSetItem(int id, int count, int damage)
     {
         this.id = id;

@@ -33,28 +33,25 @@ public class CommonProxy {
 		Item.getItemFromBlock(Vending.blockMultipleVendingMachine).setHasSubtypes(true).setMaxDamage(0);
 		for(int i=0;i< EnumSupports.length;i++){
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockVendingMachine, 1, i),
-					new Object[]{"XXX", "XGX", "*R*",
-							'X', Blocks.glass,
-							'G', Items.gold_ingot,
-							'R', Items.redstone,
-							'*', EnumSupports.byMetadata(i).getReagent(),
-					});
+					"XXX", "XGX", "*R*",
+					'X', Blocks.glass,
+					'G', Items.gold_ingot,
+					'R', Items.redstone,
+					'*', EnumSupports.byMetadata(i).getReagent());
 
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockAdvancedVendingMachine, 1, i),
-					new Object[]{"XXX", "XGX", "*R*",
-							'X', Blocks.glass,
-							'G', Items.gold_ingot,
-							'R', Items.repeater,
-							'*', EnumSupports.byMetadata(i).getReagent(),
-					});
+					"XXX", "XGX", "*R*",
+					'X', Blocks.glass,
+					'G', Items.gold_ingot,
+					'R', Items.repeater,
+					'*', EnumSupports.byMetadata(i).getReagent());
 
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockMultipleVendingMachine, 1, i),
-					new Object[]{"XXX", "XGX", "*R*",
-							'X', Blocks.glass,
-							'G', Items.gold_ingot,
-							'R', Blocks.dispenser,
-							'*', EnumSupports.byMetadata(i).getReagent(),
-					});
+					"XXX", "XGX", "*R*",
+					'X', Blocks.glass,
+					'G', Items.gold_ingot,
+					'R', Blocks.dispenser,
+					'*', EnumSupports.byMetadata(i).getReagent());
 		}
 	}
 }

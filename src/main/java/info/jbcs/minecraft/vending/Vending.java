@@ -25,7 +25,6 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
@@ -36,8 +35,6 @@ public class Vending {
 
 	@Instance(MOD_ID)
 	public static Vending	instance;
-
-	public static FMLEventChannel Channel;
 
 	public static Block blockVendingMachine;
 	public static Block blockAdvancedVendingMachine;

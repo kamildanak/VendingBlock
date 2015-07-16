@@ -18,7 +18,6 @@ public class MsgWrench extends Message {
 
     public MsgWrench() { }
 
-    @SuppressWarnings("unchecked")
     public MsgWrench(TileEntity tileEntityVendingMachine, boolean infinite, String ownerName)
     {
         TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntityVendingMachine;
