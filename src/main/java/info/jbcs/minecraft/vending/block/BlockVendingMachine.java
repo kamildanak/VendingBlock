@@ -104,6 +104,10 @@ public class BlockVendingMachine extends BlockContainer {
 				fits = false;
 			else if (bought.getItem() != offered.getItem())
 				fits = false;
+			else if (bought.getItemDamage() != offered.getItemDamage())
+				fits = false;
+			else if (offered.stackSize < bought.stackSize)
+				fits = false;
             else if(bought.hasTagCompound() || offered.hasTagCompound()){
                 if(bought.hasTagCompound() && offered.hasTagCompound()) {
                     if (!bought.getTagCompound().equals(offered.getTagCompound())) {
@@ -113,10 +117,6 @@ public class BlockVendingMachine extends BlockContainer {
                     fits = false;
                 }
             }
-			else if (bought.getItemDamage() != offered.getItemDamage())
-				fits = false;
-			else if (offered.stackSize < bought.stackSize)
-				fits = false;
 		}
 
 		if (fits) {
