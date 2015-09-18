@@ -104,6 +104,10 @@ public class BlockVendingMachine extends BlockContainer {
 				fits = false;
 			else if (bought.getItem() != offered.getItem())
 				fits = false;
+			else if (bought.getItemDamage() != offered.getItemDamage())
+				fits = false;
+			else if (offered.stackSize < bought.stackSize)
+				fits = false;
             else if(bought.hasTagCompound() || offered.hasTagCompound()){
                 if(bought.hasTagCompound() && offered.hasTagCompound()) {
                     if (!bought.getTagCompound().equals(offered.getTagCompound())) {
@@ -113,10 +117,6 @@ public class BlockVendingMachine extends BlockContainer {
                     fits = false;
                 }
             }
-			else if (bought.getItemDamage() != offered.getItemDamage())
-				fits = false;
-			else if (offered.stackSize < bought.stackSize)
-				fits = false;
 		}
 
 		if (fits) {
@@ -252,7 +252,11 @@ public class BlockVendingMachine extends BlockContainer {
 				}
 
 				itemstack.stackSize -= i1;
-				EntityItem entityitem = new EntityItem(world, blockPos.getX() + f, blockPos.getY() + f1, blockPos.getZ() + f2, new ItemStack(itemstack.getItem(), i1, itemstack.getItemDamage()));
+				NBTTagCompound tag = new NBTTagCompound();
+				itemstack.writeToNBT(tag);
+				ItemStack toSpawn = ItemStack.loadItemStackFromNBT(tag);
+				toSpawn.stackSize = i1;
+				EntityItem entityitem = new EntityItem(world, blockPos.getX() + f, blockPos.getY() + f1, blockPos.getZ() + f2, toSpawn);
 				float f3 = 0.05F;
 				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
 				entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 0.2F;
