@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.util.StatCollector;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
@@ -76,7 +77,7 @@ public class GuiPickBlock extends GuiContainer
                 container.scrollTo(off);
             }
         });
-        buttonList.add(new GuiButton(100, guiLeft + 44, guiTop + 151, 70, 20, "Select"));
+        buttonList.add(new GuiButton(100, guiLeft + 44, guiTop + 151, 70, 20, StatCollector.translateToLocal("gui.vendingBlock.select")));
     }
 
     public void picked(ItemStack stack)
