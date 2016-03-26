@@ -51,6 +51,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		}
 
 		@Override
+		public ItemStack removeStackFromSlot(int i) {
+			return null;
+		}
+
+		@Override
 		public void markDirty() {
 
 		}
@@ -116,6 +121,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
+	public ItemStack removeStackFromSlot(int i) {
+		return null;
+	}
+
+	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		if ((advanced && i == 10) || (advanced && multiple && i == 13))  {
 			return;
@@ -175,12 +185,6 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		return null;
-	}
-
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {

@@ -3,9 +3,11 @@ package info.jbcs.minecraft.vending.gui;
 import info.jbcs.minecraft.vending.GeneralClient;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Container;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -190,11 +192,6 @@ public class GuiScreenPlus extends GuiContainer {
 
 	public void drawTiledRect(int rx, int ry, int rw, int rh, int u, int v, int tw, int th) {
 		if(rw==0 || rh==0 || tw==0 || th==0) return;
-		
-		float pixel = 0.00390625f;
-		Tessellator tessellator = Tessellator.getInstance();
-		WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-		worldrenderer.startDrawingQuads();
 
 		for (int y = 0; y < rh; y += th) {
 			for (int x = 0; x < rw; x += tw) {
@@ -210,22 +207,13 @@ public class GuiScreenPlus extends GuiContainer {
 					qh = rh - y;
 				}
 
-				double x1 = rx + x;
-				double x2 = rx + x + qw;
-				double y1 = ry + y;
-				double y2 = ry + y + qh;
-				double u1 = pixel * (u);
-				double u2 = pixel * (u + tw);
-				double v1 = pixel * (v);
-				double v2 = pixel * (v + th);
-				worldrenderer.addVertexWithUV(x1, y2, this.zLevel, u1, v2);
-				worldrenderer.addVertexWithUV(x2, y2, this.zLevel, u2, v2);
-				worldrenderer.addVertexWithUV(x2, y1, this.zLevel, u2, v1);
-				worldrenderer.addVertexWithUV(x1, y1, this.zLevel, u1, v1);
+				int x1 = rx + x;
+				int w = x + qw;
+				int y1 = ry + y;
+				int h = y + qh;
+				drawTexturedModalRect(x1, y1, u, v, w, h);
 			}
 		}
-
-		tessellator.draw();
 	}
 
 	public void bindTexture(String tex) {

@@ -200,8 +200,7 @@ public class HintGui extends Gui {
     {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.startDrawingQuads();
-        worldrenderer.setVertexFormat(DefaultVertexFormats.ITEM);
+        worldrenderer.begin(7, DefaultVertexFormats.ITEM);
         EnumFacing[] aenumfacing = EnumFacing.values();
 
         for (EnumFacing enumfacing : aenumfacing) {
@@ -253,7 +252,7 @@ public class HintGui extends Gui {
         boolean isSoldEmpty = countNotNull(soldItems)==0;
         boolean isBoughtEmpty = countNotNull(boughtItems)==0;
         if (isBoughtEmpty && isSoldEmpty) return;
-        ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution resolution = new ScaledResolution(mc);
         FontRenderer fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
         int width = resolution.getScaledWidth();
         int height = resolution.getScaledHeight();

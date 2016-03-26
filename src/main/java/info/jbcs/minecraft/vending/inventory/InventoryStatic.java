@@ -268,11 +268,6 @@ public abstract class InventoryStatic implements IInventory {
 		return res;
 	}
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		return null;
-	}
-
 	//@Override
 	public void onInventoryChanged() {
 	}
