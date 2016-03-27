@@ -5,6 +5,7 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -16,6 +17,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,7 +40,7 @@ import static net.minecraft.util.SoundEvent.soundEventRegistry;
 
 public class BlockVendingMachine extends BlockContainer {
 	public static final PropertyEnum<EnumSupports> SUPPORT = PropertyEnum.create("support", EnumSupports.class);
-	boolean isAdvanced, isMultiple;
+	boolean isAdvanced, isMultiple, isOpen;
 	private String name;
 
 	public BlockVendingMachine(boolean advanced, boolean multiple, String name) {
@@ -58,6 +60,7 @@ public class BlockVendingMachine extends BlockContainer {
 
 		isAdvanced=advanced;
 		isMultiple=multiple;
+		isOpen=true;
 	}
 
 	@Override
@@ -96,8 +99,17 @@ public class BlockVendingMachine extends BlockContainer {
 		TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
 		if (tileEntity == null)
 			return;
+		if (!tileEntity.isOpen()){
+			world.playSound(entityplayer, blockPos, Vending.sound_forbidden, SoundCategory.MASTER, 0.3f, 0.6f);
+			return;
+		}
 
 		ItemStack[] soldItems = tileEntity.getSoldItems();
+		ItemStack[] soldItemsOld = new ItemStack[soldItems.length];
+		if(Vending.close_on_partial_sold_out)
+			for(int i=0; i<soldItems.length; i++)
+				if(soldItems[i]!=null)
+					soldItemsOld[i] = soldItems[i].copy();
 		ItemStack bought = tileEntity.getBoughtItems()[0];
 		ItemStack offered = entityplayer.inventory.getCurrentItem();
 
@@ -146,6 +158,17 @@ public class BlockVendingMachine extends BlockContainer {
 						entityitem.motionY = 0.2;
 						entityitem.setPickupDelay(10);
 						world.spawnEntityInWorld(entityitem);
+					}
+
+					if(Vending.close_on_sold_out && countNotNull(tileEntity.getSoldItems())==0) tileEntity.setOpen(false);
+					if(Vending.close_on_partial_sold_out)
+					for(int i=0; i<soldItemsOld.length; i++)
+					{
+						System.out.println(soldItemsOld[i]!=null? soldItemsOld[i].toString():"null");
+						System.out.println(tileEntity.getSoldItems()[i]!=null? soldItemsOld[i].toString():"null");
+						if(soldItemsOld[i]==null && tileEntity.getSoldItems()[i]==null) continue;
+						if(soldItemsOld[i]==null || tileEntity.getSoldItems()[i]==null) tileEntity.setOpen(false);
+						if ( soldItemsOld[i].stackSize != soldItems[i].stackSize) tileEntity.setOpen(false);
 					}
 				}
 
@@ -215,11 +238,22 @@ public class BlockVendingMachine extends BlockContainer {
 	}
 
 	@Override
+	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+		if(!worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos)) return false;
+		if(!Vending.block_placing_next_to_doors) return true;
+		for(int x=-1; x<2; x++)
+			for(int z=-1; z<2; z++)
+				if(worldIn.getBlockState(pos.add(x, 0, z)).getBlock() instanceof BlockDoor) return false;
+		return true;
+	}
+
+	@Override
 	public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack){
 		world.setBlockState(blockPos, getStateFromMeta(stack.getMetadata()));
 		TileEntityVendingMachine e = new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
 		e.multiple=isMultiple;
+		e.setOpen(isOpen);
 
 		if (entityLiving != null) {
 			EntityPlayer player = (EntityPlayer) entityLiving;
@@ -234,6 +268,7 @@ public class BlockVendingMachine extends BlockContainer {
 		TileEntityVendingMachine e=new TileEntityVendingMachine();
 		e.advanced=isAdvanced;
 		e.multiple=isMultiple;
+		e.setOpen(isOpen);
 
 		return e;
 	}

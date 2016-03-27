@@ -80,7 +80,7 @@ public class HintGui extends Gui {
             }
 
             TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-            draw(tileEntity.getOwnerName(), tileEntity.getSoldItems(), tileEntity.getBoughtItems());
+            draw(tileEntity, tileEntity.getOwnerName(), tileEntity.getSoldItems(), tileEntity.getBoughtItems());
             GeneralClient.bind("textures/gui/icons.png");
         }
     }
@@ -133,10 +133,11 @@ public class HintGui extends Gui {
         guiRenderItem.renderItemAndEffectIntoGUI(stack, x, y);
     }
 
-    void draw(String seller, ItemStack[] soldItems, ItemStack[] boughtItems) {
+    void draw(TileEntityVendingMachine tileEntity, String seller, ItemStack[] soldItems, ItemStack[] boughtItems) {
         boolean isSoldEmpty = countNotNull(soldItems)==0;
         boolean isBoughtEmpty = countNotNull(boughtItems)==0;
-        if (isBoughtEmpty && isSoldEmpty) return;
+
+        if (isBoughtEmpty && isSoldEmpty && tileEntity.isOpen()) return;
         ScaledResolution resolution = new ScaledResolution(mc);
         FontRenderer fontRenderer = Minecraft.getMinecraft().getRenderManager().getFontRenderer();
         int width = resolution.getScaledWidth();
@@ -174,6 +175,8 @@ public class HintGui extends Gui {
         int h = 44 + (drawDesc? descHeight:0) + ((!isBoughtEmpty && !isSoldEmpty)?16:0);
         int centerYOff = -80 + (drawDesc? (descHeight)/2:0) + ((!isBoughtEmpty && !isSoldEmpty)?16/2:0);
         if(drawDesc && !isBoughtEmpty && !isSoldEmpty){h-=16; centerYOff-=16/2;}
+
+        if(!tileEntity.isOpen()) {w = 104; h = 44; centerYOff=-80; }
         int cx = width / 2;
         int x = cx - w / 2;
         int y = height / 2 - h / 2 + centerYOff;
@@ -182,18 +185,20 @@ public class HintGui extends Gui {
         GL11.glTranslatef(0.0f, 0.0f, -100.0f);
         GL11.glDisable(GL11.GL_LIGHTING);
 
+
         drawGradientRect(x, y, x + w, y + h, 0xc0101010, 0xd0101010);
         drawCenteredString(fontRenderer, seller, cx, y + 8, 0xffffff);
-
-        if (!isBoughtEmpty && !isSoldEmpty) {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling", cx-(drawDesc? 100:0), y+26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx + (drawDesc ? 100 : 0), y + (drawDesc ? 26 : 46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
-        } else if (!isBoughtEmpty) {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y+26, 0xa0a0a0, boughtItems, drawDesc, lengthBought);
-        } else {
-            drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+        if(!tileEntity.isOpen()) drawCenteredString(fontRenderer, "Shop is closed", cx, y + 26, 0xa0a0a0);
+        else {
+            if (!isBoughtEmpty && !isSoldEmpty) {
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling", cx - (drawDesc ? 100 : 0), y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx + (drawDesc ? 100 : 0), y + (drawDesc ? 26 : 46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+            } else if (!isBoughtEmpty) {
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y + 26, 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+            } else {
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+            }
         }
-
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
     }

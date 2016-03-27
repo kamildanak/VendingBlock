@@ -14,7 +14,7 @@ public class GuiMultipleVendingMachine extends GuiVendingMachine {
     EntityPlayer player;
 
     public GuiMultipleVendingMachine(InventoryPlayer inventoryplayer, TileEntityVendingMachine machine) {
-        super(new ContainerMultipleVendingMachine(inventoryplayer, machine));
+        super(new ContainerMultipleVendingMachine(inventoryplayer, machine), machine);
         container = (ContainerMultipleVendingMachine) inventorySlots;
         player = inventoryplayer.player;
     }

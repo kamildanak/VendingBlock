@@ -22,6 +22,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public boolean advanced = false;
 	public boolean infinite = false;
 	public boolean multiple = false;
+	private boolean open = true;
 
 	private static final int[] side0 = new int[] { };
 
@@ -169,6 +170,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		advanced = nbttagcompound.getBoolean("advanced");
 		infinite = nbttagcompound.getBoolean("infinite");
 		multiple = nbttagcompound.getBoolean("multiple");
+		open = !nbttagcompound.hasKey("open") || nbttagcompound.getBoolean("open");
 	}
 
 	@Override
@@ -179,6 +181,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		nbttagcompound.setBoolean("advanced", advanced);
 		nbttagcompound.setBoolean("infinite", infinite);
 		nbttagcompound.setBoolean("multiple", multiple);
+		nbttagcompound.setBoolean("open", open);
 	}
 
 	@Override
@@ -254,6 +257,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public String getOwnerName(){
 		return ownerName;
 	}
+	public void setOpen(boolean open) { this.open=open; }
+	public boolean isOpen() { return this.open; }
 }
 
 
