@@ -5,7 +5,7 @@ import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -63,7 +63,7 @@ public class MsgWrench extends Message {
             TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
             entity.infinite = message.infinite;
             entity.setOwnerName(message.ownerName);
-            player.worldObj.markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
+            entity.markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
             return null;
         }
     }

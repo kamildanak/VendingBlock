@@ -5,6 +5,7 @@ import info.jbcs.minecraft.vending.block.EnumSupports;
 import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
 import info.jbcs.minecraft.vending.network.MsgWrench;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;

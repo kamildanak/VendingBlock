@@ -40,7 +40,8 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
 			}
 
 			try {
-				Minecraft.getMinecraft().getRenderManager().renderEntityWithPosYaw(entity, (notNullSold==1)?0:-0.1+(A%2)*0.2, -0.2, (notNullSold==1)?0:-0.1+(A<2?0:1)*0.2, f, f);
+				Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(entity.getClass()).doRender(entity, (notNullSold==1)?0:-0.1+(A%2)*0.2, -0.2, (notNullSold==1)?0:-0.1+(A<2?0:1)*0.2, f, f);
+				//Minecraft.getMinecraft().getRenderManager().renderEntityWithPosYaw(entity, );
 			} catch (Throwable e) {
 			}
 			A=A+1;

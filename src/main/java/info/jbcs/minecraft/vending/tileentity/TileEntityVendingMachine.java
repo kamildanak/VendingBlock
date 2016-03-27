@@ -1,6 +1,7 @@
 package info.jbcs.minecraft.vending.tileentity;
 
 import info.jbcs.minecraft.vending.inventory.InventoryStatic;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -8,10 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
 	private String ownerName = "";
@@ -38,14 +40,14 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 				if (!ItemStack.areItemStacksEqual(sold[i], getSoldItems()[i])){
 					sold[i] = getSoldItems()[i];
 					if(sold[i]!=null) sold[i] = sold[i].copy();
-					worldObj.markBlockForUpdate(pos);
+					markBlockForUpdate(pos);
 				}
 			}
 			for (int i = 0; i < getBoughtItems().length; i++){
 				if (!ItemStack.areItemStacksEqual(sold[i], getBoughtItems()[i])){
 					bought[i] = getBoughtItems()[i];
 					if(bought[i]!=null) bought[i] = bought[i].copy();
-					worldObj.markBlockForUpdate(pos);
+					markBlockForUpdate(pos);
 				}
 			}
 		}
@@ -65,6 +67,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 			return worldObj.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 		}
 	};
+
+	public void markBlockForUpdate(BlockPos pos){
+		IBlockState blockState = worldObj.getBlockState(pos);
+		worldObj.notifyBlockUpdate(pos, blockState, blockState, 3);
+	}
 
 	@Override
 	public int getSizeInventory() {
@@ -178,11 +185,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public Packet getDescriptionPacket() {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
-		return new S35PacketUpdateTileEntity(pos, 1, var1);
+		return new SPacketUpdateTileEntity(pos, 1, var1);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
 
@@ -237,7 +244,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		return null;
 	}
 

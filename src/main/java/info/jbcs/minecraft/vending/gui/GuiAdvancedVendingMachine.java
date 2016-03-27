@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPickBlockHandler {
 	ContainerAdvancedVendingMachine container;
@@ -28,7 +28,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 		super.initGui();
 
 		buttonList.clear();
-		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, StatCollector.translateToLocal("gui.vendingBlock.select")));
+		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, I18n.translateToLocal("gui.vendingBlock.select")));
 	}
 
 	/**

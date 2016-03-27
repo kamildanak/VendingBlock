@@ -6,7 +6,7 @@ import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import org.lwjgl.opengl.GL11;
 
 public class GuiMultipleVendingMachine extends GuiVendingMachine {
@@ -22,9 +22,9 @@ public class GuiMultipleVendingMachine extends GuiVendingMachine {
     @Override
     protected void drawGuiContainerForegroundLayer(int a, int b) {
         FontRenderer fontRenderer = this.fontRendererObj;
-        fontRenderer.drawString(StatCollector.translateToLocal("gui.vendingBlock.storage"), 69, 6, 0x404040);
-        fontRenderer.drawString(StatCollector.translateToLocal("gui.vendingBlock.selling"), 15, 15, 0x404040);
-        fontRenderer.drawString(StatCollector.translateToLocal("gui.vendingBlock.buying"), 126, 20, 0x404040);
+        fontRenderer.drawString(I18n.translateToLocal("gui.vendingBlock.storage"), 69, 6, 0x404040);
+        fontRenderer.drawString(I18n.translateToLocal("gui.vendingBlock.selling"), 15, 15, 0x404040);
+        fontRenderer.drawString(I18n.translateToLocal("gui.vendingBlock.buying"), 126, 20, 0x404040);
     }
 
     @Override

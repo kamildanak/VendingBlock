@@ -12,10 +12,13 @@ import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -26,6 +29,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import java.util.Iterator;
+
+import static net.minecraft.util.SoundEvent.soundEventRegistry;
 
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {
@@ -40,7 +47,10 @@ public class Vending {
 	public static Block blockAdvancedVendingMachine;
 	public static Block blockMultipleVendingMachine;
 	public static Item itemWrench;
-	
+
+	public static SoundEvent sound_processed;
+	public static SoundEvent sound_forbidden;
+
 	public static GuiHandler guiVending;
 	public static GuiHandler guiWrench;
 
@@ -65,7 +75,7 @@ public class Vending {
 		blockMultipleVendingMachine = new BlockVendingMachine(false, true, "vendingMachineMultiple");
 
 		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setContainerItem(itemWrench);
-		GameRegistry.registerItem(itemWrench, "vendingMachineWrench", Vending.MOD_ID);
+		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
 	}
 
 	@EventHandler
@@ -144,17 +154,34 @@ public class Vending {
 			@Override
 			public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
                
-                return new GuiWrenchVendingMachine(world, new BlockPos(x,y,z) ,player);
+                return new GuiWrenchVendingMachine(world, new BlockPos(x,y,z),player);
 			}
 		};
 
 		GuiHandler.register(this);
+		int soundEventId = soundEventRegistry.getKeys().size();
+		ResourceLocation resourcelocation = new ResourceLocation("vending", "vending.sound.processed");
+		soundEventRegistry.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
+		sound_processed = (SoundEvent)SoundEvent.soundEventRegistry.getObject(resourcelocation);
+
+		resourcelocation = new ResourceLocation("vending", "vending.sound.forbidden");
+		soundEventRegistry.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
+		sound_forbidden = (SoundEvent)SoundEvent.soundEventRegistry.getObject(resourcelocation);
+
+		/*
+		Iterator iterator = soundEventRegistry.iterator();
+		while(iterator.hasNext()){
+			SoundEvent soundEvent = (SoundEvent) iterator.next();
+			System.out.println(soundEvent.getSoundName());
+		}*/
 	}
 
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
 
 	}
+
+
 }
 
 
