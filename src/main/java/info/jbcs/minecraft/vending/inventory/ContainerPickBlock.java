@@ -55,6 +55,11 @@ public class ContainerPickBlock extends Container
     public InventoryStatic inventory = new InventoryStatic(width * height + 1)
     {
         @Override
+        public ItemStack removeStackFromSlot(int i) {
+            return null;
+        }
+
+        @Override
         public void markDirty() {
 
         }

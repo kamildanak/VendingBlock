@@ -7,7 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
@@ -24,7 +24,7 @@ public abstract class InventoryStatic implements IInventory {
 	}
 
 	@Override
-	public IChatComponent getDisplayName(){
+	public ITextComponent getDisplayName(){
 		return null;
 	}
 
@@ -266,11 +266,6 @@ public abstract class InventoryStatic implements IInventory {
 
 		onInventoryChanged();
 		return res;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i) {
-		return null;
 	}
 
 	//@Override

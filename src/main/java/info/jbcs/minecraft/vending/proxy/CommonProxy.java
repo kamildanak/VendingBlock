@@ -4,7 +4,9 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.EnumSupports;
 import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
+import info.jbcs.minecraft.vending.network.MsgSetLock;
 import info.jbcs.minecraft.vending.network.MsgWrench;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -21,6 +23,7 @@ public class CommonProxy {
 	{
 		pipeline.registerMessage(MsgAdvVenSetItem.Handler.class, MsgAdvVenSetItem.class, 0, Side.SERVER);
 		pipeline.registerMessage(MsgWrench.Handler.class, MsgWrench.class, 1, Side.SERVER);
+		pipeline.registerMessage(MsgSetLock.Handler.class, MsgSetLock.class, 2, Side.SERVER);
 	}
 
 	public void registerRenderers()

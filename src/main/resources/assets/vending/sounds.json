@@ -1,4 +1,26 @@
 {
-"cha-ching": {"category": "master","sounds": [{"name": "cha-ching","stream": false}]},
-"forbidden": {"category": "master","sounds": [{"name": "forbidden","stream": false}]}
+  "vending.sound.processed": {
+    "category": "master music",
+    "replace": false,
+    "sounds": [
+      {
+        "name": "sound_processed",
+        "type": "event",
+        "volume": 1,
+        "pitch": 1
+      },
+      "vending:cha-ching" ]
+  },
+  "vending.sound.forbidden": {
+    "category": "master music",
+    "replace": false,
+    "sounds": [
+      {
+        "name": "sound_forbidden",
+        "type": "event",
+        "volume": 1,
+        "pitch": 1
+      },
+      "vending:forbidden" ]
+  }
 }

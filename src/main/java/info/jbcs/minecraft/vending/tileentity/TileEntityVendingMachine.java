@@ -1,6 +1,7 @@
 package info.jbcs.minecraft.vending.tileentity;
 
 import info.jbcs.minecraft.vending.inventory.InventoryStatic;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -8,10 +9,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
 	private String ownerName = "";
@@ -20,6 +22,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public boolean advanced = false;
 	public boolean infinite = false;
 	public boolean multiple = false;
+	private boolean open = true;
 
 	private static final int[] side0 = new int[] { };
 
@@ -38,16 +41,21 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 				if (!ItemStack.areItemStacksEqual(sold[i], getSoldItems()[i])){
 					sold[i] = getSoldItems()[i];
 					if(sold[i]!=null) sold[i] = sold[i].copy();
-					worldObj.markBlockForUpdate(pos);
+					markBlockForUpdate(pos);
 				}
 			}
 			for (int i = 0; i < getBoughtItems().length; i++){
 				if (!ItemStack.areItemStacksEqual(sold[i], getBoughtItems()[i])){
 					bought[i] = getBoughtItems()[i];
 					if(bought[i]!=null) bought[i] = bought[i].copy();
-					worldObj.markBlockForUpdate(pos);
+					markBlockForUpdate(pos);
 				}
 			}
+		}
+
+		@Override
+		public ItemStack removeStackFromSlot(int i) {
+			return null;
 		}
 
 		@Override
@@ -60,6 +68,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 			return worldObj.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 		}
 	};
+
+	public void markBlockForUpdate(BlockPos pos){
+		IBlockState blockState = worldObj.getBlockState(pos);
+		worldObj.notifyBlockUpdate(pos, blockState, blockState, 3);
+	}
 
 	@Override
 	public int getSizeInventory() {
@@ -116,6 +129,11 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
+	public ItemStack removeStackFromSlot(int i) {
+		return null;
+	}
+
+	@Override
 	public void setInventorySlotContents(int i, ItemStack itemstack) {
 		if ((advanced && i == 10) || (advanced && multiple && i == 13))  {
 			return;
@@ -152,6 +170,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		advanced = nbttagcompound.getBoolean("advanced");
 		infinite = nbttagcompound.getBoolean("infinite");
 		multiple = nbttagcompound.getBoolean("multiple");
+		open = !nbttagcompound.hasKey("open") || nbttagcompound.getBoolean("open");
 	}
 
 	@Override
@@ -162,25 +181,20 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		nbttagcompound.setBoolean("advanced", advanced);
 		nbttagcompound.setBoolean("infinite", infinite);
 		nbttagcompound.setBoolean("multiple", multiple);
+		nbttagcompound.setBoolean("open", open);
 	}
 
 	@Override
 	public Packet getDescriptionPacket() {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
-		return new S35PacketUpdateTileEntity(pos, 1, var1);
+		return new SPacketUpdateTileEntity(pos, 1, var1);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt) {
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
 		readFromNBT(pkt.getNbtCompound());
 	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		return null;
-	}
-
 
 	@Override
 	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
@@ -233,7 +247,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		return null;
 	}
 
@@ -243,6 +257,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	public String getOwnerName(){
 		return ownerName;
 	}
+	public void setOpen(boolean open) { this.open=open; }
+	public boolean isOpen() { return this.open; }
 }
 
 

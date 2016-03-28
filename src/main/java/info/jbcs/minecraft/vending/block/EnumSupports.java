@@ -1,6 +1,8 @@
 package info.jbcs.minecraft.vending.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.IStringSerializable;
@@ -8,21 +10,21 @@ import net.minecraft.util.IStringSerializable;
 public enum EnumSupports implements IStringSerializable
 {
     STONE(0, "stone", "stone", Blocks.stone, Blocks.stone),
-    COBBLE_STONE(1, "stoneBrick", "stoneBrick", Blocks.cobblestone, Blocks.cobblestone),
-    STONE_BRICK(2, "stoneBrickSmooth", "stoneBrickSmooth", Blocks.stonebrick, Blocks.stonebrick),
+    COBBLE_STONE(1, "stonebrick", "stonebrick", Blocks.cobblestone, Blocks.cobblestone),
+    STONE_BRICK(2, "stonebricksmooth", "stonebricksmooth", Blocks.stonebrick, Blocks.stonebrick),
     PLANKS(3, "wood", "wood", Blocks.planks, Blocks.planks),
     CRAFTING_TABLE(4, "workbench", "workbench", Blocks.crafting_table, Blocks.crafting_table),
     GRAVEL(5, "gravel", "gravel", Blocks.gravel, Blocks.gravel),
-    NOTEBLOCK(6, "musicBlock", "musicBlock", Blocks.noteblock, Blocks.noteblock),
-    SANDSTONE(7, "sandStone", "sandStone", Blocks.sandstone, Blocks.sandstone),
-    GOLD(8, "blockGold", "blockGold", Blocks.gold_block, Items.gold_ingot),
-    IRON(9, "blockIron", "blockIron", Blocks.iron_block, Items.iron_ingot),
+    NOTEBLOCK(6, "musicblock", "musicblock", Blocks.noteblock, Blocks.noteblock),
+    SANDSTONE(7, "sandstone", "sandstone", Blocks.sandstone, Blocks.sandstone),
+    GOLD(8, "blockgold", "blockgold", Blocks.gold_block, Items.gold_ingot),
+    IRON(9, "blockiron", "blockiron", Blocks.iron_block, Items.iron_ingot),
     BRICK(10, "brick", "brick", Blocks.brick_block, Blocks.brick_block),
-    COBBLESTONE_MOSSY(11, "stoneMoss", "stoneMoss", Blocks.mossy_cobblestone, Blocks.mossy_cobblestone),
+    COBBLESTONE_MOSSY(11, "stonemoss", "stonemoss", Blocks.mossy_cobblestone, Blocks.mossy_cobblestone),
     OBSIDIAN(12, "obsidian", "obsidian", Blocks.obsidian, Blocks.obsidian),
-    DIAMOND(13, "blockDiamond", "blockDiamond", Blocks.diamond_block, Items.diamond),
-    EMERALD(14, "blockEmerald", "blockEmerald", Blocks.emerald_block, Items.emerald),
-    LAPIS(15, "blockLapis", "blockLapis", Blocks.lapis_block, Blocks.lapis_block);
+    DIAMOND(13, "blockdiamond", "blockdiamond", Blocks.diamond_block, Items.diamond),
+    EMERALD(14, "blockemerald", "blockemerald", Blocks.emerald_block, Items.emerald),
+    LAPIS(15, "blocklapis", "blocklapis", Blocks.lapis_block, Blocks.lapis_block);
     private static final EnumSupports[] META_LOOKUP = new EnumSupports[values().length];
     private final int meta;
     private final String name;

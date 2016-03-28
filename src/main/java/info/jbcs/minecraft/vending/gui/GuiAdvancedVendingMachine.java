@@ -10,14 +10,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPickBlockHandler {
 	ContainerAdvancedVendingMachine container;
 	EntityPlayer player;
 
 	public GuiAdvancedVendingMachine(InventoryPlayer inventoryplayer, TileEntityVendingMachine machine) {
-		super(new ContainerAdvancedVendingMachine(inventoryplayer, machine));
+		super(new ContainerAdvancedVendingMachine(inventoryplayer, machine), machine);
 
 		container = (ContainerAdvancedVendingMachine) inventorySlots;
 		player = inventoryplayer.player;
@@ -26,9 +26,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 	@Override
 	public void initGui() {
 		super.initGui();
-
-		buttonList.clear();
-		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, StatCollector.translateToLocal("gui.vendingBlock.select")));
+		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, I18n.translateToLocal("gui.vendingBlock.select")));
 	}
 
 	/**
@@ -37,6 +35,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 	 */
 	@Override
 	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
 		if (button.id == 100) {
 			Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems()[0], this));
 		}
