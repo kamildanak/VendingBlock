@@ -34,6 +34,7 @@ public class Vending {
 	public static Block blockVendingMachine;
 	public static Block blockAdvancedVendingMachine;
 	public static Item itemWrench;
+	Public static Item itemStatTool;
 	
 	public static GuiHandler guiVending;
 	public static GuiHandler guiWrench;
@@ -124,6 +125,9 @@ public class Vending {
 
 		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
 		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
+		
+		itemStatTool = new Item().setUnlocalizedName("vendingMachinestattool").setCreativeTab(tabVending).setTextureName("Vending:stattool");
+		GameRegistry.registerItem(itemStatTool, "vendingMachinestattool");
 		
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
 
