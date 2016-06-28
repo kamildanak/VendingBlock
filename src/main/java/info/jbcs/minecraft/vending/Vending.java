@@ -32,13 +32,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.Iterator;
 
-import static net.minecraft.util.SoundEvent.soundEventRegistry;
-
 @Mod(modid=Vending.MOD_ID, name=Vending.MOD_NAME, version=Vending.VERSION) // dependencies = "required-after:autoutils"
 public class Vending {
 	public static final String MOD_ID = "vending";
 	public static final String MOD_NAME = "vending";
-	public static final String VERSION = "1.3.1";
+	public static final String VERSION = "1.3.4";
 
 	@Instance(MOD_ID)
 	public static Vending	instance;
@@ -101,7 +99,7 @@ public class Vending {
 				}
 			};
 		} else{
-			tabVending = CreativeTabs.tabDecorations;
+			tabVending = CreativeTabs.DECORATIONS;
 		}
 		close_on_sold_out = config.get("general", "close_on_sold_out", false, "Stop accepting items after last item is sold out.").getBoolean(false);
 		close_on_partial_sold_out = config.get("general", "close_on_partial_sold_out", false,
@@ -169,14 +167,15 @@ public class Vending {
 		};
 
 		GuiHandler.register(this);
-		int soundEventId = soundEventRegistry.getKeys().size();
+
+		int soundEventId = SoundEvent.REGISTRY.getKeys().size();
 		ResourceLocation resourcelocation = new ResourceLocation("vending", "vending.sound.processed");
-		soundEventRegistry.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
-		sound_processed = (SoundEvent)SoundEvent.soundEventRegistry.getObject(resourcelocation);
+		SoundEvent.REGISTRY.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
+		sound_processed = (SoundEvent)SoundEvent.REGISTRY.getObject(resourcelocation);
 
 		resourcelocation = new ResourceLocation("vending", "vending.sound.forbidden");
-		soundEventRegistry.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
-		sound_forbidden = (SoundEvent)SoundEvent.soundEventRegistry.getObject(resourcelocation);
+		SoundEvent.REGISTRY.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
+		sound_forbidden = (SoundEvent)SoundEvent.REGISTRY.getObject(resourcelocation);
 
 		/*
 		Iterator iterator = soundEventRegistry.iterator();

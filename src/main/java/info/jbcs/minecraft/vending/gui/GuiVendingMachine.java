@@ -34,7 +34,7 @@ public class GuiVendingMachine extends GuiContainer {
 
 		buttonList.clear();
 		buttonList.add(guiLockIconButton = new GuiLockIconButton(107, guiLeft + 7, guiTop + 63));
-		guiLockIconButton.func_175229_b(!tileEntityVendingMachine.isOpen());
+		guiLockIconButton.setLocked(!tileEntityVendingMachine.isOpen());
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class GuiVendingMachine extends GuiContainer {
 			MsgSetLock msg = new MsgSetLock(tileEntityVendingMachine.getPos(), lock);
 
 			Vending.instance.messagePipeline.sendToServer(msg);
-			guiLockIconButton.func_175229_b(lock);
+			guiLockIconButton.setLocked(lock);
 		}
 	}
 

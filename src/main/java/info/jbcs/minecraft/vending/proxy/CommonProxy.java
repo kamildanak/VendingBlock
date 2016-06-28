@@ -37,23 +37,23 @@ public class CommonProxy {
 		for(int i=0;i< EnumSupports.length;i++){
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockVendingMachine, 1, i),
 					"XXX", "XGX", "*R*",
-					'X', Blocks.glass,
-					'G', Items.gold_ingot,
-					'R', Items.redstone,
+					'X', Blocks.GLASS,
+					'G', Items.GOLD_INGOT,
+					'R', Items.REDSTONE,
 					'*', EnumSupports.byMetadata(i).getReagent());
 
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockAdvancedVendingMachine, 1, i),
 					"XXX", "XGX", "*R*",
-					'X', Blocks.glass,
-					'G', Items.gold_ingot,
-					'R', Items.repeater,
+					'X', Blocks.GLASS,
+					'G', Items.GOLD_INGOT,
+					'R', Items.REPEATER,
 					'*', EnumSupports.byMetadata(i).getReagent());
 
 			CraftingManager.getInstance().addRecipe(new ItemStack(Vending.blockMultipleVendingMachine, 1, i),
 					"XXX", "XGX", "*R*",
-					'X', Blocks.glass,
-					'G', Items.gold_ingot,
-					'R', Blocks.dispenser,
+					'X', Blocks.GLASS,
+					'G', Items.GOLD_INGOT,
+					'R', Blocks.DISPENSER,
 					'*', EnumSupports.byMetadata(i).getReagent());
 		}
 	}

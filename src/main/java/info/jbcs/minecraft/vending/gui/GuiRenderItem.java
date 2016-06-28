@@ -130,7 +130,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         GlStateManager.enableLighting();
         GlStateManager.depthFunc(515);
         GlStateManager.depthMask(true);
-        this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
+        this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
     }
 
     private void putQuadNormal(VertexBuffer renderer, BakedQuad quad) {
@@ -193,8 +193,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     protected void renderItemModel(ItemStack p_184394_1_, IBakedModel p_184394_2_, ItemCameraTransforms.TransformType p_184394_3_, boolean p_184394_4_) {
         if(p_184394_1_.getItem() != null) {
-            this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
-            this.textureManager.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+            this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.enableRescaleNormal();
             GlStateManager.alphaFunc(516, 0.1F);
@@ -207,8 +207,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
             GlStateManager.popMatrix();
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableBlend();
-            this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
-            this.textureManager.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+            this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+            this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         }
 
     }
@@ -223,8 +223,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     protected void renderItemModelIntoGUI(ItemStack p_184390_1_, int p_184390_2_, int p_184390_3_, IBakedModel p_184390_4_) {
         GlStateManager.pushMatrix();
-        this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
-        this.textureManager.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+        this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(516, 0.1F);
@@ -238,8 +238,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         GlStateManager.disableRescaleNormal();
         GlStateManager.disableLighting();
         GlStateManager.popMatrix();
-        this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
-        this.textureManager.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+        this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
     }
 
     private void setupGuiTransform(int xPosition, int yPosition, boolean isGui3d) {
@@ -269,22 +269,22 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
             } catch (Throwable var8) {
                 CrashReport crashreport = CrashReport.makeCrashReport(var8, "Rendering item");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being rendered");
-                crashreportcategory.addCrashSectionCallable("Item Type", new Callable() {
+                crashreportcategory.addCrashSection("Item Type", new Callable() {
                     public String call() throws Exception {
                         return String.valueOf(p_184391_2_.getItem());
                     }
                 });
-                crashreportcategory.addCrashSectionCallable("Item Aux", new Callable() {
+                crashreportcategory.addCrashSection("Item Aux", new Callable() {
                     public String call() throws Exception {
                         return String.valueOf(p_184391_2_.getMetadata());
                     }
                 });
-                crashreportcategory.addCrashSectionCallable("Item NBT", new Callable() {
+                crashreportcategory.addCrashSection("Item NBT", new Callable() {
                     public String call() throws Exception {
                         return String.valueOf(p_184391_2_.getTagCompound());
                     }
                 });
-                crashreportcategory.addCrashSectionCallable("Item Foil", new Callable() {
+                crashreportcategory.addCrashSection("Item Foil", new Callable() {
                     public String call() throws Exception {
                         return String.valueOf(p_184391_2_.hasEffect());
                     }

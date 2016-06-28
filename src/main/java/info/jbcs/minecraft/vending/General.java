@@ -100,7 +100,7 @@ public class General {
 	
 	
 	public static Block getBlock(String s){
-		return getBlock(s, Blocks.stone);
+		return getBlock(s, Blocks.STONE);
 	}
 
 	public static String getName(Block block){

@@ -36,7 +36,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
-import static net.minecraft.util.SoundEvent.soundEventRegistry;
 
 public class BlockVendingMachine extends BlockContainer {
 	public static final PropertyEnum<EnumSupports> SUPPORT = PropertyEnum.create("support", EnumSupports.class);
@@ -44,13 +43,13 @@ public class BlockVendingMachine extends BlockContainer {
 	private String name;
 
 	public BlockVendingMachine(boolean advanced, boolean multiple, String name) {
-		super(Material.glass);
+		super(Material.GLASS);
 		setUnlocalizedName(name);
 		this.name=name;
 		this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
 		GameRegistry.registerBlock(this, name);
 
-		setStepSound(SoundType.GLASS);
+		setSoundType(SoundType.GLASS);
 
 		setCreativeTab(Vending.tabVending);
 
@@ -233,6 +232,8 @@ public class BlockVendingMachine extends BlockContainer {
 		}
 
 		vend(world, blockPos, entityPlayer);
+		tileEntity.markDirty();
+		tileEntity.markBlockForUpdate(blockPos);
 
 		return true;
 	}

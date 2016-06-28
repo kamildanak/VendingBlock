@@ -174,7 +174,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
+	public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 		inventory.writeToNBT(nbttagcompound);
 		nbttagcompound.setString("owner", ownerName);
@@ -182,10 +182,19 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 		nbttagcompound.setBoolean("infinite", infinite);
 		nbttagcompound.setBoolean("multiple", multiple);
 		nbttagcompound.setBoolean("open", open);
+		return super.writeToNBT(nbttagcompound);
+	}
+
+
+	public NBTTagCompound getUpdateTag()
+	{
+		NBTTagCompound updateTag = super.getUpdateTag();
+		writeToNBT(updateTag);
+		return updateTag;
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
 		return new SPacketUpdateTileEntity(pos, 1, var1);
