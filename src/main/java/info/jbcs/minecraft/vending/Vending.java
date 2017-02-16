@@ -59,6 +59,7 @@ public class Vending {
 	public static boolean close_on_partial_sold_out;
 	public static boolean close_on_sold_out;
 	public static boolean block_placing_next_to_doors;
+	public static boolean transfer_to_inventory;
 
 	@SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
 	public static CommonProxy commonProxy;
@@ -107,6 +108,10 @@ public class Vending {
 		block_placing_next_to_doors = config.get("general", "block_placing_next_to_doors", false,
 				"Check for nearby doors when block is placed " +
 				"(Use specialized mod if you want more advanced restrictions)").getBoolean(false);
+
+		transfer_to_inventory = config.get("general", "transfer_to_inventory", false,
+				"Transfer sold items directly to player's inventory.").getBoolean(false);
+
 		config.save();
 		blockVendingMachine.setCreativeTab(tabVending);
 		blockAdvancedVendingMachine.setCreativeTab(tabVending);

@@ -152,11 +152,18 @@ public class BlockVendingMachine extends BlockContainer {
 							tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
 						}
 
-						EntityItem entityitem = new EntityItem(world, blockPos.getX() + 0.5, blockPos.getY() + 1.2, blockPos.getZ() + 0.5, vended);
-						General.propelTowards(entityitem, entityplayer, 0.2);
-						entityitem.motionY = 0.2;
-						entityitem.setPickupDelay(10);
-						world.spawnEntityInWorld(entityitem);
+						boolean spawnItem = true;
+						if(Vending.transfer_to_inventory) {
+							spawnItem = !entityplayer.inventory.addItemStackToInventory(vended);
+						}
+						if(spawnItem)
+						{
+							EntityItem entityitem = new EntityItem(world, blockPos.getX() + 0.5, blockPos.getY() + 1.2, blockPos.getZ() + 0.5, vended);
+							General.propelTowards(entityitem, entityplayer, 0.2);
+							entityitem.motionY = 0.2;
+							entityitem.setPickupDelay(10);
+							world.spawnEntityInWorld(entityitem);
+						}
 					}
 
 					if(Vending.close_on_sold_out && countNotNull(tileEntity.getSoldItems())==0) tileEntity.setOpen(false);
