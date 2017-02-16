@@ -34,7 +34,12 @@ sourceCompatibility = "1.7"
 
 minecraft {
     version = "1.10.2-12.18.1.2094"
-    runDir = "run"
+    if(file("../run").exists())
+    {
+        runDir = "../run"
+    } else {
+        runDir = "run"
+    }
     
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
