@@ -1,7 +1,10 @@
 package info.jbcs.minecraft.vending.gui;
 
+import com.kamildanak.minecraft.enderpay.EnderPay;
+import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -29,12 +32,16 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 import static info.jbcs.minecraft.vending.General.getNotNull;
@@ -80,7 +87,21 @@ public class HintGui extends Gui {
             }
 
             TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-            draw(tileEntity, tileEntity.getOwnerName(), tileEntity.getSoldItems(), tileEntity.getBoughtItems());
+            if(Loader.isModLoaded("enderpay")) {
+                ItemStack[] soldItems;
+                ItemStack[] boughtItems;
+                soldItems = tileEntity.getSoldItems().clone();
+                boughtItems = tileEntity.getBoughtItems().clone();
+                for(int i = 0; i < soldItems.length; i++) {
+                    if(isBanknote(soldItems[i])) soldItems[i] = null;
+                }
+                for(int i = 0; i < boughtItems.length; i++) {
+                    if(isBanknote(boughtItems[i])) boughtItems[i] = null;
+                }
+                draw(tileEntity, tileEntity.getOwnerName(), soldItems, boughtItems, tileEntity.soldCreditsSum(), tileEntity.boughtCreditsSum());
+            } else {
+                draw(tileEntity, tileEntity.getOwnerName(), tileEntity.getSoldItems(), tileEntity.getBoughtItems(), 0, 0);
+            }
             GeneralClient.bind("textures/gui/icons.png");
         }
     }
@@ -98,9 +119,10 @@ public class HintGui extends Gui {
         drawString(fontRenderer, line, x, y, 0xffffff);
         GL11.glTranslatef(0.0f, 0.0f, -500.0f);
     }
-    void drawItemsWithLabel(FontRenderer fontRenderer, String label, int x, int y, int colour, ItemStack[] itemStacks, boolean drawDescription, int descWidth){
+    int drawItemsWithLabel(FontRenderer fontRenderer, String label, int x, int y, int colour, ItemStack[] itemStacks, boolean drawDescription, int descWidth){
         int w = fontRenderer.getStringWidth(I18n.translateToLocal(label))+2;
         int numOfItems = countNotNull(itemStacks);
+        if(numOfItems==0) return 0;
         int witdth = (drawDescription? max(w+18*numOfItems, descWidth):w+18*numOfItems);
         x-=witdth/2;
         drawString(fontRenderer, I18n.translateToLocal(label), x, y, colour);
@@ -124,6 +146,22 @@ public class HintGui extends Gui {
                 }
             }
         }
+        return y-20;
+    }
+
+    void drawCredits(FontRenderer fontRenderer, String label, int x, int y, int colour, long amount){
+        if(amount==0) return;
+        if(!Loader.isModLoaded("enderpay")) return; // double check
+        String amountStr = " " + Utils.format(amount) + getCurrencyName(amount);
+        int w = fontRenderer.getStringWidth(I18n.translateToLocal(label)+amountStr)+2;
+        x-=w/2;
+        drawString(fontRenderer, I18n.translateToLocal(label)+amountStr, x, y, colour);
+
+    }
+    String getCurrencyName(long amount)
+    {
+        if(amount==1) return EnderPay.currencyNameSingular;
+        return EnderPay.currencyNameMultiple;
     }
     public void renderItemIntoGUI(ItemStack stack, int x, int y)
     {
@@ -133,9 +171,10 @@ public class HintGui extends Gui {
         guiRenderItem.renderItemAndEffectIntoGUI(stack, x, y);
     }
 
-    void draw(TileEntityVendingMachine tileEntity, String seller, ItemStack[] soldItems, ItemStack[] boughtItems) {
-        boolean isSoldEmpty = countNotNull(soldItems)==0;
-        boolean isBoughtEmpty = countNotNull(boughtItems)==0;
+    void draw(TileEntityVendingMachine tileEntity, String seller, ItemStack[] soldItems, ItemStack[] boughtItems,
+              long soldCredits, long boughtCredits) {
+        boolean isSoldEmpty = countNotNull(soldItems)==0 && soldCredits==0;
+        boolean isBoughtEmpty = countNotNull(boughtItems)==0 && boughtCredits==0;
 
         if (isBoughtEmpty && isSoldEmpty && tileEntity.isOpen()) return;
         ScaledResolution resolution = new ScaledResolution(mc);
@@ -188,18 +227,34 @@ public class HintGui extends Gui {
 
         drawGradientRect(x, y, x + w, y + h, 0xc0101010, 0xd0101010);
         drawCenteredString(fontRenderer, seller, cx, y + 8, 0xffffff);
+        int yy=0;
         if(!tileEntity.isOpen()) drawCenteredString(fontRenderer, "Shop is closed", cx, y + 26, 0xa0a0a0);
         else {
             if (!isBoughtEmpty && !isSoldEmpty) {
-                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling", cx - (drawDesc ? 100 : 0), y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
-                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for", cx + (drawDesc ? 100 : 0), y + (drawDesc ? 26 : 46), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+                yy = drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isSelling",
+                        cx - (drawDesc ? 100 : 0), y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+                drawCredits(fontRenderer, countNotNull(soldItems)==0?"gui.vendingBlock.isSelling":"and",
+                        cx - (drawDesc ? 100 : 0), y + 26 + yy-25, 0xa0a0a0, soldCredits);
+                yy+=16;
+                yy = (drawDesc ? 26:yy)+drawItemsWithLabel(fontRenderer, "gui.vendingBlock.for",
+                        cx + (drawDesc ? 100 : 0), y + (drawDesc ? 26 : yy), 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+                drawCredits(fontRenderer, countNotNull(boughtItems)==0?"gui.vendingBlock.for":"and",
+                        cx + (drawDesc ? 100 : 0), yy + y, 0xa0a0a0, boughtCredits);
             } else if (!isBoughtEmpty) {
-                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting", cx, y + 26, 0xa0a0a0, boughtItems, drawDesc, lengthBought);
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isAccepting",
+                        cx, y + 26, 0xa0a0a0, boughtItems, drawDesc, lengthBought);
             } else {
-                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway", cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
+                drawItemsWithLabel(fontRenderer, "gui.vendingBlock.isGivingAway",
+                        cx, y + 26, 0xa0a0a0, soldItems, drawDesc, lengthSold);
             }
         }
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public boolean isBanknote(ItemStack itemStack) {
+        if(itemStack == null) return false;
+        return itemStack.getItem() instanceof ItemFilledBanknote;
     }
 }

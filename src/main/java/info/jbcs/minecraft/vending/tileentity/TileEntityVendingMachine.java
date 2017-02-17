@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.tileentity;
 
+import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
 import info.jbcs.minecraft.vending.inventory.InventoryStatic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.fml.common.Optional;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
 	private String ownerName = "";
@@ -268,6 +270,32 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 	}
 	public void setOpen(boolean open) { this.open=open; }
 	public boolean isOpen() { return this.open; }
+
+	@Optional.Method(modid = "enderpay")
+	public long soldCreditsSum()
+	{
+		return creditsSum(sold);
+	}
+
+	@Optional.Method(modid = "enderpay")
+	public long boughtCreditsSum()
+	{
+		return creditsSum(bought);
+	}
+
+	@Optional.Method(modid = "enderpay")
+	private long creditsSum(ItemStack[] stacks)
+	{
+		long sum = 0;
+		for (ItemStack itemStack : stacks) {
+			if(itemStack==null) continue;
+			if(itemStack.getItem() instanceof ItemFilledBanknote)
+			{
+				sum += itemStack.getTagCompound().getLong("Amount");
+			}
+		}
+		return sum;
+	}
 }
 
 
