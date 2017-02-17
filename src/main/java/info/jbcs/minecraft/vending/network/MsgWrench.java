@@ -12,14 +12,14 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MsgWrench extends Message {
-    private int				x, y, z;
-    private boolean             infinite;
-    private String              ownerName;
+    private int x, y, z;
+    private boolean infinite;
+    private String ownerName;
 
-    public MsgWrench() { }
+    public MsgWrench() {
+    }
 
-    public MsgWrench(TileEntity tileEntityVendingMachine, boolean infinite, String ownerName)
-    {
+    public MsgWrench(TileEntity tileEntityVendingMachine, boolean infinite, String ownerName) {
         TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntityVendingMachine;
         BlockPos blockPos = entity.getPos();
         x = blockPos.getX();
@@ -30,8 +30,7 @@ public class MsgWrench extends Message {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
+    public void fromBytes(ByteBuf buf) {
         x = buf.readInt();
         y = buf.readInt();
         z = buf.readInt();
@@ -40,8 +39,7 @@ public class MsgWrench extends Message {
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
+    public void toBytes(ByteBuf buf) {
         buf.writeInt(x);
         buf.writeInt(y);
         buf.writeInt(z);

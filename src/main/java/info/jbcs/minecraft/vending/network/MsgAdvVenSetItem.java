@@ -11,28 +11,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MsgAdvVenSetItem extends Message {
-    private int                 id, count, damage;
+    private int id, count, damage;
 
-    public MsgAdvVenSetItem() { }
+    public MsgAdvVenSetItem() {
+    }
 
-    public MsgAdvVenSetItem(int id, int count, int damage)
-    {
+    public MsgAdvVenSetItem(int id, int count, int damage) {
         this.id = id;
         this.count = count;
         this.damage = damage;
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
+    public void fromBytes(ByteBuf buf) {
         id = buf.readInt();
         count = buf.readInt();
         damage = buf.readInt();
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
+    public void toBytes(ByteBuf buf) {
         buf.writeInt(id);
         buf.writeInt(count);
         buf.writeInt(damage);

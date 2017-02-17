@@ -13,14 +13,12 @@ import net.minecraft.util.text.translation.I18n;
 
 import java.io.IOException;
 
-public class GuiPickBlock extends GuiContainer
-{
+public class GuiPickBlock extends GuiContainer {
     Scrollbar scrollbar;
     ContainerPickBlock container;
     GuiScreen parent;
 
-    public GuiPickBlock(EntityPlayer player, ItemStack stack, GuiScreen screen)
-    {
+    public GuiPickBlock(EntityPlayer player, ItemStack stack, GuiScreen screen) {
         super(new ContainerPickBlock(player));
         ySize = 185;
         xSize = 195;
@@ -31,8 +29,7 @@ public class GuiPickBlock extends GuiContainer
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float f, int x, int y)
-    {
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
         GeneralClient.bind("vending:textures/list_items.png");
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         scrollbar.drawButton(mc, x, y);
@@ -48,28 +45,21 @@ public class GuiPickBlock extends GuiContainer
      * Adds the buttons (and other controls) to the screen in question.
      */
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
-        buttonList.add(scrollbar = new Scrollbar(200, guiLeft + 175, guiTop + 18, 12, 124, "")
-        {
+        buttonList.add(scrollbar = new Scrollbar(200, guiLeft + 175, guiTop + 18, 12, 124, "") {
             @Override
-            public void onScrolled(float off)
-            {
+            public void onScrolled(float off) {
                 int columnsNotFitting = container.items.size() / container.width - container.height + 1;
 
-                if (columnsNotFitting < 0)
-                {
+                if (columnsNotFitting < 0) {
                     columnsNotFitting = 0;
                 }
 
-                if (columnsNotFitting == 0)
-                {
+                if (columnsNotFitting == 0) {
                     scrollbar.active = false;
                     scrollbar.offset = 0;
-                }
-                else
-                {
+                } else {
                     scrollbar.active = true;
                     scrollbar.step = 1.0f / columnsNotFitting;
                 }
@@ -80,15 +70,12 @@ public class GuiPickBlock extends GuiContainer
         buttonList.add(new GuiButton(100, guiLeft + 44, guiTop + 151, 70, 20, I18n.translateToLocal("gui.vendingBlock.select")));
     }
 
-    public void picked(ItemStack stack)
-    {
-        if (parent == null)
-        {
+    public void picked(ItemStack stack) {
+        if (parent == null) {
             return;
         }
 
-        if (parent instanceof IPickBlockHandler)
-        {
+        if (parent instanceof IPickBlockHandler) {
             ((IPickBlockHandler) parent).blockPicked(stack);
         }
     }
@@ -98,15 +85,12 @@ public class GuiPickBlock extends GuiContainer
      * ActionListener.actionPerformed(ActionEvent e).
      */
     @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        switch (button.id)
-        {
+    protected void actionPerformed(GuiButton button) {
+        switch (button.id) {
             case 100:
                 ItemStack stack = container.resultSlot.getStack();
 
-                if (parent instanceof IPickBlockHandler)
-                {
+                if (parent instanceof IPickBlockHandler) {
                     ((IPickBlockHandler) parent).blockPicked(stack);
                 }
 

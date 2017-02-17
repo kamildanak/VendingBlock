@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending.gui;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -39,11 +38,11 @@ import java.util.concurrent.Callable;
 @SideOnly(Side.CLIENT)
 public class GuiRenderItem implements IResourceManagerReloadListener {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
-    private boolean notRenderingEffectsInGUI = true;
-    public float zLevel;
     private final ItemModelMesher itemModelMesher;
     private final TextureManager textureManager;
     private final ItemColors itemColors;
+    public float zLevel;
+    private boolean notRenderingEffectsInGUI = true;
 
     public GuiRenderItem(TextureManager p_i46552_1_, ItemModelMesher itemModelMesher, ItemColors p_i46552_3_) {
         this.textureManager = p_i46552_1_;
@@ -65,7 +64,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     private void renderModel(IBakedModel model, int color) {
-        this.renderModel(model, color, (ItemStack)null);
+        this.renderModel(model, color, null);
     }
 
     private void renderModel(IBakedModel model, int color, ItemStack stack) {
@@ -75,26 +74,26 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         EnumFacing[] var6 = EnumFacing.values();
         int var7 = var6.length;
 
-        for(int var8 = 0; var8 < var7; ++var8) {
+        for (int var8 = 0; var8 < var7; ++var8) {
             EnumFacing enumfacing = var6[var8];
-            this.renderQuads(vertexbuffer, model.getQuads((IBlockState)null, enumfacing, 0L), color, stack);
+            this.renderQuads(vertexbuffer, model.getQuads(null, enumfacing, 0L), color, stack);
         }
 
-        this.renderQuads(vertexbuffer, model.getQuads((IBlockState)null, (EnumFacing)null, 0L), color, stack);
+        this.renderQuads(vertexbuffer, model.getQuads(null, null, 0L), color, stack);
         tessellator.draw();
     }
 
     public void renderItem(ItemStack stack, IBakedModel model) {
-        if(stack != null) {
+        if (stack != null) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(-0.5F, -0.5F, -0.5F);
-            if(model.isBuiltInRenderer()) {
+            if (model.isBuiltInRenderer()) {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.enableRescaleNormal();
                 TileEntityItemStackRenderer.instance.renderByItem(stack);
             } else {
                 this.renderModel(model, stack);
-                if(stack.hasEffect()) {
+                if (stack.hasEffect()) {
                     this.renderEffect(model);
                 }
             }
@@ -113,14 +112,14 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         GlStateManager.matrixMode(5890);
         GlStateManager.pushMatrix();
         GlStateManager.scale(8.0F, 8.0F, 8.0F);
-        float f = (float)(Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
+        float f = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
         GlStateManager.translate(f, 0.0F, 0.0F);
         GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
         this.renderModel(model, -8372020);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         GlStateManager.scale(8.0F, 8.0F, 8.0F);
-        float f1 = (float)(Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
+        float f1 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
         GlStateManager.translate(-f1, 0.0F, 0.0F);
         GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
         this.renderModel(model, -8372020);
@@ -135,7 +134,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     private void putQuadNormal(VertexBuffer renderer, BakedQuad quad) {
         Vec3i vec3i = quad.getFace().getDirectionVec();
-        renderer.putNormal((float)vec3i.getX(), (float)vec3i.getY(), (float)vec3i.getZ());
+        renderer.putNormal((float) vec3i.getX(), (float) vec3i.getY(), (float) vec3i.getZ());
     }
 
     private void renderQuad(VertexBuffer renderer, BakedQuad quad, int color) {
@@ -148,12 +147,12 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         boolean flag = color == -1 && stack != null;
         int i = 0;
 
-        for(int j = quads.size(); i < j; ++i) {
-            BakedQuad bakedquad = (BakedQuad)quads.get(i);
+        for (int j = quads.size(); i < j; ++i) {
+            BakedQuad bakedquad = quads.get(i);
             int k = color;
-            if(flag && bakedquad.hasTintIndex()) {
+            if (flag && bakedquad.hasTintIndex()) {
                 k = this.itemColors.getColorFromItemstack(stack, bakedquad.getTintIndex());
-                if(EntityRenderer.anaglyphEnable) {
+                if (EntityRenderer.anaglyphEnable) {
                     k = TextureUtil.anaglyphColor(k);
                 }
 
@@ -167,12 +166,12 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     public boolean shouldRenderItemIn3D(ItemStack stack) {
         IBakedModel ibakedmodel = this.itemModelMesher.getItemModel(stack);
-        return ibakedmodel == null?false:ibakedmodel.isGui3d();
+        return ibakedmodel != null && ibakedmodel.isGui3d();
     }
 
     public void renderItem(ItemStack stack, ItemCameraTransforms.TransformType cameraTransformType) {
-        if(stack != null) {
-            IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null);
+        if (stack != null) {
+            IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, null, null);
             this.renderItemModel(stack, ibakedmodel, cameraTransformType, false);
         }
 
@@ -184,7 +183,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItem(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_) {
-        if(p_184392_1_ != null && p_184392_2_ != null && p_184392_1_.getItem() != null) {
+        if (p_184392_1_ != null && p_184392_2_ != null && p_184392_1_.getItem() != null) {
             IBakedModel ibakedmodel = this.getItemModelWithOverrides(p_184392_1_, p_184392_2_.worldObj, p_184392_2_);
             this.renderItemModel(p_184392_1_, ibakedmodel, p_184392_3_, p_184392_4_);
         }
@@ -192,7 +191,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     protected void renderItemModel(ItemStack p_184394_1_, IBakedModel p_184394_2_, ItemCameraTransforms.TransformType p_184394_3_, boolean p_184394_4_) {
-        if(p_184394_1_.getItem() != null) {
+        if (p_184394_1_.getItem() != null) {
             this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -218,7 +217,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemIntoGUI(ItemStack stack, int x, int y) {
-        this.renderItemModelIntoGUI(stack, x, y, this.getItemModelWithOverrides(stack, (World)null, (EntityLivingBase)null));
+        this.renderItemModelIntoGUI(stack, x, y, this.getItemModelWithOverrides(stack, null, null));
     }
 
     protected void renderItemModelIntoGUI(ItemStack p_184390_1_, int p_184390_2_, int p_184390_3_, IBakedModel p_184390_4_) {
@@ -243,11 +242,11 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     private void setupGuiTransform(int xPosition, int yPosition, boolean isGui3d) {
-        GlStateManager.translate((float)xPosition, (float)yPosition, 100.0F + this.zLevel);
+        GlStateManager.translate((float) xPosition, (float) yPosition, 100.0F + this.zLevel);
         GlStateManager.translate(8.0F, 8.0F, 0.0F);
         GlStateManager.scale(1.0F, -1.0F, 1.0F);
         GlStateManager.scale(16.0F, 16.0F, 16.0F);
-        if(isGui3d) {
+        if (isGui3d) {
             //GlStateManager.enableLighting();
             GlStateManager.disableLighting();
         } else {
@@ -261,11 +260,11 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemAndEffectIntoGUI(EntityLivingBase p_184391_1_, final ItemStack p_184391_2_, int p_184391_3_, int p_184391_4_) {
-        if(p_184391_2_ != null && p_184391_2_.getItem() != null) {
+        if (p_184391_2_ != null && p_184391_2_.getItem() != null) {
             this.zLevel += 50.0F;
 
             try {
-                this.renderItemModelIntoGUI(p_184391_2_, p_184391_3_, p_184391_4_, this.getItemModelWithOverrides(p_184391_2_, (World)null, p_184391_1_));
+                this.renderItemModelIntoGUI(p_184391_2_, p_184391_3_, p_184391_4_, this.getItemModelWithOverrides(p_184391_2_, null, p_184391_1_));
             } catch (Throwable var8) {
                 CrashReport crashreport = CrashReport.makeCrashReport(var8, "Rendering item");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being rendered");
@@ -298,29 +297,29 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemOverlays(FontRenderer fr, ItemStack stack, int xPosition, int yPosition) {
-        this.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, (String)null);
+        this.renderItemOverlayIntoGUI(fr, stack, xPosition, yPosition, null);
     }
 
     public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-        if(stack != null) {
-            if(stack.stackSize != 1 || text != null) {
-                String entityplayersp = text == null?String.valueOf(stack.stackSize):text;
-                if(text == null && stack.stackSize < 1) {
+        if (stack != null) {
+            if (stack.stackSize != 1 || text != null) {
+                String entityplayersp = text == null ? String.valueOf(stack.stackSize) : text;
+                if (text == null && stack.stackSize < 1) {
                     entityplayersp = TextFormatting.RED + String.valueOf(stack.stackSize);
                 }
 
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.disableBlend();
-                fr.drawStringWithShadow(entityplayersp, (float)(xPosition + 19 - 2 - fr.getStringWidth(entityplayersp)), (float)(yPosition + 6 + 3), 16777215);
+                fr.drawStringWithShadow(entityplayersp, (float) (xPosition + 19 - 2 - fr.getStringWidth(entityplayersp)), (float) (yPosition + 6 + 3), 16777215);
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();
             }
 
-            if(stack.getItem().showDurabilityBar(stack)) {
+            if (stack.getItem().showDurabilityBar(stack)) {
                 double entityplayersp1 = stack.getItem().getDurabilityForDisplay(stack);
-                int tessellator1 = (int)Math.round(13.0D - entityplayersp1 * 13.0D);
-                int vertexbuffer1 = (int)Math.round(255.0D - entityplayersp1 * 255.0D);
+                int tessellator1 = (int) Math.round(13.0D - entityplayersp1 * 13.0D);
+                int vertexbuffer1 = (int) Math.round(255.0D - entityplayersp1 * 255.0D);
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.disableTexture2D();
@@ -338,8 +337,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
             }
 
             EntityPlayerSP entityplayersp2 = Minecraft.getMinecraft().thePlayer;
-            float f = entityplayersp2 == null?0.0F:entityplayersp2.getCooldownTracker().getCooldown(stack.getItem(), Minecraft.getMinecraft().getRenderPartialTicks());
-            if(f > 0.0F) {
+            float f = entityplayersp2 == null ? 0.0F : entityplayersp2.getCooldownTracker().getCooldown(stack.getItem(), Minecraft.getMinecraft().getRenderPartialTicks());
+            if (f > 0.0F) {
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.disableTexture2D();
@@ -356,10 +355,10 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     private void draw(VertexBuffer renderer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
         renderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        renderer.pos((double)(x + 0), (double)(y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
-        renderer.pos((double)(x + 0), (double)(y + height), 0.0D).color(red, green, blue, alpha).endVertex();
-        renderer.pos((double)(x + width), (double)(y + height), 0.0D).color(red, green, blue, alpha).endVertex();
-        renderer.pos((double)(x + width), (double)(y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double) (x + 0), (double) (y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double) (x + 0), (double) (y + height), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double) (x + width), (double) (y + height), 0.0D).color(red, green, blue, alpha).endVertex();
+        renderer.pos((double) (x + width), (double) (y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
         Tessellator.getInstance().draw();
     }
 

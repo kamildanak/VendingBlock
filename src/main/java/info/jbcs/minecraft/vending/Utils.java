@@ -10,6 +10,18 @@ import java.util.TreeMap;
 
 @SuppressWarnings({"Duplicates"})
 public class Utils {
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+    static HashMap<String, ResourceLocation> resources = new HashMap<String, ResourceLocation>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
     // http://stackoverflow.com/questions/4753251/how-to-go-about-formatting-1200-to-1-2k-in-java
     public static String format(long value) {
         //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
@@ -26,23 +38,12 @@ public class Utils {
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-    static {
-        suffixes.put(1_000L, "k");
-        suffixes.put(1_000_000L, "M");
-        suffixes.put(1_000_000_000L, "G");
-        suffixes.put(1_000_000_000_000L, "T");
-        suffixes.put(1_000_000_000_000_000L, "P");
-        suffixes.put(1_000_000_000_000_000_000L, "E");
-    }
-
-    static HashMap<String,ResourceLocation> resources=new HashMap<String,ResourceLocation>();
     public static void bind(String textureName) {
-        ResourceLocation res=resources.get(textureName);
+        ResourceLocation res = resources.get(textureName);
 
-        if(res==null){
-            res=new ResourceLocation(textureName);
-            resources.put(textureName,res);
+        if (res == null) {
+            res = new ResourceLocation(textureName);
+            resources.put(textureName, res);
         }
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(res);

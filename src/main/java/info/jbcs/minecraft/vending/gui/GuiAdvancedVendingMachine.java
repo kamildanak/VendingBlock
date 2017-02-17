@@ -13,47 +13,47 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.translation.I18n;
 
 public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPickBlockHandler {
-	ContainerAdvancedVendingMachine container;
-	EntityPlayer player;
+    ContainerAdvancedVendingMachine container;
+    EntityPlayer player;
 
-	public GuiAdvancedVendingMachine(InventoryPlayer inventoryplayer, TileEntityVendingMachine machine) {
-		super(new ContainerAdvancedVendingMachine(inventoryplayer, machine), machine);
+    public GuiAdvancedVendingMachine(InventoryPlayer inventoryplayer, TileEntityVendingMachine machine) {
+        super(new ContainerAdvancedVendingMachine(inventoryplayer, machine), machine);
 
-		container = (ContainerAdvancedVendingMachine) inventorySlots;
-		player = inventoryplayer.player;
-	}
+        container = (ContainerAdvancedVendingMachine) inventorySlots;
+        player = inventoryplayer.player;
+    }
 
-	@Override
-	public void initGui() {
-		super.initGui();
-		buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, I18n.translateToLocal("gui.vendingBlock.select")));
-	}
+    @Override
+    public void initGui() {
+        super.initGui();
+        buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, I18n.translateToLocal("gui.vendingBlock.select")));
+    }
 
-	/**
-	 * Fired when a control is clicked. This is the equivalent of
-	 * ActionListener.actionPerformed(ActionEvent e).
-	 */
-	@Override
-	protected void actionPerformed(GuiButton button) {
-		super.actionPerformed(button);
-		if (button.id == 100) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems()[0], this));
-		}
-	}
+    /**
+     * Fired when a control is clicked. This is the equivalent of
+     * ActionListener.actionPerformed(ActionEvent e).
+     */
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+        if (button.id == 100) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems()[0], this));
+        }
+    }
 
-	@Override
-	public void blockPicked(final ItemStack stack) {
-		MsgAdvVenSetItem msg;
-		if (stack == null) {
-			msg = new MsgAdvVenSetItem(0, 0, 0);
-		} else {
-			msg = new MsgAdvVenSetItem(General.getItemId(stack.getItem()), stack.stackSize, stack.getItemDamage());
-		}
-		Vending.instance.messagePipeline.sendToServer(msg);
-	}
+    @Override
+    public void blockPicked(final ItemStack stack) {
+        MsgAdvVenSetItem msg;
+        if (stack == null) {
+            msg = new MsgAdvVenSetItem(0, 0, 0);
+        } else {
+            msg = new MsgAdvVenSetItem(General.getItemId(stack.getItem()), stack.stackSize, stack.getItemDamage());
+        }
+        Vending.instance.messagePipeline.sendToServer(msg);
+    }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int a, int b) {
-		super.drawGuiContainerForegroundLayer(a, b);
-	}
+    @Override
+    protected void drawGuiContainerForegroundLayer(int a, int b) {
+        super.drawGuiContainerForegroundLayer(a, b);
+    }
 }
