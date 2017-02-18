@@ -64,16 +64,16 @@ public class HintHUD extends HUD {
         boughtAndSold.addChild(bought = new LinearLayout(0, 0, false));
 
         sold.addChild(soldItems = new LinearLayout(0, 0, true));
-        sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xffffff));
-        soldItems.addChild(labelSelling = new GuiLabel(0, 0, "gui.vendingBlock.isSelling", 0xffffff));
+        sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xa0a0a0));
+        soldItems.addChild(labelSelling = new GuiLabel(0, 0, "gui.vendingBlock.isSelling", 0xa0a0a0));
         soldItems.addChild(soldItemList = new GuiItemsList(0, 0, 0, 0));
-        sold.addChild(labelSoldDesc = new GuiLabelCarousel(0, 0, "", 0xffffff));
+        sold.addChild(labelSoldDesc = new GuiLabelCarousel(0, 0, "", 0xa0a0a0));
 
         bought.addChild(boughtItems = new LinearLayout(0, 0, true));
-        bought.addChild(labelBoughtCredits = new GuiLabel(0, 0, "<bCredits>", 0xffffff));
-        boughtItems.addChild(labelFor = new GuiLabel(0, 0, "gui.vendingBlock.for", 0xffffff));
+        bought.addChild(labelBoughtCredits = new GuiLabel(0, 0, "<bCredits>", 0xa0a0a0));
+        boughtItems.addChild(labelFor = new GuiLabel(0, 0, "gui.vendingBlock.for", 0xa0a0a0));
         boughtItems.addChild(boughtItemList = new GuiItemsList(0, 0, 0, 0));
-        bought.addChild(labelBoughtDesc = new GuiLabelCarousel(0, 0, "", 0xffffff));
+        bought.addChild(labelBoughtDesc = new GuiLabelCarousel(0, 0, "", 0xa0a0a0));
     }
 
     @Override
@@ -154,8 +154,8 @@ public class HintHUD extends HUD {
             labelSoldDesc.setCaption(getTooltips(soldItemStacks));
         }
 
-        labelSelling.setCaption(boughtItems.hidden & labelBoughtCredits.hidden ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.isSelling");
-        labelFor.setCaption(soldItems.hidden & labelSoldCredits.hidden ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.for");
+        labelSelling.setCaption(boughtItems.hidden & labelBoughtCredits.hidden ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling");
+        labelFor.setCaption(soldItems.hidden & labelSoldCredits.hidden ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for");
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (!layout.hidden)
