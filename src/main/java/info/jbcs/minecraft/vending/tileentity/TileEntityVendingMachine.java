@@ -44,7 +44,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
                 }
             }
             for (int i = 0; i < getBoughtItems().length; i++) {
-                if (!ItemStack.areItemStacksEqual(sold[i], getBoughtItems()[i])) {
+                if (!ItemStack.areItemStacksEqual(bought[i], getBoughtItems()[i])) {
                     bought[i] = getBoughtItems()[i];
                     if (bought[i] != null) bought[i] = bought[i].copy();
                     markBlockForUpdate(pos);
