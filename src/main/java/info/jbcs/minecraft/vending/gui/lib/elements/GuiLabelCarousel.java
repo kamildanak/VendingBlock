@@ -1,5 +1,7 @@
 package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import net.minecraft.client.renderer.GlStateManager;
+
 public class GuiLabelCarousel extends GuiLabelMultiline {
     private String[] captions = new String[0];
 
@@ -23,6 +25,7 @@ public class GuiLabelCarousel extends GuiLabelMultiline {
     public void render() {
         if (hidden) return;
         if (captions.length == 0) return;
+        GlStateManager.color(0, 0, 0, 0);
         int offset = 1;
         String caption = captions[((int) gui.getMinecraft().thePlayer.worldObj.getWorldTime() / 50) % captions.length];
         if (caption == null) return;

@@ -1,5 +1,7 @@
 package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import net.minecraft.client.renderer.GlStateManager;
+
 public class GuiLabelMultiline extends GuiLabel {
     public GuiLabelMultiline(int x, int y, int w, int h, String caption, int color) {
         super(x, y, w, h, caption, color);
@@ -20,6 +22,7 @@ public class GuiLabelMultiline extends GuiLabel {
     @Override
     public void render() {
         if (hidden) return;
+        GlStateManager.color(0, 0, 0, 0);
         int offset = 1;
         for (String s : getCaption().split("\n")) {
             gui.drawString(s, x, y + offset, super.getColor());
