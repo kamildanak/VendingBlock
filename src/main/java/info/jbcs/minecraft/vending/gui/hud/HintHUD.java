@@ -92,6 +92,10 @@ public class HintHUD extends HUD {
         if (te == null) return;
         if (!(te instanceof TileEntityVendingMachine)) return;
 
+        ScaledResolution resolution = new ScaledResolution(mc);
+        root.h = resolution.getScaledHeight();
+        root.w = resolution.getScaledWidth();
+
         boughtAndSold.setHorizontal(mc.thePlayer.isSneaking());
         drawGradientRect(layout.x - 6, layout.y - 5,
                 layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 5 - 2,
