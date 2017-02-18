@@ -13,6 +13,8 @@ public class LinearLayout extends AbstractLayout {
     }
 
     public void render() {
+        //((HUD)gui).drawRect(x, y + 1, x + 1, y+getHeight(), 0xFFFFFF);
+        //((HUD)gui).drawRect(x+getWidth(), y + 1, x + getWidth() + 1, y+getHeight(), 0xFFFFFF);
         if (getChildren() == null || hidden) {
             return;
         }
@@ -25,7 +27,8 @@ public class LinearLayout extends AbstractLayout {
                 e.y = y;
                 if (e.center) e.y = y + getHeight() / 2 - e.getHeight() / 2;
                 e.render();
-                offset += e.getWidth();
+                int w = e.getWidth();
+                offset += w + ((w == 0) ? 0 : 6);
             }
         } else {
             for (GuiElement e : getChildren()) {
@@ -66,8 +69,10 @@ public class LinearLayout extends AbstractLayout {
             }
         } else {
             for (GuiElement guiElement : this.getChildren()) {
-                s += guiElement.getWidth();
+                int w = guiElement.getWidth();
+                s += w + ((w == 0) ? 0 : 6);
             }
+            s -= 6;
         }
         return s;
     }

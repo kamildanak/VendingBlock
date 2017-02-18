@@ -20,7 +20,7 @@ public class GuiLabelMultiline extends GuiLabel {
     @Override
     public void render() {
         if (hidden) return;
-        int offset = 0;
+        int offset = 1;
         for (String s : getCaption().split("\n")) {
             gui.drawString(s, x, y + offset, super.getColor());
             offset += gui.fontRenderer().FONT_HEIGHT;
@@ -30,7 +30,12 @@ public class GuiLabelMultiline extends GuiLabel {
     @Override
     public int getHeight() {
         if (hidden) return 0;
-        if (gui.fontRenderer() != null) return gui.fontRenderer().FONT_HEIGHT * getCaption().split("\n").length;
+        if (gui.fontRenderer() != null) {
+            int c = 0;
+            for (String s : getCaption().split("\n"))
+                if (s.trim().length() != 0) c++;
+            return c;
+        }
         return 0;
     }
 

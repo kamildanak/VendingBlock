@@ -93,8 +93,8 @@ public class HintHUD extends HUD {
         if (!(te instanceof TileEntityVendingMachine)) return;
 
         boughtAndSold.setHorizontal(mc.thePlayer.isSneaking());
-        drawGradientRect(layout.x - 6, layout.y - 6,
-                layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 6,
+        drawGradientRect(layout.x - 6, layout.y - 5,
+                layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 5 - 2,
                 0xc0101010, 0xd0101010);
 
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
@@ -105,6 +105,11 @@ public class HintHUD extends HUD {
 
         labelClosed.hidden = tileEntity.isOpen();
         boughtAndSold.hidden = !tileEntity.isOpen();
+
+        labelSeller.hidden = false;
+        labelSeller.center = false;
+        //labelClosed.hidden = true;
+        //boughtAndSold.hidden = true;
 
         ItemStack[] soldItemStacks;
         ItemStack[] boughtItemStacks;

@@ -34,13 +34,13 @@ public class GuiLabel extends GuiElement {
     @Override
     public void render() {
         if (hidden) return;
-        gui.drawString(caption, x, y, 0xffffff);
+        gui.drawString(caption, x, y + 1, 0xffffff);
     }
 
     @Override
     public int getHeight() {
         if (hidden) return 0;
-        if (gui.fontRenderer() != null) return gui.fontRenderer().FONT_HEIGHT;
+        if (gui.fontRenderer() != null) return gui.fontRenderer().FONT_HEIGHT + 2;
         return 0;
     }
 

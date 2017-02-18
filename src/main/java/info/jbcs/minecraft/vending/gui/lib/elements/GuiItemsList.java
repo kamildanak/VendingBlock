@@ -30,7 +30,7 @@ public class GuiItemsList extends GuiElement {
     @Override
     public int getHeight() {
         if (hidden || items == null) return 0;
-        return 17;
+        return 12 + 2;
     }
 
     @Override

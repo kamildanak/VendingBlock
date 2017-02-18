@@ -23,13 +23,13 @@ public class GuiLabelCarousel extends GuiLabelMultiline {
     public void render() {
         if (hidden) return;
         if (captions.length == 0) return;
-        int offset = 0;
+        int offset = 1;
         String caption = captions[((int) gui.getMinecraft().thePlayer.worldObj.getWorldTime() / 50) % captions.length];
         if (caption == null) return;
         for (String s : caption.split("\n")) {
             if (s.trim().length() == 0) continue;
             gui.drawString(s, x, y + offset, 0xffffff);
-            offset += gui.fontRenderer().FONT_HEIGHT;
+            offset += gui.fontRenderer().FONT_HEIGHT + 2;
         }
     }
 
@@ -44,7 +44,7 @@ public class GuiLabelCarousel extends GuiLabelMultiline {
                 if (s.trim().length() != 0) c++;
             if (max < c) max = c;
         }
-        return max * gui.fontRenderer().FONT_HEIGHT;
+        return max * (gui.fontRenderer().FONT_HEIGHT + 2);
     }
 
     @Override
