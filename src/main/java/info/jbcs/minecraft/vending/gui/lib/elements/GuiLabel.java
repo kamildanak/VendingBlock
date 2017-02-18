@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 
 public class GuiLabel extends GuiElement {
@@ -9,6 +10,7 @@ public class GuiLabel extends GuiElement {
     public GuiLabel(int x, int y, int w, int h, String caption, int color) {
         super(x, y, w, h);
         this.caption = I18n.format(caption).trim();
+        this.color = color;
     }
 
     public GuiLabel(int x, int y, String caption, int color) {
@@ -34,7 +36,8 @@ public class GuiLabel extends GuiElement {
     @Override
     public void render() {
         if (hidden) return;
-        gui.drawString(caption, x, y + 1, 0xffffff);
+        GlStateManager.color(0, 0, 0, 0);
+        gui.drawString(caption, x, y + 1, color);
     }
 
     @Override
