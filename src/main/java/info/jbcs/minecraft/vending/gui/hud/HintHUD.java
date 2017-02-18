@@ -64,16 +64,16 @@ public class HintHUD extends HUD {
         boughtAndSold.addChild(bought = new LinearLayout(0, 0, false));
 
         sold.addChild(soldItems = new LinearLayout(0, 0, true));
-        sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xa0a0a0));
         soldItems.addChild(labelSelling = new GuiLabel(0, 0, "gui.vendingBlock.isSelling", 0xa0a0a0));
         soldItems.addChild(soldItemList = new GuiItemsList(0, 0, 0, 0));
         sold.addChild(labelSoldDesc = new GuiLabelCarousel(0, 0, "", 0xa0a0a0));
+        sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xa0a0a0));
 
         bought.addChild(boughtItems = new LinearLayout(0, 0, true));
-        bought.addChild(labelBoughtCredits = new GuiLabel(0, 0, "<bCredits>", 0xa0a0a0));
         boughtItems.addChild(labelFor = new GuiLabel(0, 0, "gui.vendingBlock.for", 0xa0a0a0));
         boughtItems.addChild(boughtItemList = new GuiItemsList(0, 0, 0, 0));
         bought.addChild(labelBoughtDesc = new GuiLabelCarousel(0, 0, "", 0xa0a0a0));
+        bought.addChild(labelBoughtCredits = new GuiLabel(0, 0, "<bCredits>", 0xa0a0a0));
     }
 
     @Override
