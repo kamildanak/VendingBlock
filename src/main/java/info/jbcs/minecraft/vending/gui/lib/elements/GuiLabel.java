@@ -28,7 +28,7 @@ public class GuiLabel extends GuiElement {
     }
 
     public void setCaption(String caption) {
-        this.caption = caption;
+        this.caption = I18n.format(caption).trim();
     }
 
     @Override

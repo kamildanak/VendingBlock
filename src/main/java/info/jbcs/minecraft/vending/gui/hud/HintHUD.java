@@ -42,6 +42,8 @@ public class HintHUD extends HUD {
     private GuiLabel labelSoldCredits;
     private GuiLabel labelSeller;
     private GuiLabel labelClosed;
+    private GuiLabel labelSelling;
+    private GuiLabel labelFor;
     private GuiLabelCarousel labelBoughtDesc;
     private GuiLabelCarousel labelSoldDesc;
     private GuiItemsList soldItemList;
@@ -63,13 +65,13 @@ public class HintHUD extends HUD {
 
         sold.addChild(soldItems = new LinearLayout(0, 0, true));
         sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xffffff));
-        soldItems.addChild(new GuiLabel(0, 0, "gui.vendingBlock.isSelling", 0xffffff));
+        soldItems.addChild(labelSelling = new GuiLabel(0, 0, "gui.vendingBlock.isSelling", 0xffffff));
         soldItems.addChild(soldItemList = new GuiItemsList(0, 0, 0, 0));
         sold.addChild(labelSoldDesc = new GuiLabelCarousel(0, 0, "", 0xffffff));
 
         bought.addChild(boughtItems = new LinearLayout(0, 0, true));
         bought.addChild(labelBoughtCredits = new GuiLabel(0, 0, "<bCredits>", 0xffffff));
-        boughtItems.addChild(new GuiLabel(0, 0, "gui.vendingBlock.for", 0xffffff));
+        boughtItems.addChild(labelFor = new GuiLabel(0, 0, "gui.vendingBlock.for", 0xffffff));
         boughtItems.addChild(boughtItemList = new GuiItemsList(0, 0, 0, 0));
         bought.addChild(labelBoughtDesc = new GuiLabelCarousel(0, 0, "", 0xffffff));
     }
@@ -97,12 +99,8 @@ public class HintHUD extends HUD {
         root.w = resolution.getScaledWidth();
 
         boughtAndSold.setHorizontal(mc.thePlayer.isSneaking());
-        drawGradientRect(layout.x - 6, layout.y - 5,
-                layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 5 - 2,
-                0xc0101010, 0xd0101010);
 
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-
         root.y = 15;
         labelSeller.setCaption(tileEntity.getOwnerName());
         labelSeller.center = true;
@@ -127,22 +125,25 @@ public class HintHUD extends HUD {
                 if (isBanknote(boughtItemStacks[i])) boughtItemStacks[i] = null;
             }
 
-            String label = countNotNull(soldItemStacks) == 0 ? "gui.vendingBlock.isSelling" : "gui.vendingBlock.and";
-            long amount = tileEntity.soldCreditsSum();
-            String amountStr = I18n.format(label).trim() + " " + Utils.format(amount) + getCurrencyName(amount);
+            long amountSold = tileEntity.soldCreditsSum();
+            long amountBought = tileEntity.boughtCreditsSum();
+
+            String label = countNotNull(soldItemStacks) == 0 ?
+                    (amountBought == 0 ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
+            String amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + getCurrencyName(amountSold);
             labelSoldCredits.setCaption(amountStr);
-            labelSoldCredits.hidden = amount == 0;
+            labelSoldCredits.hidden = amountSold == 0;
 
-            label = countNotNull(boughtItemStacks) == 0 ? "gui.vendingBlock.for" : "gui.vendingBlock.and";
-            amount = tileEntity.boughtCreditsSum();
-            amountStr = I18n.format(label).trim() + " " + Utils.format(amount) + getCurrencyName(amount);
+            label = countNotNull(boughtItemStacks) == 0 ?
+                    (amountSold == 0 ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
+            amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + getCurrencyName(amountBought);
             labelBoughtCredits.setCaption(amountStr);
-            labelBoughtCredits.hidden = amount == 0;
-
+            labelBoughtCredits.hidden = amountBought == 0;
         }
 
         soldItems.hidden = countNotNull(soldItemStacks) == 0;
         boughtItems.hidden = countNotNull(boughtItemStacks) == 0;
+        layout.hidden = soldItems.hidden && boughtItems.hidden && labelBoughtCredits.hidden && labelSoldCredits.hidden;
         soldItemList.setItems(soldItemStacks);
         boughtItemList.setItems(boughtItemStacks);
         String tooltip;
@@ -153,8 +154,14 @@ public class HintHUD extends HUD {
             labelSoldDesc.setCaption(getTooltips(soldItemStacks));
         }
 
+        labelSelling.setCaption(boughtItems.hidden & labelBoughtCredits.hidden ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.isSelling");
+        labelFor.setCaption(soldItems.hidden & labelSoldCredits.hidden ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.for");
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        if (!layout.hidden)
+            drawGradientRect(layout.x - 6, layout.y - 5,
+                    layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 5 - 2,
+                    0xc0101010, 0xd0101010);
         super.render();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
