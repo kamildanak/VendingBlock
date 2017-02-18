@@ -1,16 +1,21 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import info.jbcs.minecraft.vending.gui.lib.IGuiWrapper;
+import info.jbcs.minecraft.vending.gui.lib.input.InputKeyboardEvent;
+import info.jbcs.minecraft.vending.gui.lib.input.InputMouseEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 
-public class GuiElement {
+public abstract class GuiElement {
     public int x;
     public int y;
     public int w;
     public int h;
+    public boolean hidden;
+    public boolean center;
 
-    public GuiScreenPlus gui;
+    public IGuiWrapper gui;
     public GuiElement parent, addedParent;
     private ArrayList<GuiElement> children = null;
 
@@ -19,11 +24,17 @@ public class GuiElement {
         this.y = y;
         this.w = w;
         this.h = h;
+        hidden = false;
+        center = false;
+    }
+
+    public ArrayList<GuiElement> getChildren() {
+        return children;
     }
 
     public GuiElement addChild(GuiElement e) {
         if (children == null) {
-            children = new ArrayList<GuiElement>();
+            children = new ArrayList<>();
         }
 
         if (e.parent != null) {
@@ -126,7 +137,7 @@ public class GuiElement {
     }
 
     public void render() {
-        if (children == null) {
+        if (children == null || hidden) {
             return;
         }
 
@@ -149,4 +160,8 @@ public class GuiElement {
             }
         }
     }
+
+    public abstract int getHeight();
+
+    public abstract int getWidth();
 }

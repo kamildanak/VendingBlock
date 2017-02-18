@@ -1,4 +1,4 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.input;
 
 public class InputMouseEvent extends InputEvent {
     public int x;

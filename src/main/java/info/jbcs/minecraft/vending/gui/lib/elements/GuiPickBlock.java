@@ -1,7 +1,8 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
 
 
-import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.gui.lib.input.IPickBlockHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -9,14 +10,13 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 
 import java.io.IOException;
 
 public class GuiPickBlock extends GuiContainer {
-    Scrollbar scrollbar;
-    ContainerPickBlock container;
-    GuiScreen parent;
+    private Scrollbar scrollbar;
+    private ContainerPickBlock container;
+    private GuiScreen parent;
 
     public GuiPickBlock(EntityPlayer player, ItemStack stack, GuiScreen screen) {
         super(new ContainerPickBlock(player));
@@ -30,7 +30,7 @@ public class GuiPickBlock extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-        GeneralClient.bind("vending:textures/list_items.png");
+        Utils.bind("vending:textures/list_items.png");
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         scrollbar.drawButton(mc, x, y);
     }
@@ -67,7 +67,7 @@ public class GuiPickBlock extends GuiContainer {
                 container.scrollTo(off);
             }
         });
-        buttonList.add(new GuiButton(100, guiLeft + 44, guiTop + 151, 70, 20, I18n.translateToLocal("gui.vendingBlock.select")));
+        buttonList.add(new GuiButton(100, guiLeft + 44, guiTop + 151, 70, 20, net.minecraft.client.resources.I18n.format("gui.vendingBlock.select").trim()));
     }
 
     public void picked(ItemStack stack) {

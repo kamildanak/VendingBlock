@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -13,13 +12,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameData;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Random;
 
 public class General {
     public static Random rand = new Random();
     static HashMap<String, Block> blockMapping;
 
-    public static void propelTowards(Entity what, Entity whereTo, double force) {
+    public static void propelTowards(Entity what, Entity whereTo, @SuppressWarnings("SameParameterValue") double force) {
         double dx = whereTo.posX - what.posX;
         double dy = whereTo.posY - what.posY;
         double dz = whereTo.posZ - what.posZ;
@@ -50,58 +50,12 @@ public class General {
 
         return stack.getItem();
     }
-
-    /*
-        public static Block getBlock(int blockId) {
-            if (blockId < 0)
-                return null;
-
-            return Block.blocksList[blockId];
-        }
-    */
     public static Item getItem(int itemId) {
         return GameData.getItemRegistry().getObjectById(itemId);
     }
 
     public static Integer getItemId(Item item) {
         return GameData.getItemRegistry().getId(item);
-    }
-
-    public static String getUnlocalizedName(Block block) {
-        String name = block.getUnlocalizedName();
-        if (name.startsWith("tile.")) name = name.substring(5);
-
-        return name;
-    }
-
-    public static Block getBlock(String s, Block fallback) {
-        Set blockReg = GameData.getBlockRegistry().getKeys();
-        List<String> blockList = new ArrayList<String>();
-        blockList.addAll(blockReg);
-        String[] blockNames = blockList.toArray(new String[0]);
-
-        if (blockMapping == null) {
-            blockMapping = new HashMap<String, Block>();
-
-            for (int i = 0; i < blockList.size(); i++) {
-                Block block = Block.getBlockFromName(blockNames[i]);
-                if (block == null) continue;
-                String name = block.getUnlocalizedName();
-                if (name.startsWith("tile.")) name = name.substring(5);
-
-                blockMapping.put(name.toLowerCase(), block);
-            }
-        }
-
-        Block res = blockMapping.get(s.toLowerCase());
-        if (res == null) return fallback;
-        return res;
-
-    }
-
-
-    public static Block getBlock(String s) {
-        return getBlock(s, Blocks.STONE);
     }
 
     public static String getName(Block block) {

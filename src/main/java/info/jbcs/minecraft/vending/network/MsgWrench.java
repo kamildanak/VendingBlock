@@ -59,7 +59,7 @@ public class MsgWrench extends Message {
             if (!(tileEntity instanceof TileEntityVendingMachine))
                 return null;
             TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
-            entity.infinite = message.infinite;
+            entity.setInfinite(message.infinite);
             entity.setOwnerName(message.ownerName);
             entity.markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
             return null;

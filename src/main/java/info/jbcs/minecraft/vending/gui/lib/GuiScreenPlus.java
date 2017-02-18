@@ -1,7 +1,12 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib;
 
-import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.gui.lib.elements.GuiElement;
+import info.jbcs.minecraft.vending.gui.lib.input.InputKeyboardEvent;
+import info.jbcs.minecraft.vending.gui.lib.input.InputMouseEvent;
+import info.jbcs.minecraft.vending.gui.lib.layouts.AbsoluteLayout;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
@@ -11,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class GuiScreenPlus extends GuiContainer {
+public class GuiScreenPlus extends GuiContainer implements IGuiWrapper {
     public int screenW;
     public int screenH;
     public int screenX;
@@ -28,7 +33,7 @@ public class GuiScreenPlus extends GuiContainer {
 
     public GuiScreenPlus(Container container, int w, int h, String backgroundTexture) {
         super(container);
-        root = new GuiElement(0, 0, w, h);
+        root = new AbsoluteLayout(0, 0);
         root.gui = this;
         this.screenW = w;
         this.screenH = h;
@@ -144,7 +149,7 @@ public class GuiScreenPlus extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float f, int bx, int by) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        GeneralClient.bind(backgroundTexture);
+        bindTexture(backgroundTexture);
         drawTexturedModalRect(screenX, screenY, 0, 0, screenW, screenH);
     }
 
@@ -209,6 +214,11 @@ public class GuiScreenPlus extends GuiContainer {
     }
 
     public void bindTexture(String tex) {
-        GeneralClient.bind(tex);
+        Utils.bind(tex);
+    }
+
+
+    public Minecraft getMinecraft() {
+        return mc;
     }
 }

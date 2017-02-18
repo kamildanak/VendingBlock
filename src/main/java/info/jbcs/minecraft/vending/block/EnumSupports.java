@@ -5,6 +5,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.IStringSerializable;
 
+import javax.annotation.Nonnull;
+
 public enum EnumSupports implements IStringSerializable {
     STONE(0, "stone", "stone", Blocks.STONE, Blocks.STONE),
     COBBLE_STONE(1, "stonebrick", "stonebrick", Blocks.COBBLESTONE, Blocks.COBBLESTONE),
@@ -63,6 +65,7 @@ public enum EnumSupports implements IStringSerializable {
         return this.unlocalizedName;
     }
 
+    @Nonnull
     public String getName() {
         return this.name;
     }

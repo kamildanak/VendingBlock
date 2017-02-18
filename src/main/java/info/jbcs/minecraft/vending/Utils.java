@@ -11,7 +11,7 @@ import java.util.TreeMap;
 @SuppressWarnings({"Duplicates"})
 public class Utils {
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-    static HashMap<String, ResourceLocation> resources = new HashMap<String, ResourceLocation>();
+    private static HashMap<String, ResourceLocation> resources = new HashMap<>();
 
     static {
         suffixes.put(1_000L, "k");

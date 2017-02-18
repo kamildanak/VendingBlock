@@ -1,7 +1,11 @@
 package info.jbcs.minecraft.vending;
 
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
-import info.jbcs.minecraft.vending.gui.*;
+import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiMultipleVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
+import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
+import info.jbcs.minecraft.vending.gui.lib.GuiHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
@@ -25,15 +29,17 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
+
 @Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION)
-// dependencies = "required-after:autoutils"
 public class Vending {
     public static final String MOD_ID = "vending";
+    @SuppressWarnings("WeakerAccess")
     public static final String MOD_NAME = "vending";
+    @SuppressWarnings("WeakerAccess")
     public static final String VERSION = "1.3.4";
 
     @Instance(MOD_ID)
@@ -56,8 +62,9 @@ public class Vending {
     public static boolean block_placing_next_to_doors;
     public static boolean transfer_to_inventory;
     @SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
+    @SuppressWarnings("WeakerAccess")
     public static CommonProxy commonProxy;
-    static Configuration config;
+    private static Configuration config;
     public MessagePipeline messagePipeline;
 
     public Vending() {
@@ -65,6 +72,7 @@ public class Vending {
     }
 
     @EventHandler
+    @SuppressWarnings("unused")
     public void preInit(FMLPreInitializationEvent event) {
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
@@ -72,11 +80,13 @@ public class Vending {
         blockAdvancedVendingMachine = new BlockVendingMachine(true, false, "vendingMachineAdvanced");
         blockMultipleVendingMachine = new BlockVendingMachine(false, true, "vendingMachineMultiple");
 
-        itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setContainerItem(itemWrench);
-        GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
+        itemWrench = new Item().setRegistryName("vendingMachineWrench").setUnlocalizedName("vendingMachineWrench")
+                .setCreativeTab(tabVending).setContainerItem(itemWrench);
+        GameRegistry.register(itemWrench);
     }
 
     @EventHandler
+    @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
         commonProxy.registerPackets(messagePipeline);
         commonProxy.registerEventHandlers();
@@ -86,11 +96,13 @@ public class Vending {
         if (config.get("general", "use_custom_creative_tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)) {
             tabVending = new CreativeTabs("tabVending") {
                 @Override
+                @Nonnull
                 public ItemStack getIconItemStack() {
                     return new ItemStack(blockVendingMachine, 1, 4);
                 }
 
                 @Override
+                @Nonnull
                 public Item getTabIconItem() {
                     return new ItemStack(blockVendingMachine, 1, 4).getItem();
                 }
@@ -126,10 +138,10 @@ public class Vending {
 
                 TileEntityVendingMachine e = (TileEntityVendingMachine) tileEntity;
 
-                if (e.advanced)
+                if (e.isAdvanced())
                     return new ContainerAdvancedVendingMachine(player.inventory, e);
 
-                if (e.multiple)
+                if (e.isMultiple())
                     return new ContainerMultipleVendingMachine(player.inventory, e);
 
                 return new ContainerVendingMachine(player.inventory, e);
@@ -144,10 +156,10 @@ public class Vending {
 
                 TileEntityVendingMachine e = (TileEntityVendingMachine) tileEntity;
 
-                if (e.advanced)
+                if (e.isAdvanced())
                     return new GuiAdvancedVendingMachine(player.inventory, e);
 
-                if (e.multiple)
+                if (e.isMultiple())
                     return new GuiMultipleVendingMachine(player.inventory, e);
 
                 return new GuiVendingMachine(player.inventory, e);
@@ -175,7 +187,7 @@ public class Vending {
         sound_processed = SoundEvent.REGISTRY.getObject(resourcelocation);
 
         resourcelocation = new ResourceLocation("vending", "vending.sound.forbidden");
-        SoundEvent.REGISTRY.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
+        SoundEvent.REGISTRY.register(soundEventId, resourcelocation, new SoundEvent(resourcelocation));
         sound_forbidden = SoundEvent.REGISTRY.getObject(resourcelocation);
 
 		/*
@@ -185,13 +197,6 @@ public class Vending {
 			System.out.println(soundEvent.getSoundName());
 		}*/
     }
-
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-
-    }
-
-
 }
 
 

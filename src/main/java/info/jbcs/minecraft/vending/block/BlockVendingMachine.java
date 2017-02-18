@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,21 +29,24 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 
 public class BlockVendingMachine extends BlockContainer {
-    public static final PropertyEnum<EnumSupports> SUPPORT = PropertyEnum.create("support", EnumSupports.class);
-    boolean isAdvanced, isMultiple, isOpen;
+    private static final PropertyEnum<EnumSupports> SUPPORT = PropertyEnum.create("support", EnumSupports.class);
+    private boolean isAdvanced, isMultiple, isOpen;
     private String name;
 
     public BlockVendingMachine(boolean advanced, boolean multiple, String name) {
         super(Material.GLASS);
         setUnlocalizedName(name);
+        setRegistryName(name);
         this.name = name;
         this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
-        GameRegistry.registerBlock(this, name);
+        GameRegistry.register(this);
+        GameRegistry.register(new ItemBlock(this).setRegistryName(this.getRegistryName()).setHasSubtypes(true).setMaxDamage(0));
 
         setSoundType(SoundType.GLASS);
 
@@ -58,21 +62,26 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    @Nonnull
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return new AxisAlignedBB(0.0625f, 0.125f, 0.0625f, 0.9375f, 0.9375f, 0.9375f);
     }
 
     @Override
+    @Nonnull
     public EnumBlockRenderType getRenderType(IBlockState state) {
         return EnumBlockRenderType.MODEL;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean isFullCube(IBlockState state) {
         return false;
     }
 
     @Override
+    @Nonnull
     public BlockRenderLayer getBlockLayer() {
         return BlockRenderLayer.CUTOUT;
     }
@@ -82,6 +91,7 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     @Override
+    @Nonnull
     public String getLocalizedName() {
         return I18n.translateToLocal("tile." + getName() + ".name");
     }
@@ -140,7 +150,7 @@ public class BlockVendingMachine extends BlockContainer {
                         sold.writeToNBT(tag);
                         ItemStack vended = ItemStack.loadItemStackFromNBT(tag);
 
-                        if (!tileEntity.infinite) {
+                        if (!tileEntity.isInfinite()) {
                             tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
                         }
 
@@ -176,11 +186,11 @@ public class BlockVendingMachine extends BlockContainer {
                         entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
                     }
 
-                    if (!tileEntity.infinite)
+                    if (!tileEntity.isInfinite())
                         tileEntity.inventory.addItemStackToInventory(paid, 0, 8);
                 }
 
-                if (!tileEntity.infinite)
+                if (!tileEntity.isInfinite())
                     tileEntity.inventory.onInventoryChanged();
             }
             world.playSound(entityplayer, blockPos, Vending.sound_processed, SoundCategory.MASTER, 0.3f, 0.6f);
@@ -219,13 +229,11 @@ public class BlockVendingMachine extends BlockContainer {
 
         if (entityPlayer.getDisplayNameString().equals(tileEntity.getOwnerName()) && !entityPlayer.isSneaking()) {
             Vending.guiVending.open(entityPlayer, world, blockPos);
-
             return true;
         }
 
         if (entityPlayer.capabilities.isCreativeMode && !entityPlayer.isSneaking()) {
             Vending.guiVending.open(entityPlayer, world, blockPos);
-
             return true;
         }
 
@@ -249,9 +257,7 @@ public class BlockVendingMachine extends BlockContainer {
     @Override
     public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack) {
         world.setBlockState(blockPos, getStateFromMeta(stack.getMetadata()));
-        TileEntityVendingMachine e = new TileEntityVendingMachine();
-        e.advanced = isAdvanced;
-        e.multiple = isMultiple;
+        TileEntityVendingMachine e = new TileEntityVendingMachine(isAdvanced, false, isMultiple);
         e.setOpen(isOpen);
 
         if (entityLiving != null) {
@@ -264,9 +270,7 @@ public class BlockVendingMachine extends BlockContainer {
 
     @Override
     public TileEntity createNewTileEntity(World var1, int metadata) {
-        TileEntityVendingMachine e = new TileEntityVendingMachine();
-        e.advanced = isAdvanced;
-        e.multiple = isMultiple;
+        TileEntityVendingMachine e = new TileEntityVendingMachine(isAdvanced, false, isMultiple);
         e.setOpen(isOpen);
 
         return e;
@@ -283,7 +287,7 @@ public class BlockVendingMachine extends BlockContainer {
             ItemStack itemstack = tileEntityChest.getStackInSlot(l);
             if (itemstack == null)
                 continue;
-            if (l == 10 && tileEntityChest.advanced)
+            if (l == 10 && tileEntityChest.isAdvanced())
                 continue;
 
             float f = world.rand.nextFloat() * 0.8F + 0.1F;

@@ -1,10 +1,12 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import info.jbcs.minecraft.vending.gui.lib.input.InputKeyboardEvent;
+import info.jbcs.minecraft.vending.gui.lib.input.InputMouseEvent;
 import net.minecraft.client.gui.GuiTextField;
 
 public class GuiEdit extends GuiElement {
     GuiTextField field;
-    String tempString = "";
+    private String tempString = "";
 
     public GuiEdit(int x, int y, int w, int h) {
         super(x, y, w, h);
@@ -48,10 +50,21 @@ public class GuiEdit extends GuiElement {
 
     @Override
     public void keyPressed(InputKeyboardEvent ev) {
-        field.textboxKeyTyped(ev.character, ev.key);
+        if (!field.isFocused()) return;
 
-        if (field.isFocused()) {
-            ev.handled = true;
-        }
+        field.textboxKeyTyped(ev.character, ev.key);
+        ev.handled = true;
+    }
+
+    @Override
+    public int getHeight() {
+        if (hidden) return 0;
+        return h;
+    }
+
+    @Override
+    public int getWidth() {
+        if (hidden) return 0;
+        return w;
     }
 }

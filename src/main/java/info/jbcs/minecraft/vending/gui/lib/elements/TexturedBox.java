@@ -1,4 +1,6 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
+
+import info.jbcs.minecraft.vending.gui.lib.IGuiWrapper;
 
 public class TexturedBox {
     String texture;
@@ -17,7 +19,7 @@ public class TexturedBox {
         this.borderLeft = borderLeft;
     }
 
-    public void render(GuiScreenPlus gui, int x, int y, int w, int h) {
+    public void render(IGuiWrapper gui, int x, int y, int w, int h) {
         int x2 = x + borderLeft;
         int x3 = x + w - borderRight;
         int y2 = y + borderTop;

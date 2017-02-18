@@ -17,6 +17,7 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f, int p_180535_9_) {
         TileEntityVendingMachine machine = (TileEntityVendingMachine) tileEntity;
 
+        //noinspection ConstantConditions
         if (machine == null || machine.getBlockType() == null) {
             return;
         }
@@ -29,9 +30,10 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
             if (itemStack == null) { //|| itemstack.itemID < 0 || itemstack.itemID >= Item.itemsList.length || Item.itemsList[itemstack.itemID] == null) {
                 continue;
             }
-            EntityItem entity = new EntityItem(null, x, y, z, itemStack);
+            EntityItem entity = new EntityItem(tileEntity.getWorld(), x, y, z, itemStack);
             entity.hoverStart = 0;
 
+            //noinspection ConstantConditions
             if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null) {
                 NBTTagCompound nbtTagCompound = new NBTTagCompound(); //TODO: Find a better way
                 entity.writeEntityToNBT(nbtTagCompound);
@@ -42,7 +44,7 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
             try {
                 Minecraft.getMinecraft().getRenderManager().getEntityClassRenderObject(entity.getClass()).doRender(entity, (notNullSold == 1) ? 0 : -0.1 + (A % 2) * 0.2, -0.2, (notNullSold == 1) ? 0 : -0.1 + (A < 2 ? 0 : 1) * 0.2, f, f);
                 //Minecraft.getMinecraft().getRenderManager().renderEntityWithPosYaw(entity, );
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
             A = A + 1;
         }

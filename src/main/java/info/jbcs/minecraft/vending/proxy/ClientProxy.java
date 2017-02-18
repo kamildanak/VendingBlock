@@ -3,7 +3,7 @@ package info.jbcs.minecraft.vending.proxy;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.block.EnumSupports;
-import info.jbcs.minecraft.vending.gui.HintGui;
+import info.jbcs.minecraft.vending.gui.hud.HintHUD;
 import info.jbcs.minecraft.vending.renderer.TileEntityVendingMachineRenderer;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
@@ -13,18 +13,18 @@ import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-//import net.minecraft.util.EnumMovingObjectType;
-
+@SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
     private Minecraft mc;
 
     @Override
     public void registerEventHandlers() {
-        MinecraftForge.EVENT_BUS.register(new HintGui(Minecraft.getMinecraft()));
+        MinecraftForge.EVENT_BUS.register(new HintHUD(Minecraft.getMinecraft()));
     }
 
     @Override
     public void registerRenderers() {
+        //noinspection unchecked
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityVendingMachine.class, new TileEntityVendingMachineRenderer());
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
         renderItem.getItemModelMesher().register(Vending.itemWrench, 0, new ModelResourceLocation(Vending.MOD_ID + ":" + "vendingMachineWrench", "inventory"));

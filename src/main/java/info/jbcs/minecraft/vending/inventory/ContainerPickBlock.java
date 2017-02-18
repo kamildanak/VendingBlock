@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import info.jbcs.minecraft.vending.gui.GuiPickBlock;
+import info.jbcs.minecraft.vending.gui.lib.elements.GuiPickBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Set;
 
 public class ContainerPickBlock extends Container {
-    public ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+    public ArrayList<ItemStack> items = new ArrayList<>();
     public GuiPickBlock gui;
     public int width = 9;
     public int height = 7;
@@ -38,7 +38,7 @@ public class ContainerPickBlock extends Container {
 
     public ContainerPickBlock(EntityPlayer p) {
         Set itemReg = GameData.getItemRegistry().getKeys();
-        List<ResourceLocation> itemList = new ArrayList<ResourceLocation>();
+        List<ResourceLocation> itemList = new ArrayList<>();
         itemList.addAll(itemReg);
 
         for (ResourceLocation itemName : itemList) {

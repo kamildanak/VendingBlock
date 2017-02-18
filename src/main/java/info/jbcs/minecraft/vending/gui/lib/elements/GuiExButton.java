@@ -1,9 +1,11 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
 
+import info.jbcs.minecraft.vending.gui.lib.input.InputMouseEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.init.SoundEvents;
 
 public class GuiExButton extends GuiElement {
@@ -22,7 +24,7 @@ public class GuiExButton extends GuiElement {
 
     public GuiExButton(int x, int y, int w, int h, String caption, String texture) {
         super(x, y, w, h);
-        this.caption = caption;
+        this.caption = I18n.format(caption).trim();
         disabled = false;
         u = 0;
         v = 46;
@@ -73,5 +75,17 @@ public class GuiExButton extends GuiElement {
         SoundHandler soundHandler = new SoundHandler(mc.getResourceManager(), mc.gameSettings);
         soundHandler.playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         onClick();
+    }
+
+    @Override
+    public int getHeight() {
+        if (hidden) return 0;
+        return h;
+    }
+
+    @Override
+    public int getWidth() {
+        if (hidden) return 0;
+        return w;
     }
 }

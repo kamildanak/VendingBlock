@@ -1,9 +1,11 @@
-package info.jbcs.minecraft.vending.gui;
+package info.jbcs.minecraft.vending.gui.lib.elements;
 
-import info.jbcs.minecraft.vending.GeneralClient;
+import info.jbcs.minecraft.vending.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.input.Mouse;
+
+import javax.annotation.Nonnull;
 
 public abstract class Scrollbar extends GuiButton {
     public boolean active;
@@ -49,7 +51,7 @@ public abstract class Scrollbar extends GuiButton {
      * Draws this button to the screen.
      */
     @Override
-    public void drawButton(Minecraft mc, int x, int y) {
+    public void drawButton(@Nonnull Minecraft mc, int x, int y) {
         if (dragged) {
             float initialOffset = offset;
             int off = y - yPosition - elementHeight / 2;
@@ -69,7 +71,7 @@ public abstract class Scrollbar extends GuiButton {
         }
 
         int bottom = yPosition + height;
-        GeneralClient.bind("textures/gui/container/creative_inventory/tabs.png");
+        Utils.bind("textures/gui/container/creative_inventory/tabs.png");
         drawTexturedModalRect(xPosition, yPosition + (int) ((height - elementHeight) * offset), active ? 232 : 244, 0, 12, elementHeight);
     }
 

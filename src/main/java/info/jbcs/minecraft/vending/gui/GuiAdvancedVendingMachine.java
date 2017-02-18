@@ -1,7 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.gui.lib.elements.GuiPickBlock;
+import info.jbcs.minecraft.vending.gui.lib.input.IPickBlockHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
@@ -9,12 +10,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.translation.I18n;
 
 public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPickBlockHandler {
-    ContainerAdvancedVendingMachine container;
-    EntityPlayer player;
+    private ContainerAdvancedVendingMachine container;
+    private EntityPlayer player;
 
     public GuiAdvancedVendingMachine(InventoryPlayer inventoryplayer, TileEntityVendingMachine machine) {
         super(new ContainerAdvancedVendingMachine(inventoryplayer, machine), machine);
@@ -26,7 +27,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, I18n.translateToLocal("gui.vendingBlock.select")));
+        buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, "gui.vendingBlock.select"));
     }
 
     /**
@@ -47,7 +48,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
         if (stack == null) {
             msg = new MsgAdvVenSetItem(0, 0, 0);
         } else {
-            msg = new MsgAdvVenSetItem(General.getItemId(stack.getItem()), stack.stackSize, stack.getItemDamage());
+            msg = new MsgAdvVenSetItem(Item.getIdFromItem(stack.getItem()), stack.stackSize, stack.getItemDamage());
         }
         Vending.instance.messagePipeline.sendToServer(msg);
     }

@@ -17,5 +17,7 @@ gui.vendingBlock.no=no
 gui.vendingBlock.apply=Apply
 gui.vendingBlock.isSelling=is selling
 gui.vendingBlock.for=for
+gui.vendingBlock.and=and
 gui.vendingBlock.isGivingAway=is giving away
 gui.vendingBlock.isAccepting=is accepting
+gui.vendingBlock.closed=Shop is closed

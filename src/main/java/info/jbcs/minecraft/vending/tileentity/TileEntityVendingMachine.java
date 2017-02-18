@@ -16,13 +16,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.Optional;
 
+import javax.annotation.Nonnull;
+
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
     private static final int[] side0 = new int[]{};
-    public ItemStack[] sold = {null, null, null, null};
-    public ItemStack[] bought = {null, null, null, null};
-    public boolean advanced = false;
-    public boolean infinite = false;
-    public boolean multiple = false;
+    private ItemStack[] sold = {null, null, null, null};
+    private ItemStack[] bought = {null, null, null, null};
+    private boolean advanced = false;
+    private boolean infinite = false;
+    private boolean multiple = false;
     public InventoryStatic inventory = new InventoryStatic(14) {
         @Override
         public String getName() {
@@ -67,6 +69,15 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     };
     private String ownerName = "";
     private boolean open = true;
+
+    public TileEntityVendingMachine(boolean advanced, boolean infinite, boolean multiple) {
+        this.advanced = advanced;
+        this.infinite = infinite;
+        this.multiple = multiple;
+    }
+
+    public TileEntityVendingMachine() {
+    }
 
     public void markBlockForUpdate(BlockPos pos) {
         IBlockState blockState = worldObj.getBlockState(pos);
@@ -146,17 +157,17 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
-    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+    public boolean isUseableByPlayer(@Nonnull EntityPlayer entityplayer) {
         return inventory.isUseableByPlayer(entityplayer);
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
+    public void openInventory(@Nonnull EntityPlayer player) {
 
     }
 
     @Override
-    public void closeInventory(EntityPlayer player) {
+    public void closeInventory(@Nonnull EntityPlayer player) {
 
     }
 
@@ -173,8 +184,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
+    @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
-        super.writeToNBT(nbttagcompound);
         inventory.writeToNBT(nbttagcompound);
         nbttagcompound.setString("owner", ownerName);
         nbttagcompound.setBoolean("advanced", advanced);
@@ -185,6 +196,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
 
+    @Nonnull
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
         writeToNBT(updateTag);
@@ -204,7 +216,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
-    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+    public boolean isItemValidForSlot(int i, @Nonnull ItemStack itemstack) {
         return !((!multiple && i == 100) || (advanced && multiple && i == 13));
     }
 
@@ -229,21 +241,23 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
-    public int[] getSlotsForFace(EnumFacing side) {
+    @Nonnull
+    public int[] getSlotsForFace(@Nonnull EnumFacing side) {
         return side0;
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canInsertItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
         return this.isItemValidForSlot(index, stack);
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
         return false;
     }
 
     @Override
+    @Nonnull
     public String getName() {
         return inventory.getName();
     }
@@ -254,8 +268,9 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
+    @Nonnull
     public ITextComponent getDisplayName() {
-        return null;
+        return inventory.getDisplayName();
     }
 
     public String getOwnerName() {
@@ -289,11 +304,27 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
         long sum = 0;
         for (ItemStack itemStack : stacks) {
             if (itemStack == null) continue;
-            if (itemStack.getItem() instanceof ItemFilledBanknote) {
+            if (itemStack.getItem() instanceof ItemFilledBanknote && itemStack.getTagCompound() != null) {
                 sum += itemStack.getTagCompound().getLong("Amount");
             }
         }
         return sum;
+    }
+
+    public boolean isInfinite() {
+        return infinite;
+    }
+
+    public void setInfinite(boolean infinite) {
+        this.infinite = infinite;
+    }
+
+    public boolean isAdvanced() {
+        return advanced;
+    }
+
+    public boolean isMultiple() {
+        return multiple;
     }
 }
 
