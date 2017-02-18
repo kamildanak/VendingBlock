@@ -108,8 +108,6 @@ public class HintHUD extends HUD {
         labelClosed.hidden = tileEntity.isOpen();
         boughtAndSold.hidden = !tileEntity.isOpen();
 
-        labelSeller.hidden = false;
-        labelSeller.center = false;
         //labelClosed.hidden = true;
         //boughtAndSold.hidden = true;
 
@@ -129,13 +127,15 @@ public class HintHUD extends HUD {
             long amountBought = tileEntity.boughtCreditsSum();
 
             String label = countNotNull(soldItemStacks) == 0 ?
-                    (amountBought == 0 ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
+                    (amountBought == 0 & countNotNull(boughtItemStacks) == 0 ?
+                            "gui.vendingBlock.isAccepting" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
             String amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + getCurrencyName(amountSold);
             labelSoldCredits.setCaption(amountStr);
             labelSoldCredits.hidden = amountSold == 0;
 
             label = countNotNull(boughtItemStacks) == 0 ?
-                    (amountSold == 0 ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
+                    (amountSold == 0 & countNotNull(soldItemStacks) == 0 ?
+                            "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
             amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + getCurrencyName(amountBought);
             labelBoughtCredits.setCaption(amountStr);
             labelBoughtCredits.hidden = amountBought == 0;
