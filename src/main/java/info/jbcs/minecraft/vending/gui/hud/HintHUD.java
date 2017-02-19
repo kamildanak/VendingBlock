@@ -1,7 +1,6 @@
 package info.jbcs.minecraft.vending.gui.hud;
 
 import com.kamildanak.minecraft.enderpay.EnderPay;
-import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiElement;
@@ -19,7 +18,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -117,10 +115,10 @@ public class HintHUD extends HUD {
         boughtItemStacks = tileEntity.getBoughtItems().clone();
         if (Loader.isModLoaded("enderpay")) {
             for (int i = 0; i < soldItemStacks.length; i++) {
-                if (isBanknote(soldItemStacks[i])) soldItemStacks[i] = null;
+                if (Utils.isBanknote(soldItemStacks[i])) soldItemStacks[i] = null;
             }
             for (int i = 0; i < boughtItemStacks.length; i++) {
-                if (isBanknote(boughtItemStacks[i])) boughtItemStacks[i] = null;
+                if (Utils.isBanknote(boughtItemStacks[i])) boughtItemStacks[i] = null;
             }
 
             long amountSold = tileEntity.soldCreditsSum();
@@ -185,11 +183,5 @@ public class HintHUD extends HUD {
     private String getCurrencyName(long amount) {
         if (amount == 1) return EnderPay.currencyNameSingular;
         return EnderPay.currencyNameMultiple;
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public boolean isBanknote(ItemStack itemStack) {
-        if (itemStack == null) return false;
-        return itemStack.getItem() instanceof ItemFilledBanknote;
     }
 }

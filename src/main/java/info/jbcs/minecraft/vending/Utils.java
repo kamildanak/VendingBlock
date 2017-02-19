@@ -1,7 +1,10 @@
 package info.jbcs.minecraft.vending;
 
+import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Optional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,5 +50,10 @@ public class Utils {
         }
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(res);
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static boolean isBanknote(ItemStack itemStack) {
+        return itemStack != null && itemStack.getItem() instanceof ItemFilledBanknote;
     }
 }
