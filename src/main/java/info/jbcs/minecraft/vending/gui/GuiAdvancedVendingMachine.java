@@ -8,6 +8,7 @@ import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
@@ -27,7 +28,8 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20, "gui.vendingBlock.select"));
+        buttonList.add(new GuiButton(100, guiLeft + 118, guiTop + 58, 50, 20,
+                I18n.format("gui.vendingBlock.select").trim()));
     }
 
     /**

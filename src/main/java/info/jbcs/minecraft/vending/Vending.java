@@ -42,7 +42,7 @@ public class Vending {
     @SuppressWarnings("WeakerAccess")
     public static final String MOD_NAME = "vending";
     @SuppressWarnings("WeakerAccess")
-    public static final String VERSION = "1.3.4";
+    public static final String VERSION = "1.4.1";
 
     @Instance(MOD_ID)
     public static Vending instance;
