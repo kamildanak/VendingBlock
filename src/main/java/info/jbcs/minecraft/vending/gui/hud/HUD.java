@@ -40,6 +40,15 @@ public abstract class HUD extends GuiScreen implements IGuiWrapper {
 
     }
 
+    public void drawTexturedRectangle(int x, int y, int textureX, int textureY, int width, int height) {
+        super.drawTexturedModalRect(x, y, textureX, textureY, width, height);
+    }
+
+    @Override
+    public void drawCenteredString(String caption, int i, int i1, int color) {
+
+    }
+
     public Minecraft getMinecraft() {
         return mc;
     }

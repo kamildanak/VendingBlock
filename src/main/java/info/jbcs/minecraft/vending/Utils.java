@@ -1,9 +1,13 @@
 package info.jbcs.minecraft.vending;
 
-import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
+import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 
 import java.util.HashMap;
@@ -52,8 +56,21 @@ public class Utils {
         Minecraft.getMinecraft().getTextureManager().bindTexture(res);
     }
 
+    public static void throwItemAtPlayer(EntityPlayer entityPlayer, World world, BlockPos blockPos, ItemStack vended) {
+        EntityItem entityitem = new EntityItem(world, blockPos.getX() + 0.5, blockPos.getY() + 1.2, blockPos.getZ() + 0.5, vended);
+        General.propelTowards(entityitem, entityPlayer, 0.2);
+        entityitem.motionY = 0.2;
+        entityitem.setPickupDelay(10);
+        world.spawnEntityInWorld(entityitem);
+    }
+
     @Optional.Method(modid = "enderpay")
     public static boolean isBanknote(ItemStack itemStack) {
-        return itemStack != null && itemStack.getItem() instanceof ItemFilledBanknote;
+        return EnderPayApi.isBlankBanknote(itemStack) || EnderPayApi.isFilledBanknote(itemStack);
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static boolean isFilledBanknote(ItemStack bought) {
+        return EnderPayApi.isFilledBanknote(bought);
     }
 }

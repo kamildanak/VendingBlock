@@ -2,17 +2,19 @@ package info.jbcs.minecraft.vending.gui;
 
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.gui.lib.GuiScreenPlus;
+import info.jbcs.minecraft.vending.gui.lib.IGuiWrapper;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiEdit;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiExButton;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabel;
 import info.jbcs.minecraft.vending.network.MsgWrench;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class GuiWrenchVendingMachine extends GuiScreenPlus {
+public class GuiWrenchVendingMachine extends GuiScreenPlus implements IGuiWrapper {
     private GuiEdit ownerNameEdit;
     private GuiExButton infiniteButton;
     private TileEntityVendingMachine entity;
@@ -29,7 +31,9 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus {
             @Override
             public void onClick() {
                 infinite = !infinite;
-                caption = "gui.vendingBlock.infinite" + ": " + (infinite ? "gui.vendingBlock.yes" : "gui.vendingBlock.no");
+                setCaption(I18n.format("gui.vendingBlock.infinite").trim() + ": " +
+                        (infinite ? I18n.format("gui.vendingBlock.yes").trim() :
+                                I18n.format("gui.vendingBlock.no").trim()));
             }
         });
 

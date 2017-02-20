@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.gui.hud;
 
-import com.kamildanak.minecraft.enderpay.EnderPay;
+import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiElement;
@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -66,7 +67,6 @@ public class HintHUD extends HUD {
         soldItems.addChild(soldItemList = new GuiItemsList(0, 0, 0, 0));
         sold.addChild(labelSoldDesc = new GuiLabelCarousel(0, 0, "", 0xa0a0a0));
         sold.addChild(labelSoldCredits = new GuiLabel(0, 0, "<sCredits>", 0xa0a0a0));
-
         bought.addChild(boughtItems = new LinearLayout(0, 0, true));
         boughtItems.addChild(labelFor = new GuiLabel(0, 0, "gui.vendingBlock.for", 0xa0a0a0));
         boughtItems.addChild(boughtItemList = new GuiItemsList(0, 0, 0, 0));
@@ -103,8 +103,20 @@ public class HintHUD extends HUD {
         labelSeller.setCaption(tileEntity.getOwnerName());
         labelSeller.center = true;
 
-        labelClosed.hidden = tileEntity.isOpen();
-        boughtAndSold.hidden = !tileEntity.isOpen();
+        boolean isOpened = tileEntity.isOpen();
+        if (Loader.isModLoaded("enderpay")) {
+            if (isOpened) {
+                long soldSum = tileEntity.soldCreditsSum();
+                long realTotalSum = tileEntity.realTotalCreditsSum();
+                isOpened = soldSum <= realTotalSum;
+                if (!isOpened) labelClosed.setCaption("gui.vendingBlock.shopNotEnoughCredits");
+            } else {
+                labelClosed.setCaption("gui.vendingBlock.closed");
+            }
+        }
+        labelClosed.hidden = isOpened;
+        boughtAndSold.hidden = !isOpened;
+
 
         //labelClosed.hidden = true;
         //boughtAndSold.hidden = true;
@@ -125,14 +137,14 @@ public class HintHUD extends HUD {
             long amountBought = tileEntity.boughtCreditsSum();
 
             String label = countNotNull(soldItemStacks) == 0 ?
-                    (amountBought == 0 & countNotNull(boughtItemStacks) == 0 ?
+                    (amountBought == 0 && countNotNull(boughtItemStacks) == 0 ?
                             "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
             String amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + getCurrencyName(amountSold);
             labelSoldCredits.setCaption(amountStr);
             labelSoldCredits.hidden = amountSold == 0;
 
             label = countNotNull(boughtItemStacks) == 0 ?
-                    (amountSold == 0 & countNotNull(soldItemStacks) == 0 ?
+                    (amountSold == 0 && countNotNull(soldItemStacks) == 0 ?
                             "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
             amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + getCurrencyName(amountBought);
             labelBoughtCredits.setCaption(amountStr);
@@ -152,14 +164,20 @@ public class HintHUD extends HUD {
             labelSoldDesc.setCaption(getTooltips(soldItemStacks));
         }
 
-        labelSelling.setCaption(boughtItems.hidden & labelBoughtCredits.hidden ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling");
-        labelFor.setCaption(soldItems.hidden & labelSoldCredits.hidden ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for");
+        labelSelling.setCaption(boughtItems.hidden && labelBoughtCredits.hidden ? "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling");
+        labelFor.setCaption(soldItems.hidden && labelSoldCredits.hidden ? "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for");
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (!layout.hidden)
             drawGradientRect(layout.x - 6, layout.y - 5,
                     layout.x + layout.getWidth() + 6, layout.y + layout.getHeight() + 5 - 2,
                     0xc0101010, 0xd0101010);
+
+
+        if (!Loader.isModLoaded("enderpay")) {
+            labelSoldCredits.hidden = true;
+            labelBoughtCredits.hidden = true;
+        }
         super.render();
 
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -180,8 +198,8 @@ public class HintHUD extends HUD {
         return tooltips.toArray(new String[tooltips.size()]);
     }
 
+    @Optional.Method(modid = "enderpay")
     private String getCurrencyName(long amount) {
-        if (amount == 1) return EnderPay.currencyNameSingular;
-        return EnderPay.currencyNameMultiple;
+        return EnderPayApi.getCurrencyName(amount);
     }
 }

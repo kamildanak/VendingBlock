@@ -217,8 +217,11 @@ public class GuiScreenPlus extends GuiContainer implements IGuiWrapper {
         Utils.bind(tex);
     }
 
-
     public Minecraft getMinecraft() {
         return mc;
+    }
+
+    public void drawTexturedRectangle(int x, int y, int textureX, int textureY, int width, int height) {
+        super.drawTexturedModalRect(x, y, textureX, textureY, width, height);
     }
 }

@@ -1,6 +1,7 @@
 package info.jbcs.minecraft.vending.tileentity;
 
-import com.kamildanak.minecraft.enderpay.item.ItemFilledBanknote;
+import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import info.jbcs.minecraft.vending.inventory.InventoryStatic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -103,6 +104,15 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
     public ItemStack[] getBoughtItems() {
         return new ItemStack[]{inventory.getStackInSlot(multiple ? 13 : 10)};
+    }
+
+    public ItemStack[] getInventoryItems() {
+        return new ItemStack[]
+                {
+                        inventory.getStackInSlot(0), inventory.getStackInSlot(1), inventory.getStackInSlot(2),
+                        inventory.getStackInSlot(3), inventory.getStackInSlot(4), inventory.getStackInSlot(5),
+                        inventory.getStackInSlot(6), inventory.getStackInSlot(7), inventory.getStackInSlot(8)
+                };
     }
 
     public void setBoughtItem(ItemStack stack) {
@@ -291,12 +301,12 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
     @Optional.Method(modid = "enderpay")
     public long soldCreditsSum() {
-        return creditsSum(sold);
+        return creditsSum(getSoldItems());
     }
 
     @Optional.Method(modid = "enderpay")
     public long boughtCreditsSum() {
-        return creditsSum(bought);
+        return creditsSum(getBoughtItems());
     }
 
     @Optional.Method(modid = "enderpay")
@@ -304,11 +314,48 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
         long sum = 0;
         for (ItemStack itemStack : stacks) {
             if (itemStack == null) continue;
-            if (itemStack.getItem() instanceof ItemFilledBanknote && itemStack.getTagCompound() != null) {
-                sum += itemStack.getTagCompound().getLong("Amount");
+            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
+                try {
+                    sum += EnderPayApi.getBanknoteOriginalValue(itemStack);
+                } catch (NotABanknoteException ignored) {
+                }
             }
         }
         return sum;
+    }
+
+    @Optional.Method(modid = "enderpay")
+    private long realCreditsSum(ItemStack[] stacks) {
+        long sum = 0;
+        for (ItemStack itemStack : stacks) {
+            if (itemStack == null) continue;
+            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
+                try {
+                    sum += EnderPayApi.getBanknoteCurrentValue(itemStack);
+                } catch (NotABanknoteException ignored) {
+                }
+            }
+        }
+        return sum;
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public long realInventoryCreditsSum() {
+        return realCreditsSum(getInventoryItems());
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public long realTotalCreditsSum() {
+        return realCreditsSum(getInventoryItems()) + realCreditsSum(getSoldItems());
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public boolean hasPlaceForBanknote() {
+        ItemStack[] stacks = getInventoryItems();
+        for (ItemStack itemStack : stacks) {
+            if (itemStack == null || EnderPayApi.isFilledBanknote(itemStack)) return true;
+        }
+        return false;
     }
 
     public boolean isInfinite() {

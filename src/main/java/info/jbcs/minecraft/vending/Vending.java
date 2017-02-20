@@ -34,7 +34,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
 
-@Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION)
+@Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION,
+        dependencies = "after:enderpay")
+
 public class Vending {
     public static final String MOD_ID = "vending";
     @SuppressWarnings("WeakerAccess")

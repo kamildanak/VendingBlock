@@ -53,14 +53,14 @@ public class TexturedBox {
         int texh2 = th - borderTop - borderBottom;
         int texh3 = borderBottom;
         gui.bindTexture(texture);
-        gui.drawTexturedModalRect(x, y, u1, v1, w1, h1);
+        gui.drawTexturedRectangle(x, y, u1, v1, w1, h1);
         gui.drawTiledRect(x2, y, w2, h1, u2, v1, texw2, texh1);
-        gui.drawTexturedModalRect(x3, y, u3, v1, w3, h1);
+        gui.drawTexturedRectangle(x3, y, u3, v1, w3, h1);
         gui.drawTiledRect(x, y2, w1, h2, u1, v2, w1, texh2);
         gui.drawTiledRect(x2, y2, w2, h2, u2, v2, texw2, texh2);
         gui.drawTiledRect(x3, y2, w3, h2, u3, v2, w3, texh2);
-        gui.drawTexturedModalRect(x, y3, u1, v3, w1, h3);
+        gui.drawTexturedRectangle(x, y3, u1, v3, w1, h3);
         gui.drawTiledRect(x2, y3, w2, h3, u2, v3, texw2, texh3);
-        gui.drawTexturedModalRect(x3, y3, u3, v3, w3, h3);
+        gui.drawTexturedRectangle(x3, y3, u3, v3, w3, h3);
     }
 }
