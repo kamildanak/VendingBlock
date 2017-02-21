@@ -6,12 +6,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameData;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -45,7 +47,7 @@ public class General {
     }
 
     public static Item getItem(ItemStack stack) {
-        if (stack == null)
+        if (stack.isEmpty())
             return null;
 
         return stack.getItem();
@@ -89,20 +91,21 @@ public class General {
         //return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
     }
 
-    public static int countNotNull(ItemStack[] itemStacks) {
+    public static int countNotNull(NonNullList<ItemStack> itemStacks) {
         int counter = 0;
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null) counter++;
+            if (!itemStack.isEmpty()) counter++;
         }
         return counter;
     }
 
-    public static ItemStack getNotNull(ItemStack[] itemStacks, int num) {
+    @Nonnull
+    public static ItemStack getNotNull(NonNullList<ItemStack> itemStacks, int num) {
         int counter = -1;
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null) counter++;
+            if (!itemStack.isEmpty()) counter++;
             if (counter == num) return itemStack;
         }
-        return null;
+        return ItemStack.EMPTY;
     }
 }

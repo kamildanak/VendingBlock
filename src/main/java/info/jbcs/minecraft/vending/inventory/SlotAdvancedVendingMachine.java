@@ -5,16 +5,20 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import javax.annotation.Nonnull;
+
 public class SlotAdvancedVendingMachine extends Slot {
     public SlotAdvancedVendingMachine(IInventory inventory, int index, int x, int y) {
         super(inventory, index, x, y);
     }
 
     @Override
-    public void onPickupFromSlot(EntityPlayer player, ItemStack itemstack) {
-        super.onPickupFromSlot(player, itemstack);
-        player.inventory.setItemStack(null);
-        putStack(new ItemStack(itemstack.getItem(), itemstack.stackSize, itemstack.getItemDamage()));
+    @Nonnull
+    public ItemStack onTake(EntityPlayer player, @Nonnull ItemStack itemstack) {
+        super.onTake(player, itemstack);
+        player.inventory.setItemStack(ItemStack.EMPTY);
+        putStack(new ItemStack(itemstack.getItem(), itemstack.getCount(), itemstack.getItemDamage()));
+        return ItemStack.EMPTY;
     }
 
     @Override

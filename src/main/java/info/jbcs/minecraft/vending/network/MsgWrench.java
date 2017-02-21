@@ -4,6 +4,7 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -53,9 +54,9 @@ public class MsgWrench extends Message {
         public IMessage onMessage(MsgWrench message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
-            if (player.inventory.getCurrentItem() == null || player.inventory.getCurrentItem().getItem() != Vending.itemWrench)
+            if (player.inventory.getCurrentItem().isEmpty() || player.inventory.getCurrentItem().getItem() != Vending.itemWrench)
                 return null;
-            TileEntity tileEntity = player.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+            TileEntity tileEntity = player.world.getTileEntity(new BlockPos(message.x, message.y, message.z));
             if (!(tileEntity instanceof TileEntityVendingMachine))
                 return null;
             TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;

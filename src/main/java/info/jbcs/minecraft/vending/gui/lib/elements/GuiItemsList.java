@@ -5,11 +5,14 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nonnull;
 
 public class GuiItemsList extends GuiElement {
 
-    private ItemStack[] items;
+    private NonNullList<ItemStack> items;
 
     public GuiItemsList(int x, int y, int w, int h) {
         super(x, y, w, h);
@@ -38,18 +41,18 @@ public class GuiItemsList extends GuiElement {
         if (hidden || items == null) return 0;
         int c = 0;
         for (ItemStack itemStack : items) {
-            if (itemStack == null) continue;
+            if (itemStack.isEmpty()) continue;
             c++;
         }
         return 18 * c;
     }
 
     private void drawNumberForItem(FontRenderer fontRenderer, ItemStack stack, int ux, int uy) {
-        if (stack == null || stack.stackSize < 2) {
+        if (stack.isEmpty() || stack.getCount() < 2) {
             return;
         }
 
-        String line = "" + stack.stackSize;
+        String line = "" + stack.getCount();
         int x = ux + 19 - 2 - fontRenderer.getStringWidth(line);
         int y = uy + 6 + 3;
         GL11.glTranslatef(0.0f, 0.0f, 500.0f);
@@ -58,10 +61,10 @@ public class GuiItemsList extends GuiElement {
         GL11.glTranslatef(0.0f, 0.0f, -500.0f);
     }
 
-    private void drawItemsWithLabel(FontRenderer fontRenderer, int x, int y, ItemStack[] itemStacks) {
+    private void drawItemsWithLabel(FontRenderer fontRenderer, int x, int y, NonNullList<ItemStack> itemStacks) {
         w = 0;
         for (ItemStack itemStack : itemStacks) {
-            if (itemStack == null) continue;
+            if (itemStack.isEmpty()) continue;
             this.renderItemIntoGUI(itemStack, x + w, y - 4);
             drawNumberForItem(fontRenderer, itemStack, x + w, y - 4);
             w += 18;
@@ -76,7 +79,7 @@ public class GuiItemsList extends GuiElement {
         guiRenderItem.renderItemAndEffectIntoGUI(stack, x, y);
     }
 
-    public void setItems(ItemStack[] items) {
+    public void setItems(NonNullList<ItemStack> items) {
         this.items = items;
     }
 }

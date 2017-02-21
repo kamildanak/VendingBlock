@@ -34,7 +34,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Objects;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
@@ -54,28 +53,29 @@ public class BlockVendingMachine extends BlockContainer {
         isOpen = true;
     }
 
-    private static boolean checkIfFits(ItemStack bought, ItemStack offered, ItemStack[] soldItems, TileEntityVendingMachine tileEntity) {
+    private static boolean checkIfFits(@Nonnull ItemStack bought, @Nonnull ItemStack offered, NonNullList<ItemStack> soldItems, TileEntityVendingMachine tileEntity) {
         if (Loader.isModLoaded("enderpay"))
-            if (bought == null || Utils.isFilledBanknote(bought))
-                return (tileEntity.soldCreditsSum() > 0 || (tileEntity.boughtCreditsSum() > 0 && tileEntity.hasPlaceForBanknote()));
-        if (bought == null) return !(soldItems == null);
+            if(bought.isEmpty() && tileEntity.soldCreditsSum() > 0) return true;
+            if (Utils.isFilledBanknote(bought))
+                return (tileEntity.boughtCreditsSum() > 0 && tileEntity.hasPlaceForBanknote());
+        if (bought.isEmpty()) return countNotNull(soldItems)>0;
         return tileEntity.doesStackFit(bought) &&
-                offered != null &&
+                !offered.isEmpty() &&
                 bought.getItem() == offered.getItem() &&
                 bought.getItemDamage() == offered.getItemDamage() &&
-                offered.stackSize >= bought.stackSize &&
+                offered.getCount() >= bought.getCount() &&
                 Objects.equals(bought.getTagCompound(), offered.getTagCompound());
     }
 
     @Optional.Method(modid = "enderpay")
-    private static void takeCredits(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, ItemStack bought) {
+    private static void takeCredits(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, @Nonnull ItemStack bought) {
         try {
             long amount = EnderPayApi.getBanknoteOriginalValue(bought);
             EnderPayApi.addToBalance(entityplayer.getUniqueID(), -amount);
             if (tileEntity.isInfinite()) return;
             for (int i = 0; i < 9; i++) {
                 ItemStack itemStack = tileEntity.inventory.getStackInSlot(i);
-                if (itemStack == null) {
+                if (itemStack.isEmpty()) {
                     tileEntity.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(amount));
                     break;
                 }
@@ -99,14 +99,14 @@ public class BlockVendingMachine extends BlockContainer {
             long totalSum = tileEntity.realTotalCreditsSum();
             for (int i = 0; i < 9; i++) {
                 if (Utils.isBanknote(tileEntity.inventory.getStackInSlot(i))) {
-                    tileEntity.inventory.setInventorySlotContents(i, null);
+                    tileEntity.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
                 }
             }
             if (inventorySum >= soldAmount) {
                 for (int i = 0; i < 9; i++) {
-                    if (Objects.equals(tileEntity.inventory.getStackInSlot(i), null)) {
+                    if (tileEntity.inventory.getStackInSlot(i).isEmpty()) {
                         tileEntity.inventory.setInventorySlotContents(i,
-                                inventorySum - soldAmount > 0 ? EnderPayApi.getBanknote(inventorySum - soldAmount) : null);
+                                inventorySum - soldAmount > 0 ? EnderPayApi.getBanknote(inventorySum - soldAmount) : ItemStack.EMPTY);
                         break;
                     }
                 }
@@ -114,18 +114,18 @@ public class BlockVendingMachine extends BlockContainer {
                 if (tileEntity.isMultiple()) {
                     for (int i = 9; i < 13; i++) {
                         if (Utils.isBanknote(tileEntity.inventory.getStackInSlot(i))) {
-                            tileEntity.inventory.setInventorySlotContents(i, null);
+                            tileEntity.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
                         }
                     }
                     for (int i = 9; i < 13; i++) {
-                        if (Objects.equals(tileEntity.inventory.getStackInSlot(i), null)) {
+                        if (tileEntity.inventory.getStackInSlot(i).isEmpty()) {
                             tileEntity.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(totalSum - soldAmount));
                             break;
                         }
                     }
                 } else {
                     tileEntity.inventory.setInventorySlotContents(9,
-                            totalSum - soldAmount > 0 ? EnderPayApi.getBanknote(totalSum - soldAmount) : null);
+                            totalSum - soldAmount > 0 ? EnderPayApi.getBanknote(totalSum - soldAmount) : ItemStack.EMPTY);
                 }
             }
         } catch (NoSuchAccountException e) {
@@ -135,7 +135,7 @@ public class BlockVendingMachine extends BlockContainer {
 
     @Optional.Method(modid = "enderpay")
     private static boolean checkIfPlayerHasEnoughtCredits(EntityPlayer entityPlayer, TileEntityVendingMachine tileEntity,
-                                                          ItemStack bought) {
+                                                          @Nonnull ItemStack bought) {
         if (Loader.isModLoaded("enderpay")) {
             if (!Utils.isBanknote(bought)) return true;
             try {
@@ -161,7 +161,7 @@ public class BlockVendingMachine extends BlockContainer {
         setRegistryName(name);
         this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
         GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this).setRegistryName(this.getRegistryName()).setHasSubtypes(true).setMaxDamage(0));
+        GameRegistry.register(new ItemBlock(this).setRegistryName(name).setHasSubtypes(true).setMaxDamage(0));
     }
 
     private void vend(World world, BlockPos blockPos, EntityPlayer entityplayer) {
@@ -172,15 +172,15 @@ public class BlockVendingMachine extends BlockContainer {
             return;
         }
 
-        ItemStack[] soldItems = tileEntity.getSoldItems();
-        ItemStack bought = tileEntity.getBoughtItems()[0];
+        NonNullList<ItemStack> soldItems = tileEntity.getSoldItems();
+        ItemStack bought = tileEntity.getBoughtItems().get(0);
         ItemStack offered = entityplayer.inventory.getCurrentItem();
 
         boolean playerHasEnoughtCredits = true;
         boolean machineHasEnoughtCredits = true;
         if (Loader.isModLoaded("enderpay")) {
-            for (int i = 0; i < soldItems.length; i++) {
-                if (Utils.isBanknote(soldItems[i])) soldItems[i] = null;
+            for (int i = 0; i < soldItems.size(); i++) {
+                if (Utils.isBanknote(soldItems.get(i))) soldItems.set(i,ItemStack.EMPTY);
             }
             playerHasEnoughtCredits = checkIfPlayerHasEnoughtCredits(entityplayer, tileEntity, bought);
             machineHasEnoughtCredits = checkIfMachineHasEnoughtCredits(tileEntity);
@@ -211,11 +211,11 @@ public class BlockVendingMachine extends BlockContainer {
         return soldSum <= realTotalSum;
     }
 
-    private void takeItems(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, ItemStack bought, ItemStack offered) {
-        if (offered != null) {
-            ItemStack paid = offered.splitStack(bought.stackSize);
-            if (offered.stackSize == 0) {
-                entityplayer.inventory.mainInventory[entityplayer.inventory.currentItem] = null;
+    private void takeItems(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, @Nonnull ItemStack bought, @Nonnull ItemStack offered) {
+        if (!offered.isEmpty()) {
+            ItemStack paid = offered.splitStack(bought.getCount());
+            if (offered.getCount() == 0) {
+                entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem,ItemStack.EMPTY);
             }
 
             if (!tileEntity.isInfinite())
@@ -223,24 +223,24 @@ public class BlockVendingMachine extends BlockContainer {
         }
     }
 
-    private void giveItems(ItemStack[] soldItems, EntityPlayer entityPlayer, World world, BlockPos blockPos,
+    private void giveItems(NonNullList<ItemStack> soldItems, EntityPlayer entityPlayer, World world, BlockPos blockPos,
                            TileEntityVendingMachine tileEntity) {
         if (countNotNull(soldItems) == 0) return;
 
-        ItemStack[] soldItemsOld = new ItemStack[soldItems.length];
+        NonNullList<ItemStack> soldItemsOld = NonNullList.withSize(soldItems.size(), ItemStack.EMPTY);
         if (Vending.close_on_partial_sold_out)
-            for (int i = 0; i < soldItems.length; i++)
-                if (soldItems[i] != null)
-                    soldItemsOld[i] = soldItems[i].copy();
+            for (int i = 0; i < soldItems.size(); i++)
+                if (!soldItems.get(i).isEmpty())
+                    soldItemsOld.set(i,soldItems.get(i).copy());
 
         for (ItemStack sold : soldItems) {
-            if (sold == null) continue;
+            if (sold.isEmpty()) continue;
             NBTTagCompound tag = new NBTTagCompound();
             sold.writeToNBT(tag);
-            ItemStack vended = ItemStack.loadItemStackFromNBT(tag);
+            ItemStack vended = new ItemStack(tag);
 
             if (!tileEntity.isInfinite()) {
-                tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.stackSize);
+                tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.getCount());
             }
 
             boolean spawnItem = true;
@@ -254,14 +254,14 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     private void closeIfSoldChanged(TileEntityVendingMachine tileEntity,
-                                    ItemStack[] soldItems, ItemStack[] soldItemsOld) {
-        for (int i = 0; i < soldItemsOld.length; i++) {
-            System.out.println(soldItemsOld[i] != null ? soldItemsOld[i].toString() : "null");
-            System.out.println(tileEntity.getSoldItems()[i] != null ? soldItemsOld[i].toString() : "null");
-            if (soldItemsOld[i] == null && tileEntity.getSoldItems()[i] == null) continue;
-            if (soldItemsOld[i] == null || tileEntity.getSoldItems()[i] == null)
+                                    NonNullList<ItemStack> soldItems, NonNullList<ItemStack> soldItemsOld) {
+        for (int i = 0; i < soldItemsOld.size(); i++) {
+            //System.out.println(!soldItemsOld.get(i).isEmpty() ? soldItemsOld.get(i).toString() : "null");
+            //System.out.println(!tileEntity.getSoldItems().get(i).isEmpty() ? soldItemsOld.get(i).toString() : "null");
+            if (soldItemsOld.get(i).isEmpty() && tileEntity.getSoldItems().get(i).isEmpty()) continue;
+            if (soldItemsOld.get(i).isEmpty() || tileEntity.getSoldItems().get(i).isEmpty())
                 tileEntity.setOpen(false);
-            if (soldItemsOld[i].stackSize != soldItems[i].stackSize) tileEntity.setOpen(false);
+            if (soldItemsOld.get(i).getCount() != soldItems.get(i).getCount()) tileEntity.setOpen(false);
         }
     }
 
@@ -283,12 +283,12 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos blockPos, IBlockState state, EntityPlayer entityPlayer, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
         if (tileEntity == null)
             return false;
 
-        if (entityPlayer.inventory.getCurrentItem() != null && entityPlayer.inventory.getCurrentItem().getItem() == Vending.itemWrench) {
+        if (!entityPlayer.inventory.getCurrentItem().isEmpty() && entityPlayer.inventory.getCurrentItem().getItem() == Vending.itemWrench) {
             Vending.guiWrench.open(entityPlayer, world, blockPos);
             return true;
         }
@@ -321,7 +321,7 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, @Nonnull ItemStack stack) {
         world.setBlockState(blockPos, getStateFromMeta(stack.getMetadata()));
         TileEntityVendingMachine e = new TileEntityVendingMachine(isAdvanced, false, isMultiple);
         e.setOpen(isOpen);
@@ -351,7 +351,7 @@ public class BlockVendingMachine extends BlockContainer {
 
         for (int l = 0; l < tileEntityChest.getSizeInventory(); l++) {
             ItemStack itemstack = tileEntityChest.getStackInSlot(l);
-            if (itemstack == null)
+            if (itemstack.isEmpty())
                 continue;
             if (l == 10 && tileEntityChest.isAdvanced())
                 continue;
@@ -359,23 +359,23 @@ public class BlockVendingMachine extends BlockContainer {
             float f = world.rand.nextFloat() * 0.8F + 0.1F;
             float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
             float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-            while (itemstack.stackSize > 0) {
+            while (itemstack.getCount() > 0) {
                 int i1 = world.rand.nextInt(21) + 10;
-                if (i1 > itemstack.stackSize) {
-                    i1 = itemstack.stackSize;
+                if (i1 > itemstack.getCount()) {
+                    i1 = itemstack.getCount();
                 }
 
-                itemstack.stackSize -= i1;
+                itemstack.setCount(itemstack.getCount()-i1);
                 NBTTagCompound tag = new NBTTagCompound();
                 itemstack.writeToNBT(tag);
-                ItemStack toSpawn = ItemStack.loadItemStackFromNBT(tag);
-                toSpawn.stackSize = i1;
+                ItemStack toSpawn = new ItemStack(tag);
+                toSpawn.setCount(i1);
                 EntityItem entityitem = new EntityItem(world, blockPos.getX() + f, blockPos.getY() + f1, blockPos.getZ() + f2, toSpawn);
                 float f3 = 0.05F;
                 entityitem.motionX = (float) world.rand.nextGaussian() * f3;
                 entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 0.2F;
                 entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-                world.spawnEntityInWorld(entityitem);
+                world.spawnEntity(entityitem);
             }
         }
 
@@ -395,7 +395,7 @@ public class BlockVendingMachine extends BlockContainer {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(@Nonnull Item item, CreativeTabs par2CreativeTabs, List<ItemStack> list) {
+    public void getSubBlocks(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
         for (int i = 0; i < EnumSupports.length; ++i) list.add(new ItemStack(item, 1, i));
     }
 

@@ -5,23 +5,26 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameData;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class ContainerPickBlock extends Container {
-    public ArrayList<ItemStack> items = new ArrayList<>();
+    public NonNullList<ItemStack> items = NonNullList.create();
     public GuiPickBlock gui;
     public int width = 9;
     public int height = 7;
     public SlotPickBlock resultSlot;
     public InventoryStatic inventory = new InventoryStatic(width * height + 1) {
         @Override
+        @Nonnull
         public ItemStack removeStackFromSlot(int i) {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         @Override
@@ -85,13 +88,14 @@ public class ContainerPickBlock extends Container {
     }
 
     @Override
+    @Nonnull
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         SlotPickBlock slot = (SlotPickBlock) this.inventorySlots.get(index);
         return slot.transferStackInSlot(player);
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
+    public boolean canInteractWith(@Nonnull EntityPlayer entityplayer) {
         return true;
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.Optional;
@@ -21,41 +22,43 @@ import javax.annotation.Nonnull;
 
 public class TileEntityVendingMachine extends TileEntity implements IInventory, ISidedInventory {
     private static final int[] side0 = new int[]{};
-    private ItemStack[] sold = {null, null, null, null};
-    private ItemStack[] bought = {null, null, null, null};
+    private NonNullList<ItemStack> sold = NonNullList.withSize(4, ItemStack.EMPTY);
+    private NonNullList<ItemStack> bought = NonNullList.withSize(4, ItemStack.EMPTY);
     private boolean advanced = false;
     private boolean infinite = false;
     private boolean multiple = false;
     public InventoryStatic inventory = new InventoryStatic(14) {
         @Override
+        @Nonnull
         public String getName() {
             return "Vending Machine";
         }
 
         @Override
         public void onInventoryChanged() {
-            if (worldObj == null) {
+            if (world == null) {
                 return;
             }
-            for (int i = 0; i < getSoldItems().length; i++) {
-                if (!ItemStack.areItemStacksEqual(sold[i], getSoldItems()[i])) {
-                    sold[i] = getSoldItems()[i];
-                    if (sold[i] != null) sold[i] = sold[i].copy();
+            for (int i = 0; i < getSoldItems().size(); i++) {
+                if (!ItemStack.areItemStacksEqual(sold.get(i), getSoldItems().get(i))) {
+                    sold.set(i,getSoldItems().get(i));
+                    if (!sold.get(i).isEmpty()) sold.set(i,sold.get(i).copy());
                     markBlockForUpdate(pos);
                 }
             }
-            for (int i = 0; i < getBoughtItems().length; i++) {
-                if (!ItemStack.areItemStacksEqual(bought[i], getBoughtItems()[i])) {
-                    bought[i] = getBoughtItems()[i];
-                    if (bought[i] != null) bought[i] = bought[i].copy();
+            for (int i = 0; i < getBoughtItems().size(); i++) {
+                if (!ItemStack.areItemStacksEqual(bought.get(i), getBoughtItems().get(i))) {
+                    bought.set(i,getBoughtItems().get(i));
+                    if (!bought.get(i).isEmpty()) bought.set(i,bought.get(i).copy());
                     markBlockForUpdate(pos);
                 }
             }
         }
 
         @Override
+        @Nonnull
         public ItemStack removeStackFromSlot(int i) {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         @Override
@@ -64,8 +67,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
         }
 
         @Override
-        public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-            return worldObj.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
+        public boolean isUsableByPlayer(@Nonnull EntityPlayer entityplayer) {
+            return world.getTileEntity(pos) == TileEntityVendingMachine.this && entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
         }
     };
     private String ownerName = "";
@@ -81,8 +84,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     public void markBlockForUpdate(BlockPos pos) {
-        IBlockState blockState = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, blockState, blockState, 3);
+        IBlockState blockState = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, blockState, blockState, 3);
     }
 
     @Override
@@ -91,28 +94,39 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
+    public boolean isEmpty() {
+        return inventory.isEmpty();
+    }
+
+    @Override
+    @Nonnull
     public ItemStack getStackInSlot(int i) {
         return inventory.getStackInSlot(i);
     }
 
-    public ItemStack[] getSoldItems() {
+    @Nonnull
+    public NonNullList<ItemStack> getSoldItems() {
+        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
+        stackNonNullList.add(inventory.getStackInSlot(9));
         if (multiple)
-            return new ItemStack[]{inventory.getStackInSlot(9), inventory.getStackInSlot(10),
-                    inventory.getStackInSlot(11), inventory.getStackInSlot(12)};
-        return new ItemStack[]{inventory.getStackInSlot(9)};
+            for(int i=10; i<13;i++)
+                stackNonNullList.add(inventory.getStackInSlot(i));
+        return stackNonNullList;
     }
 
-    public ItemStack[] getBoughtItems() {
-        return new ItemStack[]{inventory.getStackInSlot(multiple ? 13 : 10)};
+    @Nonnull
+    public NonNullList<ItemStack> getBoughtItems() {
+        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
+        stackNonNullList.add(inventory.getStackInSlot(multiple ? 13 : 10));
+        return stackNonNullList;
     }
 
-    public ItemStack[] getInventoryItems() {
-        return new ItemStack[]
-                {
-                        inventory.getStackInSlot(0), inventory.getStackInSlot(1), inventory.getStackInSlot(2),
-                        inventory.getStackInSlot(3), inventory.getStackInSlot(4), inventory.getStackInSlot(5),
-                        inventory.getStackInSlot(6), inventory.getStackInSlot(7), inventory.getStackInSlot(8)
-                };
+    @Nonnull
+    public NonNullList<ItemStack> getInventoryItems() {
+        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
+        for(int i=0; i<9;i++)
+            stackNonNullList.add(inventory.getStackInSlot(i));
+        return stackNonNullList;
     }
 
     public void setBoughtItem(ItemStack stack) {
@@ -121,19 +135,19 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
     public boolean doesStackFit(ItemStack itemstack) {
         for (int i = 0; i < 9; i++) {
-            if (inventory.items[i] == null) {
+            if (inventory.items.get(i).isEmpty()) {
                 return true;
             }
 
-            if (inventory.items[i].getItem() != itemstack.getItem() && inventory.items[i].isStackable()) {
+            if (inventory.items.get(i).getItem() != itemstack.getItem() && inventory.items.get(i).isStackable()) {
                 continue;
             }
 
-            if (inventory.items[i].stackSize + itemstack.stackSize > inventory.items[i].getMaxStackSize()) {
+            if (inventory.items.get(i).getCount() + itemstack.getCount() > inventory.items.get(i).getMaxStackSize()) {
                 continue;
             }
 
-            if ((inventory.items[i].getHasSubtypes() && inventory.items[i].getItemDamage() != itemstack.getItemDamage())) {
+            if ((inventory.items.get(i).getHasSubtypes() && inventory.items.get(i).getItemDamage() != itemstack.getItemDamage())) {
                 continue;
             }
 
@@ -144,17 +158,19 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
+    @Nonnull
     public ItemStack decrStackSize(int i, int j) {
         return inventory.decrStackSize(i, j);
     }
 
     @Override
+    @Nonnull
     public ItemStack removeStackFromSlot(int i) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public void setInventorySlotContents(int i, ItemStack itemstack) {
+    public void setInventorySlotContents(int i, @Nonnull ItemStack itemstack) {
         if ((advanced && i == 10) || (advanced && multiple && i == 13)) {
             return;
         }
@@ -167,8 +183,8 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Override
-    public boolean isUseableByPlayer(@Nonnull EntityPlayer entityplayer) {
-        return inventory.isUseableByPlayer(entityplayer);
+    public boolean isUsableByPlayer(@Nonnull EntityPlayer entityplayer) {
+        return inventory.isUsableByPlayer(entityplayer);
     }
 
     @Override
@@ -310,10 +326,10 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Optional.Method(modid = "enderpay")
-    private long creditsSum(ItemStack[] stacks) {
+    private long creditsSum(NonNullList<ItemStack> stacks) {
         long sum = 0;
         for (ItemStack itemStack : stacks) {
-            if (itemStack == null) continue;
+            if (itemStack.isEmpty()) continue;
             if (EnderPayApi.isValidFilledBanknote(itemStack)) {
                 try {
                     sum += EnderPayApi.getBanknoteOriginalValue(itemStack);
@@ -325,10 +341,10 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
     }
 
     @Optional.Method(modid = "enderpay")
-    private long realCreditsSum(ItemStack[] stacks) {
+    private long realCreditsSum(NonNullList<ItemStack> stacks) {
         long sum = 0;
         for (ItemStack itemStack : stacks) {
-            if (itemStack == null) continue;
+            if (itemStack.isEmpty()) continue;
             if (EnderPayApi.isValidFilledBanknote(itemStack)) {
                 try {
                     sum += EnderPayApi.getBanknoteCurrentValue(itemStack);
@@ -351,9 +367,9 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
     @Optional.Method(modid = "enderpay")
     public boolean hasPlaceForBanknote() {
-        ItemStack[] stacks = getInventoryItems();
+        NonNullList<ItemStack> stacks = getInventoryItems();
         for (ItemStack itemStack : stacks) {
-            if (itemStack == null || EnderPayApi.isFilledBanknote(itemStack)) return true;
+            if (itemStack.isEmpty() || EnderPayApi.isFilledBanknote(itemStack)) return true;
         }
         return false;
     }

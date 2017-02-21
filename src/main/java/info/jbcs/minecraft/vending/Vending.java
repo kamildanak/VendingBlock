@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import javax.annotation.Nonnull;
 
 @Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION,
-        dependencies = "after:enderpay", acceptedMinecraftVersions = "[1.10,1.10.2]")
+        dependencies = "after:enderpay", acceptedMinecraftVersions = "[1.11,1.11.2]")
 
 public class Vending {
     public static final String MOD_ID = "vending";
@@ -105,8 +105,8 @@ public class Vending {
 
                 @Override
                 @Nonnull
-                public Item getTabIconItem() {
-                    return new ItemStack(blockVendingMachine, 1, 4).getItem();
+                public ItemStack getTabIconItem() {
+                    return new ItemStack(blockVendingMachine, 1, 4);
                 }
             };
         } else {

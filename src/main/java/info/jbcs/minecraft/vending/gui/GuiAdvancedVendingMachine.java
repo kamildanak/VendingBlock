@@ -40,17 +40,17 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
         if (button.id == 100) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems()[0], this));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems().get(0), this));
         }
     }
 
     @Override
     public void blockPicked(final ItemStack stack) {
         MsgAdvVenSetItem msg;
-        if (stack == null) {
+        if (stack.isEmpty()) {
             msg = new MsgAdvVenSetItem(0, 0, 0);
         } else {
-            msg = new MsgAdvVenSetItem(Item.getIdFromItem(stack.getItem()), stack.stackSize, stack.getItemDamage());
+            msg = new MsgAdvVenSetItem(Item.getIdFromItem(stack.getItem()), stack.getCount(), stack.getItemDamage());
         }
         Vending.instance.messagePipeline.sendToServer(msg);
     }

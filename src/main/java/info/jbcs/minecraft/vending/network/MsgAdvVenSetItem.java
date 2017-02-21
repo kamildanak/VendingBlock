@@ -47,7 +47,7 @@ public class MsgAdvVenSetItem extends Message {
                 return null;
             ContainerAdvancedVendingMachine container = (ContainerAdvancedVendingMachine) con;
 
-            container.entity.setBoughtItem(message.id == 0 ? null : new ItemStack(Item.getItemById(message.id), message.count, message.damage));
+            container.entity.setBoughtItem(message.id == 0 ? ItemStack.EMPTY : new ItemStack(Item.getItemById(message.id), message.count, message.damage));
 
             return null;
         }

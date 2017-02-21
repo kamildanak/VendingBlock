@@ -7,6 +7,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.Nonnull;
+
 public class ContainerTileEntity<T extends TileEntity & IInventory> extends Container {
     public final IInventory playerInventory;
     public final T entity;
@@ -30,13 +32,14 @@ public class ContainerTileEntity<T extends TileEntity & IInventory> extends Cont
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
-        return entity.isUseableByPlayer(entityplayer);
+    public boolean canInteractWith(@Nonnull EntityPlayer entityplayer) {
+        return entity.isUsableByPlayer(entityplayer);
     }
 
     @Override
+    @Nonnull
     public ItemStack transferStackInSlot(EntityPlayer entityplayer, int i) {
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(i);
 
         if (slot != null && slot.getHasStack()) {
@@ -45,16 +48,16 @@ public class ContainerTileEntity<T extends TileEntity & IInventory> extends Cont
 
             if (i < playerSlotsCount) {
                 if (!mergeItemStack(itemstack1, playerSlotsCount, inventorySlots.size(), true)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             } else {
                 if (!mergeItemStack(itemstack1, 0, playerSlotsCount, false)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             }
 
-            if (itemstack1.stackSize == 0) {
-                slot.putStack(null);
+            if (itemstack1.getCount() == 0) {
+                slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }

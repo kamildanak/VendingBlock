@@ -61,7 +61,7 @@ public class Utils {
         General.propelTowards(entityitem, entityPlayer, 0.2);
         entityitem.motionY = 0.2;
         entityitem.setPickupDelay(10);
-        world.spawnEntityInWorld(entityitem);
+        world.spawnEntity(entityitem);
     }
 
     @Optional.Method(modid = "enderpay")

@@ -32,6 +32,7 @@ import net.minecraftforge.client.model.pipeline.LightUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -64,7 +65,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     private void renderModel(IBakedModel model, int color) {
-        this.renderModel(model, color, null);
+        this.renderModel(model, color, ItemStack.EMPTY);
     }
 
     private void renderModel(IBakedModel model, int color, ItemStack stack) {
@@ -83,8 +84,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         tessellator.draw();
     }
 
-    public void renderItem(ItemStack stack, IBakedModel model) {
-        if (stack != null) {
+    public void renderItem(@Nonnull ItemStack stack, IBakedModel model) {
+        if (!stack.isEmpty()) {
             GlStateManager.pushMatrix();
             GlStateManager.translate(-0.5F, -0.5F, -0.5F);
             if (model.isBuiltInRenderer()) {
@@ -143,8 +144,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         this.putQuadNormal(renderer, quad);
     }
 
-    private void renderQuads(VertexBuffer renderer, List<BakedQuad> quads, int color, ItemStack stack) {
-        boolean flag = color == -1 && stack != null;
+    private void renderQuads(VertexBuffer renderer, List<BakedQuad> quads, int color, @Nonnull ItemStack stack) {
+        boolean flag = color == -1 && !stack.isEmpty();
         int i = 0;
 
         for (int j = quads.size(); i < j; ++i) {
@@ -164,13 +165,13 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     }
 
-    public boolean shouldRenderItemIn3D(ItemStack stack) {
+    public boolean shouldRenderItemIn3D(@Nonnull ItemStack stack) {
         IBakedModel ibakedmodel = this.itemModelMesher.getItemModel(stack);
-        return ibakedmodel != null && ibakedmodel.isGui3d();
+        return !stack.isEmpty() && ibakedmodel.isGui3d();
     }
 
     public void renderItem(ItemStack stack, ItemCameraTransforms.TransformType cameraTransformType) {
-        if (stack != null) {
+        if (!stack.isEmpty()) {
             IBakedModel ibakedmodel = this.getItemModelWithOverrides(stack, null, null);
             this.renderItemModel(stack, ibakedmodel, cameraTransformType, false);
         }
@@ -184,7 +185,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     public void renderItem(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_) {
         if (p_184392_1_ != null && p_184392_2_ != null && p_184392_1_.getItem() != null) {
-            IBakedModel ibakedmodel = this.getItemModelWithOverrides(p_184392_1_, p_184392_2_.worldObj, p_184392_2_);
+            IBakedModel ibakedmodel = this.getItemModelWithOverrides(p_184392_1_, p_184392_2_.world, p_184392_2_);
             this.renderItemModel(p_184392_1_, ibakedmodel, p_184392_3_, p_184392_4_);
         }
 
@@ -256,7 +257,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemAndEffectIntoGUI(ItemStack stack, int xPosition, int yPosition) {
-        this.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().thePlayer, stack, xPosition, yPosition);
+        this.renderItemAndEffectIntoGUI(Minecraft.getMinecraft().player, stack, xPosition, yPosition);
     }
 
     public void renderItemAndEffectIntoGUI(EntityLivingBase p_184391_1_, final ItemStack p_184391_2_, int p_184391_3_, int p_184391_4_) {
@@ -301,11 +302,11 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemOverlayIntoGUI(FontRenderer fr, ItemStack stack, int xPosition, int yPosition, String text) {
-        if (stack != null) {
-            if (stack.stackSize != 1 || text != null) {
-                String entityplayersp = text == null ? String.valueOf(stack.stackSize) : text;
-                if (text == null && stack.stackSize < 1) {
-                    entityplayersp = TextFormatting.RED + String.valueOf(stack.stackSize);
+        if (!stack.isEmpty()) {
+            if (stack.getCount() != 1 || text != null) {
+                String entityplayersp = text == null ? String.valueOf(stack.getCount()) : text;
+                if (text == null && stack.getCount() < 1) {
+                    entityplayersp = TextFormatting.RED + String.valueOf(stack.getCount());
                 }
 
                 GlStateManager.disableLighting();
@@ -336,7 +337,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
                 GlStateManager.enableDepth();
             }
 
-            EntityPlayerSP entityplayersp2 = Minecraft.getMinecraft().thePlayer;
+            EntityPlayerSP entityplayersp2 = Minecraft.getMinecraft().player;
             float f = entityplayersp2 == null ? 0.0F : entityplayersp2.getCooldownTracker().getCooldown(stack.getItem(), Minecraft.getMinecraft().getRenderPartialTicks());
             if (f > 0.0F) {
                 GlStateManager.disableLighting();
@@ -344,7 +345,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
                 GlStateManager.disableTexture2D();
                 Tessellator tessellator11 = Tessellator.getInstance();
                 VertexBuffer vertexbuffer11 = tessellator11.getBuffer();
-                this.draw(vertexbuffer11, xPosition, yPosition + MathHelper.floor_float(16.0F * (1.0F - f)), 16, MathHelper.ceiling_float_int(16.0F * f), 255, 255, 255, 127);
+                this.draw(vertexbuffer11, xPosition, yPosition + MathHelper.floor(16.0F * (1.0F - f)), 16, MathHelper.ceil(16.0F * f), 255, 255, 255, 127);
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();
@@ -362,7 +363,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         Tessellator.getInstance().draw();
     }
 
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
         this.itemModelMesher.rebuildCache();
     }
 }

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Loader;
@@ -23,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.Vector;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
@@ -85,10 +87,10 @@ public class HintHUD extends HUD {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
 
-        if (mc == null || mc.thePlayer == null || mc.theWorld == null) return;
-        RayTraceResult mop = General.getMovingObjectPositionFromPlayer(mc.theWorld, mc.thePlayer, false);
+        if (mc == null || mc.player == null || mc.world == null) return;
+        RayTraceResult mop = General.getMovingObjectPositionFromPlayer(mc.world, mc.player, false);
         if (mop == null) return;
-        TileEntity te = mc.theWorld.getTileEntity(mop.getBlockPos());
+        TileEntity te = mc.world.getTileEntity(mop.getBlockPos());
         if (te == null) return;
         if (!(te instanceof TileEntityVendingMachine)) return;
 
@@ -96,7 +98,7 @@ public class HintHUD extends HUD {
         root.h = resolution.getScaledHeight();
         root.w = resolution.getScaledWidth();
 
-        boughtAndSold.setHorizontal(mc.thePlayer.isSneaking());
+        boughtAndSold.setHorizontal(mc.player.isSneaking());
 
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
         root.y = 15;
@@ -105,7 +107,7 @@ public class HintHUD extends HUD {
 
         boolean isOpened = tileEntity.isOpen();
         if (Loader.isModLoaded("enderpay")) {
-            if (isOpened) {
+            if (isOpened && !tileEntity.isInfinite()) {
                 long soldSum = tileEntity.soldCreditsSum();
                 long realTotalSum = tileEntity.realTotalCreditsSum();
                 isOpened = soldSum <= realTotalSum;
@@ -121,16 +123,16 @@ public class HintHUD extends HUD {
         //labelClosed.hidden = true;
         //boughtAndSold.hidden = true;
 
-        ItemStack[] soldItemStacks;
-        ItemStack[] boughtItemStacks;
-        soldItemStacks = tileEntity.getSoldItems().clone();
-        boughtItemStacks = tileEntity.getBoughtItems().clone();
+        NonNullList<ItemStack> soldItemStacks = NonNullList.create();
+        NonNullList<ItemStack> boughtItemStacks = NonNullList.create();
+        soldItemStacks.addAll(tileEntity.getSoldItems());
+        boughtItemStacks.addAll(tileEntity.getBoughtItems());
         if (Loader.isModLoaded("enderpay")) {
-            for (int i = 0; i < soldItemStacks.length; i++) {
-                if (Utils.isBanknote(soldItemStacks[i])) soldItemStacks[i] = null;
+            for (int i = 0; i < soldItemStacks.size(); i++) {
+                if (Utils.isBanknote(soldItemStacks.get(i))) soldItemStacks.set(i, ItemStack.EMPTY);
             }
-            for (int i = 0; i < boughtItemStacks.length; i++) {
-                if (Utils.isBanknote(boughtItemStacks[i])) boughtItemStacks[i] = null;
+            for (int i = 0; i < boughtItemStacks.size(); i++) {
+                if (Utils.isBanknote(boughtItemStacks.get(i))) boughtItemStacks.set(i,ItemStack.EMPTY);
             }
 
             long amountSold = tileEntity.soldCreditsSum();
@@ -157,9 +159,9 @@ public class HintHUD extends HUD {
         soldItemList.setItems(soldItemStacks);
         boughtItemList.setItems(boughtItemStacks);
         String tooltip;
-        labelSoldDesc.hidden = !mc.thePlayer.isSneaking();
-        labelBoughtDesc.hidden = !mc.thePlayer.isSneaking();
-        if (mc.thePlayer.isSneaking()) {
+        labelSoldDesc.hidden = !mc.player.isSneaking();
+        labelBoughtDesc.hidden = !mc.player.isSneaking();
+        if (mc.player.isSneaking()) {
             labelBoughtDesc.setCaption(getTooltips(boughtItemStacks));
             labelSoldDesc.setCaption(getTooltips(soldItemStacks));
         }
@@ -184,14 +186,14 @@ public class HintHUD extends HUD {
         Utils.bind("textures/gui/icons.png");
     }
 
-    private String[] getTooltips(ItemStack[] itemStacks) {
+    private String[] getTooltips(NonNullList<ItemStack> itemStacks) {
         Vector<String> tooltips = new Vector<>();
         for (ItemStack stack : itemStacks) {
-            if (stack == null) continue;
+            if (stack.isEmpty()) continue;
             String tooltip = "";
-            for (int i = 0; i < stack.getTooltip(mc.thePlayer, false).size(); i++) {
+            for (int i = 0; i < stack.getTooltip(mc.player, false).size(); i++) {
                 if (i != 0) tooltip += "\n";
-                tooltip += stack.getTooltip(mc.thePlayer, false).get(i);
+                tooltip += stack.getTooltip(mc.player, false).get(i);
             }
             tooltips.add(tooltip);
         }

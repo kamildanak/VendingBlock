@@ -42,7 +42,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus implements IGuiWrappe
             public void onClick() {
                 MsgWrench msg = new MsgWrench(entity, infinite, ownerNameEdit.getText());
                 Vending.instance.messagePipeline.sendToServer(msg);
-                mc.thePlayer.closeScreen();
+                mc.player.closeScreen();
             }
         });
 

@@ -27,7 +27,7 @@ public class GuiLabelCarousel extends GuiLabelMultiline {
         if (captions.length == 0) return;
         GlStateManager.color(0, 0, 0, 0);
         int offset = 1;
-        String caption = captions[((int) gui.getMinecraft().thePlayer.worldObj.getWorldTime() / 50) % captions.length];
+        String caption = captions[((int) gui.getMinecraft().player.world.getWorldTime() / 50) % captions.length];
         if (caption == null) return;
         for (String s : caption.split("\n")) {
             if (s.trim().length() == 0) continue;

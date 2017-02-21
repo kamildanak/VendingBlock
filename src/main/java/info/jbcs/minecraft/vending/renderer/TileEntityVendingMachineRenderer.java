@@ -34,10 +34,10 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer 
             entity.hoverStart = 0;
 
             //noinspection ConstantConditions
-            if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null) {
+            if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().player != null) {
                 NBTTagCompound nbtTagCompound = new NBTTagCompound(); //TODO: Find a better way
                 entity.writeEntityToNBT(nbtTagCompound);
-                nbtTagCompound.setShort("Age", (short) Minecraft.getMinecraft().thePlayer.ticksExisted);
+                nbtTagCompound.setShort("Age", (short) Minecraft.getMinecraft().player.ticksExisted);
                 entity.readEntityFromNBT(nbtTagCompound);
             }
 

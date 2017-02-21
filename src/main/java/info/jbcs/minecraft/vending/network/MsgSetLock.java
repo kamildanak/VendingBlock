@@ -45,7 +45,7 @@ public class MsgSetLock extends Message {
         public IMessage onMessage(MsgSetLock message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
 
-            TileEntity tileEntity = player.worldObj.getTileEntity(new BlockPos(message.x, message.y, message.z));
+            TileEntity tileEntity = player.world.getTileEntity(new BlockPos(message.x, message.y, message.z));
             if (!(tileEntity instanceof TileEntityVendingMachine)) return null;
             ((TileEntityVendingMachine) tileEntity).setOpen(!message.locked);
             ((TileEntityVendingMachine) tileEntity).markBlockForUpdate(new BlockPos(message.x, message.y, message.z));
