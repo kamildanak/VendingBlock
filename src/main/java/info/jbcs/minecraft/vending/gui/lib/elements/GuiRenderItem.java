@@ -184,7 +184,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItem(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_) {
-        if (p_184392_1_ != null && p_184392_2_ != null && p_184392_1_.getItem() != null) {
+        if (p_184392_1_ != null && p_184392_2_ != null && !p_184392_1_.isEmpty()) {
             IBakedModel ibakedmodel = this.getItemModelWithOverrides(p_184392_1_, p_184392_2_.world, p_184392_2_);
             this.renderItemModel(p_184392_1_, ibakedmodel, p_184392_3_, p_184392_4_);
         }
@@ -192,7 +192,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     protected void renderItemModel(ItemStack p_184394_1_, IBakedModel p_184394_2_, ItemCameraTransforms.TransformType p_184394_3_, boolean p_184394_4_) {
-        if (p_184394_1_.getItem() != null) {
+        if (!p_184394_1_.isEmpty()) {
             this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
             this.textureManager.getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -261,7 +261,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
     }
 
     public void renderItemAndEffectIntoGUI(EntityLivingBase p_184391_1_, final ItemStack p_184391_2_, int p_184391_3_, int p_184391_4_) {
-        if (p_184391_2_ != null && p_184391_2_.getItem() != null) {
+        if (p_184391_2_ != null && !p_184391_2_.isEmpty()) {
             this.zLevel += 50.0F;
 
             try {

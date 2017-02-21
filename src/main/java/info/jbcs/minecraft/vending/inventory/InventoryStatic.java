@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public abstract class InventoryStatic implements IInventory {
     public final NonNullList<ItemStack> items;
@@ -150,7 +151,7 @@ public abstract class InventoryStatic implements IInventory {
                     (!items.get(i).getHasSubtypes() || items.get(i).getItemDamage() == itemstack.getItemDamage())) {
                 if (items.get(i).hasTagCompound() || itemstack.hasTagCompound()) {
                     if (items.get(i).hasTagCompound() && itemstack.hasTagCompound()) {
-                        if (items.get(i).getTagCompound().equals(itemstack.getTagCompound())) {
+                        if(Objects.equals(items.get(i).getTagCompound(),itemstack.getTagCompound())) {
                             return i;
                         }
                     }
@@ -248,7 +249,7 @@ public abstract class InventoryStatic implements IInventory {
             }
 
             if (itemStack.hasTagCompound()) {
-                if (!itemStack.getTagCompound().equals(items.get(i).getTagCompound())) {
+                if (!Objects.equals(itemStack.getTagCompound(),items.get(i).getTagCompound())) {
                     continue;
                 }
             }
@@ -256,7 +257,7 @@ public abstract class InventoryStatic implements IInventory {
                 res = new ItemStack(itemStack.getItem(), 0, damage);
             }
 
-            while (items.get(i) != null && res.getCount() < count && items.get(i).getCount() > 0) {
+            while (!items.get(i).isEmpty() && res.getCount() < count && items.get(i).getCount() > 0) {
                 res.setCount(res.getCount()+1);
                 items.get(i).setCount(items.get(i).getCount()-1);
 

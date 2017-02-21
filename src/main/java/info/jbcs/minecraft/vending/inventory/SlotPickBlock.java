@@ -31,7 +31,6 @@ public class SlotPickBlock extends Slot {
         if (container.resultSlot == this) {
             newSize = itemstack.getCount() - count;
         } else {
-            newSize = itemstack.getCount();
             ItemStack otherstack = container.resultSlot.getStack();
 
             if (!otherstack.isEmpty() && otherstack.getItem() == itemstack.getItem() && otherstack.getItemDamage() == itemstack.getItemDamage()) {

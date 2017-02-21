@@ -33,7 +33,7 @@ public class ContainerPickBlock extends Container {
         }
 
         @Override
-        public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        public boolean isItemValidForSlot(int i, @Nonnull ItemStack itemstack) {
             return false;
         }
     };
@@ -60,6 +60,7 @@ public class ContainerPickBlock extends Container {
             }
         }
 
+        //noinspection UnusedAssignment
         addSlotToContainer(resultSlot = new SlotPickBlock(this, index++, 18, 153));
         player = p;
         scrollTo(0);
@@ -81,7 +82,7 @@ public class ContainerPickBlock extends Container {
                 if (index >= 0 && index < items.size()) {
                     inventory.setInventorySlotContents(x + y * width, items.get(index));
                 } else {
-                    inventory.setInventorySlotContents(x + y * width, null);
+                    inventory.setInventorySlotContents(x + y * width, ItemStack.EMPTY);
                 }
             }
         }

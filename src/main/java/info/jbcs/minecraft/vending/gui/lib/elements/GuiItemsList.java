@@ -8,8 +8,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-
 public class GuiItemsList extends GuiElement {
 
     private NonNullList<ItemStack> items;

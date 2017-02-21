@@ -24,7 +24,6 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
 import java.util.Vector;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;

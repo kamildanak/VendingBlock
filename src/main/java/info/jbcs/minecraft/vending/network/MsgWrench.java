@@ -4,7 +4,6 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -17,6 +16,7 @@ public class MsgWrench extends Message {
     private boolean infinite;
     private String ownerName;
 
+    @SuppressWarnings("unused")
     public MsgWrench() {
     }
 
