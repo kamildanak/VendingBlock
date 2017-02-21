@@ -1,21 +1,24 @@
-tile.vendingMachine.name=Обменный блок
-tile.vendingMachineAdvanced.name=Улучшенный обменный блок
-tile.vendingMachineMultiple.name=Множественный обменный блок
-item.vendingMachineWrench.name=Ключ обменного блока
-itemGroup.tabVending=Обмен
+tile.vendingMachine.name=Торговый блок
+tile.vendingMachineAdvanced.name=Улучшенный торговый блок
+tile.vendingMachineMultiple.name=Множественный торговый блок
+item.vendingMachineWrench.name=Гаечный ключ для торгового блока
+itemGroup.tabVending=Vending
 
 # GUI
-gui.vendingBlock.select=Выбор...
-gui.vendingBlock.storage=Хранение
+gui.vendingBlock.select=Выбрать...
+gui.vendingBlock.storage=Хранилище
 gui.vendingBlock.selling=Продажа
 gui.vendingBlock.buying=Покупка
-gui.vendingBlock.settings=Настройки обменника
+gui.vendingBlock.settings=Настройки торгового блока
 gui.vendingBlock.owner=Ник владельца
-gui.vendingBlock.infinite=Бесконечность
+gui.vendingBlock.infinite=Бесконечный
 gui.vendingBlock.yes=да
 gui.vendingBlock.no=нет
 gui.vendingBlock.apply=Применить
-gui.vendingBlock.isSelling=продает
+gui.vendingBlock.isSelling=продаёт
 gui.vendingBlock.for=за
-gui.vendingBlock.isGivingAway=отдает бесплатно
+gui.vendingBlock.and=и
+gui.vendingBlock.isGivingAway=отдаёт
 gui.vendingBlock.isAccepting=принимает
+gui.vendingBlock.closed=Магазин закрыт
+gui.vendingBlock.shopNotEnoughCredits=Недостаточно кредитов в магазине
