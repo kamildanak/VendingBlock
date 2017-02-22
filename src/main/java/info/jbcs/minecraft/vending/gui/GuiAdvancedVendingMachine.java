@@ -1,10 +1,10 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiPickBlock;
 import info.jbcs.minecraft.vending.gui.lib.input.IPickBlockHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
-import info.jbcs.minecraft.vending.network.MsgAdvVenSetItem;
+import info.jbcs.minecraft.vending.network.PacketDispatcher;
+import info.jbcs.minecraft.vending.network.server.MessageAdvVenSetItem;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -46,13 +46,13 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 
     @Override
     public void blockPicked(final ItemStack stack) {
-        MsgAdvVenSetItem msg;
+        MessageAdvVenSetItem msg;
         if (stack.isEmpty()) {
-            msg = new MsgAdvVenSetItem(0, 0, 0);
+            msg = new MessageAdvVenSetItem(0, 0, 0);
         } else {
-            msg = new MsgAdvVenSetItem(Item.getIdFromItem(stack.getItem()), stack.getCount(), stack.getItemDamage());
+            msg = new MessageAdvVenSetItem(Item.getIdFromItem(stack.getItem()), stack.getCount(), stack.getItemDamage());
         }
-        Vending.instance.messagePipeline.sendToServer(msg);
+        PacketDispatcher.sendToServer(msg);
     }
 
     @Override

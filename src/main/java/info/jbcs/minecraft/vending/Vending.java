@@ -10,7 +10,6 @@ import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
 import info.jbcs.minecraft.vending.inventory.DummyContainer;
-import info.jbcs.minecraft.vending.network.MessagePipeline;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;
@@ -65,12 +64,11 @@ public class Vending {
     public static boolean transfer_to_inventory;
     @SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
     @SuppressWarnings("WeakerAccess")
-    public static CommonProxy commonProxy;
+    public static CommonProxy proxy;
     private static Configuration config;
-    public MessagePipeline messagePipeline;
 
     public Vending() {
-        messagePipeline = new MessagePipeline();
+
     }
 
     @EventHandler
@@ -90,10 +88,10 @@ public class Vending {
     @EventHandler
     @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
-        commonProxy.registerPackets(messagePipeline);
-        commonProxy.registerEventHandlers();
-        commonProxy.registerRenderers();
-        commonProxy.registerCraftingRecipes();
+        proxy.registerPackets();
+        proxy.registerEventHandlers();
+        proxy.registerRenderers();
+        proxy.registerCraftingRecipes();
 
         if (config.get("general", "use_custom_creative_tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)) {
             tabVending = new CreativeTabs("tabVending") {
@@ -191,13 +189,6 @@ public class Vending {
         resourcelocation = new ResourceLocation("vending", "vending.sound.forbidden");
         SoundEvent.REGISTRY.register(soundEventId, resourcelocation, new SoundEvent(resourcelocation));
         sound_forbidden = SoundEvent.REGISTRY.getObject(resourcelocation);
-
-		/*
-        Iterator iterator = soundEventRegistry.iterator();
-		while(iterator.hasNext()){
-			SoundEvent soundEvent = (SoundEvent) iterator.next();
-			System.out.println(soundEvent.getSoundName());
-		}*/
     }
 }
 

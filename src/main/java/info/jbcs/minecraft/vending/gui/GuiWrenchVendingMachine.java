@@ -1,12 +1,12 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.gui.lib.GuiScreenPlus;
 import info.jbcs.minecraft.vending.gui.lib.IGuiWrapper;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiEdit;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiExButton;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabel;
-import info.jbcs.minecraft.vending.network.MsgWrench;
+import info.jbcs.minecraft.vending.network.PacketDispatcher;
+import info.jbcs.minecraft.vending.network.server.MessageWrench;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,8 +40,8 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus implements IGuiWrappe
         addChild(new GuiExButton(9, 91, 148, 20, "gui.vendingBlock.apply") {
             @Override
             public void onClick() {
-                MsgWrench msg = new MsgWrench(entity, infinite, ownerNameEdit.getText());
-                Vending.instance.messagePipeline.sendToServer(msg);
+                MessageWrench msg = new MessageWrench(entity, infinite, ownerNameEdit.getText());
+                PacketDispatcher.sendToServer(msg);
                 mc.player.closeScreen();
             }
         });

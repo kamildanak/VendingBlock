@@ -1,9 +1,9 @@
 package info.jbcs.minecraft.vending.gui;
 
 import info.jbcs.minecraft.vending.Utils;
-import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
-import info.jbcs.minecraft.vending.network.MsgSetLock;
+import info.jbcs.minecraft.vending.network.PacketDispatcher;
+import info.jbcs.minecraft.vending.network.server.MessageSetLock;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -40,9 +40,9 @@ public class GuiVendingMachine extends GuiContainer {
     protected void actionPerformed(GuiButton button) {
         if (button.id == 107) {
             boolean lock = tileEntityVendingMachine.isOpen();
-            MsgSetLock msg = new MsgSetLock(tileEntityVendingMachine.getPos(), lock);
+            MessageSetLock msg = new MessageSetLock(tileEntityVendingMachine.getPos(), lock);
 
-            Vending.instance.messagePipeline.sendToServer(msg);
+            PacketDispatcher.sendToServer(msg);
             guiLockIconButton.setLocked(lock);
         }
     }

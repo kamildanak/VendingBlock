@@ -7,7 +7,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -37,15 +36,15 @@ public class ContainerPickBlock extends Container {
             return false;
         }
     };
-    EntityPlayer player;
+    private EntityPlayer player;
 
     public ContainerPickBlock(EntityPlayer p) {
-        Set itemReg = GameData.getItemRegistry().getKeys();
+        Set<ResourceLocation> itemReg = Item.REGISTRY.getKeys();
         List<ResourceLocation> itemList = new ArrayList<>();
         itemList.addAll(itemReg);
 
         for (ResourceLocation itemName : itemList) {
-            Item item = GameData.getItemRegistry().getObject(itemName);
+            Item item = Item.REGISTRY.getObject(itemName);
 
             if (item != null && item.getCreativeTab() != null) {
                 item.getSubItems(item, null, items);
