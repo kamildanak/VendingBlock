@@ -44,26 +44,6 @@ public class General {
         return x * x + y * y + z * z < distance * distance;
     }
 
-    public static Item getItem(ItemStack stack) {
-        if (stack == null)
-            return null;
-
-        return stack.getItem();
-    }
-    public static Item getItem(int itemId) {
-        return GameData.getItemRegistry().getObjectById(itemId);
-    }
-
-    public static Integer getItemId(Item item) {
-        return GameData.getItemRegistry().getId(item);
-    }
-
-    public static String getName(Block block) {
-        String res = block.getUnlocalizedName();
-        return res.substring(5);
-    }
-
-
     public static RayTraceResult getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3) {
         float var4 = 1.0F;
         float var5 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * var4;
@@ -95,14 +75,5 @@ public class General {
             if (itemStack != null) counter++;
         }
         return counter;
-    }
-
-    public static ItemStack getNotNull(ItemStack[] itemStacks, int num) {
-        int counter = -1;
-        for (ItemStack itemStack : itemStacks) {
-            if (itemStack != null) counter++;
-            if (counter == num) return itemStack;
-        }
-        return null;
     }
 }

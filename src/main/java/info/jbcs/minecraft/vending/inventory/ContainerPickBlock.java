@@ -13,10 +13,10 @@ import java.util.List;
 import java.util.Set;
 
 public class ContainerPickBlock extends Container {
-    public ArrayList<ItemStack> items = new ArrayList<>();
+    public ArrayList<ItemStack> itemList = new ArrayList<>();
     public GuiPickBlock gui;
     public int width = 9;
-    public int height = 7;
+    public int height = 5;
     public SlotPickBlock resultSlot;
     public InventoryStatic inventory = new InventoryStatic(width * height + 1) {
         @Override
@@ -34,18 +34,17 @@ public class ContainerPickBlock extends Container {
             return false;
         }
     };
-    EntityPlayer player;
 
-    public ContainerPickBlock(EntityPlayer p) {
-        Set itemReg = GameData.getItemRegistry().getKeys();
-        List<ResourceLocation> itemList = new ArrayList<>();
-        itemList.addAll(itemReg);
+    public ContainerPickBlock() {
+        Set<ResourceLocation> itemReg = Item.REGISTRY.getKeys();
+        List<ResourceLocation> itemArray = new ArrayList<>();
+        itemArray.addAll(itemReg);
 
-        for (ResourceLocation itemName : itemList) {
-            Item item = GameData.getItemRegistry().getObject(itemName);
+        for (ResourceLocation itemName : itemArray) {
+            Item item = Item.REGISTRY.getObject(itemName);
 
             if (item != null && item.getCreativeTab() != null) {
-                item.getSubItems(item, null, items);
+                item.getSubItems(item, null, itemList);
             }
         }
 
@@ -57,13 +56,13 @@ public class ContainerPickBlock extends Container {
             }
         }
 
-        addSlotToContainer(resultSlot = new SlotPickBlock(this, index++, 18, 153));
-        player = p;
+        //noinspection UnusedAssignment
+        addSlotToContainer(resultSlot = new SlotPickBlock(this, index++, 9, 112));
         scrollTo(0);
     }
 
     public void scrollTo(float offset) {
-        int columnsNotFitting = items.size() / width - height + 1;
+        int columnsNotFitting = itemList.size() / width - height + 1;
 
         if (columnsNotFitting < 0) {
             columnsNotFitting = 0;
@@ -75,8 +74,8 @@ public class ContainerPickBlock extends Container {
             for (int x = 0; x < width; ++x) {
                 int index = x + (y + columnOffset) * width;
 
-                if (index >= 0 && index < items.size()) {
-                    inventory.setInventorySlotContents(x + y * width, items.get(index));
+                if (index >= 0 && index < itemList.size()) {
+                    inventory.setInventorySlotContents(x + y * width, itemList.get(index));
                 } else {
                     inventory.setInventorySlotContents(x + y * width, null);
                 }
@@ -92,6 +91,17 @@ public class ContainerPickBlock extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer entityplayer) {
+        return false;
+    }
+
+    public boolean canScroll() {
         return true;
+    }
+
+    /**
+     * Called when the container is closed.
+     */
+    public void onContainerClosed(EntityPlayer playerIn)
+    {
     }
 }

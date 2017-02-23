@@ -21,3 +21,4 @@ gui.vendingBlock.and=oraz
 gui.vendingBlock.isGivingAway=rozdaje za darmo
 gui.vendingBlock.isAccepting=przyjmuje
 gui.vendingBlock.closed=Sklep jest zamknięty
+gui.vendingBlock.shopNotEnoughCredits=W automacie jest za mało środków

@@ -105,7 +105,7 @@ public class HintHUD extends HUD {
 
         boolean isOpened = tileEntity.isOpen();
         if (Loader.isModLoaded("enderpay")) {
-            if (isOpened) {
+            if (isOpened && !tileEntity.isInfinite()) {
                 long soldSum = tileEntity.soldCreditsSum();
                 long realTotalSum = tileEntity.realTotalCreditsSum();
                 isOpened = soldSum <= realTotalSum;
