@@ -56,6 +56,8 @@ public class BlockVendingMachine extends BlockContainer {
     private static boolean checkIfFits(@Nonnull ItemStack bought, @Nonnull ItemStack offered, NonNullList<ItemStack> soldItems, TileEntityVendingMachine tileEntity) {
         if (Loader.isModLoaded("enderpay"))
             if(bought.isEmpty() && tileEntity.soldCreditsSum() > 0) return true;
+            if(Utils.isBanknote(bought) && tileEntity.boughtCreditsSum()==0)
+                return countNotNull(soldItems)>0;
             if (Utils.isFilledBanknote(bought))
                 return (tileEntity.boughtCreditsSum() > 0 && tileEntity.hasPlaceForBanknote());
         if (bought.isEmpty()) return countNotNull(soldItems)>0;
@@ -190,13 +192,17 @@ public class BlockVendingMachine extends BlockContainer {
         boolean fits = checkIfFits(bought, offered, soldItems, tileEntity) && playerHasEnoughtCredits && machineHasEnoughtCredits;
         if (fits && !world.isRemote) {
             giveItems(soldItems, entityplayer, world, blockPos, tileEntity);
-            takeItems(entityplayer, tileEntity, bought, offered);
+            boolean takeItems = true;
             if (Loader.isModLoaded("enderpay")) {
                 if (tileEntity.soldCreditsSum() > 0)
                     giveCredits(entityplayer, tileEntity);
                 if (tileEntity.boughtCreditsSum() > 0)
                     takeCredits(entityplayer, tileEntity, bought);
+                if (tileEntity.getBoughtItems().size() > 0 &&
+                        Utils.isBanknote(tileEntity.getBoughtItems().get(0)))
+                    takeItems = false;
             }
+            if(takeItems) takeItems(entityplayer, tileEntity, bought, offered);
 
             if (!tileEntity.isInfinite())
                 tileEntity.inventory.onInventoryChanged();
