@@ -23,6 +23,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -56,6 +57,7 @@ public class Vending {
 
     public static GuiHandler guiVending;
     public static GuiHandler guiWrench;
+    public static int offsetY;
 
     public static CreativeTabs tabVending;
     public static boolean close_on_partial_sold_out;
@@ -119,6 +121,10 @@ public class Vending {
 
         transfer_to_inventory = config.get("general", "transfer_to_inventory", false,
                 "Transfer sold items directly to player's inventory.").getBoolean(false);
+
+        int defaultOffset = (Loader.isModLoaded("waila"))?40:15;
+        offsetY = config.get("general", "offsetY", defaultOffset,
+                "Set Y offset of HUD").getInt(defaultOffset);
 
         config.save();
         blockVendingMachine.setCreativeTab(tabVending);
