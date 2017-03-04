@@ -3,6 +3,7 @@ package info.jbcs.minecraft.vending.gui.hud;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiElement;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiItemsList;
 import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabel;
@@ -100,7 +101,7 @@ public class HintHUD extends HUD {
         boughtAndSold.setHorizontal(mc.player.isSneaking());
 
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-        root.y = 15;
+        root.y = Vending.offsetY;
         labelSeller.setCaption(tileEntity.getOwnerName());
         labelSeller.center = true;
 
