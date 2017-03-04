@@ -55,12 +55,13 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     private static boolean checkIfFits(ItemStack bought, ItemStack offered, ItemStack[] soldItems, TileEntityVendingMachine tileEntity) {
-        if (Loader.isModLoaded("enderpay"))
-            if(bought == null && tileEntity.soldCreditsSum() > 0) return true;
-            if(Utils.isBanknote(bought) && tileEntity.boughtCreditsSum()==0)
-                return countNotNull(soldItems)>0;
+        if (Loader.isModLoaded("enderpay")) {
+            if (bought == null && tileEntity.soldCreditsSum() > 0) return true;
+            if (Utils.isBanknote(bought) && tileEntity.boughtCreditsSum() == 0)
+                return countNotNull(soldItems) > 0;
             if (Utils.isFilledBanknote(bought))
                 return (tileEntity.boughtCreditsSum() > 0 && tileEntity.hasPlaceForBanknote());
+        }
         if (bought == null) return countNotNull(soldItems)>0;
         return tileEntity.doesStackFit(bought) &&
                 offered != null &&
