@@ -70,17 +70,17 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     private void renderModel(IBakedModel model, int color, ItemStack stack) {
         Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
-        vertexbuffer.begin(7, DefaultVertexFormats.ITEM);
+        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
         EnumFacing[] var6 = EnumFacing.values();
         int var7 = var6.length;
 
         for (int var8 = 0; var8 < var7; ++var8) {
             EnumFacing enumfacing = var6[var8];
-            this.renderQuads(vertexbuffer, model.getQuads(null, enumfacing, 0L), color, stack);
+            this.renderQuads(bufferbuilder, model.getQuads(null, enumfacing, 0L), color, stack);
         }
 
-        this.renderQuads(vertexbuffer, model.getQuads(null, null, 0L), color, stack);
+        this.renderQuads(bufferbuilder, model.getQuads(null, null, 0L), color, stack);
         tessellator.draw();
     }
 
@@ -133,18 +133,18 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
         this.textureManager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
     }
 
-    private void putQuadNormal(VertexBuffer renderer, BakedQuad quad) {
+    private void putQuadNormal(BufferBuilder renderer, BakedQuad quad) {
         Vec3i vec3i = quad.getFace().getDirectionVec();
         renderer.putNormal((float) vec3i.getX(), (float) vec3i.getY(), (float) vec3i.getZ());
     }
 
-    private void renderQuad(VertexBuffer renderer, BakedQuad quad, int color) {
+    private void renderQuad(BufferBuilder renderer, BakedQuad quad, int color) {
         renderer.addVertexData(quad.getVertexData());
         renderer.putColor4(color);
         this.putQuadNormal(renderer, quad);
     }
 
-    private void renderQuads(VertexBuffer renderer, List<BakedQuad> quads, int color, @Nonnull ItemStack stack) {
+    private void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, @Nonnull ItemStack stack) {
         boolean flag = color == -1 && !stack.isEmpty();
         int i = 0;
 
@@ -320,17 +320,17 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
             if (stack.getItem().showDurabilityBar(stack)) {
                 double entityplayersp1 = stack.getItem().getDurabilityForDisplay(stack);
                 int tessellator1 = (int) Math.round(13.0D - entityplayersp1 * 13.0D);
-                int vertexbuffer1 = (int) Math.round(255.0D - entityplayersp1 * 255.0D);
+                int bufferbuilder1 = (int) Math.round(255.0D - entityplayersp1 * 255.0D);
                 GlStateManager.disableLighting();
                 GlStateManager.disableDepth();
                 GlStateManager.disableTexture2D();
                 GlStateManager.disableAlpha();
                 GlStateManager.disableBlend();
                 Tessellator tessellator = Tessellator.getInstance();
-                VertexBuffer vertexbuffer = tessellator.getBuffer();
-                this.draw(vertexbuffer, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
-                this.draw(vertexbuffer, xPosition + 2, yPosition + 13, 12, 1, (255 - vertexbuffer1) / 4, 64, 0, 255);
-                this.draw(vertexbuffer, xPosition + 2, yPosition + 13, tessellator1, 1, 255 - vertexbuffer1, vertexbuffer1, 0, 255);
+                BufferBuilder bufferbuilder = tessellator.getBuffer();
+                this.draw(bufferbuilder, xPosition + 2, yPosition + 13, 13, 2, 0, 0, 0, 255);
+                this.draw(bufferbuilder, xPosition + 2, yPosition + 13, 12, 1, (255 - bufferbuilder1) / 4, 64, 0, 255);
+                this.draw(bufferbuilder, xPosition + 2, yPosition + 13, tessellator1, 1, 255 - bufferbuilder1, bufferbuilder1, 0, 255);
                 GlStateManager.enableAlpha();
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableLighting();
@@ -344,8 +344,8 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
                 GlStateManager.disableDepth();
                 GlStateManager.disableTexture2D();
                 Tessellator tessellator11 = Tessellator.getInstance();
-                VertexBuffer vertexbuffer11 = tessellator11.getBuffer();
-                this.draw(vertexbuffer11, xPosition, yPosition + MathHelper.floor(16.0F * (1.0F - f)), 16, MathHelper.ceil(16.0F * f), 255, 255, 255, 127);
+                BufferBuilder bufferbuilder11 = tessellator11.getBuffer();
+                this.draw(bufferbuilder11, xPosition, yPosition + MathHelper.floor(16.0F * (1.0F - f)), 16, MathHelper.ceil(16.0F * f), 255, 255, 255, 127);
                 GlStateManager.enableTexture2D();
                 GlStateManager.enableLighting();
                 GlStateManager.enableDepth();
@@ -354,7 +354,7 @@ public class GuiRenderItem implements IResourceManagerReloadListener {
 
     }
 
-    private void draw(VertexBuffer renderer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
+    private void draw(BufferBuilder renderer, int x, int y, int width, int height, int red, int green, int blue, int alpha) {
         renderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
         renderer.pos((double) (x + 0), (double) (y + 0), 0.0D).color(red, green, blue, alpha).endVertex();
         renderer.pos((double) (x + 0), (double) (y + height), 0.0D).color(red, green, blue, alpha).endVertex();

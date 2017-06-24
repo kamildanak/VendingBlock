@@ -46,7 +46,7 @@ public class ContainerPickBlock extends Container {
             Item item = Item.REGISTRY.getObject(itemName);
 
             if (item != null && item.getCreativeTab() != null) {
-                item.getSubItems(item, null, itemList);
+                item.getSubItems(item.getCreativeTab(), itemList);
             }
         }
 

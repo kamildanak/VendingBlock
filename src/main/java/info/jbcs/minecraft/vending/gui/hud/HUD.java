@@ -22,7 +22,7 @@ public abstract class HUD extends GuiScreen implements IGuiWrapper {
 
     @Override
     public FontRenderer fontRenderer() {
-        return mc.fontRendererObj;
+        return mc.fontRenderer;
     }
 
     @Override
@@ -32,7 +32,7 @@ public abstract class HUD extends GuiScreen implements IGuiWrapper {
 
     @Override
     public void drawString(String text, int sx, int sy, int color) {
-        mc.fontRendererObj.drawString(text, sx, sy, color);
+        mc.fontRenderer.drawString(text, sx, sy, color);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class GuiMultipleVendingMachine extends GuiVendingMachine {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int a, int b) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawString(I18n.format("gui.vendingBlock.storage").trim(), 69, 6, 0x404040);
         fontRenderer.drawString(I18n.format("gui.vendingBlock.selling").trim(), 15, 15, 0x404040);
         fontRenderer.drawString(I18n.format("gui.vendingBlock.buying").trim(), 126, 20, 0x404040);

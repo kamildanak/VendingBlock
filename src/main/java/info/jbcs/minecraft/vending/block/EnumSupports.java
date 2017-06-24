@@ -3,6 +3,7 @@ package info.jbcs.minecraft.vending.block;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.util.IStringSerializable;
 
 import javax.annotation.Nonnull;
@@ -38,14 +39,18 @@ public enum EnumSupports implements IStringSerializable {
     private final String name;
     private final String unlocalizedName;
     private final Block supportBlock;
-    private final Object reagent;
+    private final Item reagent;
 
-    EnumSupports(int meta, String name, String unlocalizedName, Block supportBlock, Object reagent) {
+    EnumSupports(int meta, String name, String unlocalizedName, Block supportBlock, Item reagent) {
         this.meta = meta;
         this.name = name;
         this.unlocalizedName = unlocalizedName;
         this.supportBlock = supportBlock;
         this.reagent = reagent;
+    }
+
+    EnumSupports(int meta, String name, String unlocalizedName, Block supportBlock, Block reagent) {
+        this(meta, name, unlocalizedName, supportBlock, Item.getItemFromBlock(reagent));
     }
 
     public static EnumSupports byMetadata(int meta) {
@@ -74,7 +79,7 @@ public enum EnumSupports implements IStringSerializable {
         return supportBlock;
     }
 
-    public Object getReagent() {
+    public Item getReagent() {
         return reagent;
     }
 }

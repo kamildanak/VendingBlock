@@ -191,9 +191,9 @@ public class HintHUD extends HUD {
         for (ItemStack stack : itemStacks) {
             if (stack.isEmpty()) continue;
             String tooltip = "";
-            for (int i = 0; i < stack.getTooltip(mc.player, false).size(); i++) {
+            for (int i = 0; i < stack.getTooltip(mc.player, () -> false).size(); i++) {
                 if (i != 0) tooltip += "\n";
-                tooltip += stack.getTooltip(mc.player, false).get(i);
+                tooltip += stack.getTooltip(mc.player, () -> false).get(i);
             }
             tooltips.add(tooltip);
         }

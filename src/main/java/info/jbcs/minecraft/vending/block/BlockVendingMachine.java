@@ -17,7 +17,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,7 +28,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,7 +38,8 @@ import java.util.Objects;
 import static info.jbcs.minecraft.vending.General.countNotNull;
 
 public class BlockVendingMachine extends BlockContainer {
-    private static final PropertyEnum<EnumSupports> SUPPORT = PropertyEnum.create("support", EnumSupports.class);
+    private static final PropertyEnum<EnumSupports> SUPPORT =
+            PropertyEnum.create("support", EnumSupports.class);
     private boolean isAdvanced, isMultiple, isOpen;
     private String name;
 
@@ -163,8 +163,8 @@ public class BlockVendingMachine extends BlockContainer {
         setUnlocalizedName(name);
         setRegistryName(name);
         this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this).setRegistryName(name).setHasSubtypes(true).setMaxDamage(0));
+        ForgeRegistries.BLOCKS.register(this);
+        ForgeRegistries.ITEMS.register(new ItemBlock(this).setRegistryName(name).setHasSubtypes(true).setMaxDamage(0));
     }
 
     private void vend(World world, BlockPos blockPos, EntityPlayer entityplayer) {
@@ -402,8 +402,8 @@ public class BlockVendingMachine extends BlockContainer {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(@Nonnull Item item, CreativeTabs tab, NonNullList<ItemStack> list) {
-        for (int i = 0; i < EnumSupports.length; ++i) list.add(new ItemStack(item, 1, i));
+    public void getSubBlocks(CreativeTabs tabs, NonNullList<ItemStack> list) {
+        for (int i = 0; i < EnumSupports.length; ++i) list.add(new ItemStack(this, 1, i));
     }
 
     @SuppressWarnings("deprecation")

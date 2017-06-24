@@ -1,12 +1,5 @@
 package info.jbcs.minecraft.vending.gui.lib.elements;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.annotation.Nullable;
-
 import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.gui.lib.input.IPickBlockHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerPickBlock;
@@ -36,6 +29,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 @SideOnly(Side.CLIENT)
 public class GuiPickBlock extends InventoryEffectRenderer
 {
@@ -43,6 +43,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
     private static final ResourceLocation CREATIVE_INVENTORY_TABS = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
     /** Currently selected creative inventory tab index. */
     private static int selectedTabIndex = CreativeTabs.BUILDING_BLOCKS.getTabIndex();
+    private static int tabPage = 0;
     /** Amount scrolled in Creative mode inventory (0 = top, 1 = bottom) */
     private float currentScroll;
     /** True if the scrollbar is being dragged */
@@ -51,7 +52,6 @@ public class GuiPickBlock extends InventoryEffectRenderer
     private boolean wasClicking;
     private GuiTextField searchField;
     private boolean clearSearch;
-    private static int tabPage = 0;
     private int maxPages = 0;
     private GuiScreen parent;
 
@@ -94,7 +94,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
 
         if (this.searchField != null && this.guiLeft != i)
         {
-            this.searchField.xPosition = this.guiLeft + 82;
+            this.searchField.x = this.guiLeft + 82;
         }
     }
 
@@ -107,7 +107,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
         super.initGui();
         this.buttonList.clear();
         Keyboard.enableRepeatEvents(true);
-        this.searchField = new GuiTextField(0, this.fontRendererObj, this.guiLeft + 82, this.guiTop + 6, 89, this.fontRendererObj.FONT_HEIGHT);
+        this.searchField = new GuiTextField(0, this.fontRenderer, this.guiLeft + 82, this.guiTop + 6, 89, this.fontRenderer.FONT_HEIGHT);
         this.searchField.setMaxStringLength(15);
         this.searchField.setEnableBackgroundDrawing(false);
         this.searchField.setVisible(false);
@@ -190,7 +190,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
         {
             if (item != null && item.getCreativeTab() != null)
             {
-                item.getSubItems(item, (CreativeTabs)null, guicontainercreative$containercreative.itemList);
+                item.getSubItems(item.getCreativeTab(), guicontainercreative$containercreative.itemList);
             }
         }
         updateFilteredItems(guicontainercreative$containercreative);
@@ -199,23 +199,15 @@ public class GuiPickBlock extends InventoryEffectRenderer
     //split from above for custom search tabs
     private void updateFilteredItems(ContainerPickBlock guicontainercreative$containercreative)
     {
-        if (CreativeTabs.CREATIVE_TAB_ARRAY[selectedTabIndex] == CreativeTabs.SEARCH) // FORGE: Only add enchanted books to the regular search
-            for (Enchantment enchantment : Enchantment.REGISTRY)
-            {
-                if (enchantment != null && enchantment.type != null)
-                {
-                    Items.ENCHANTED_BOOK.getAll(enchantment, guicontainercreative$containercreative.itemList);
-                }
-            }
         Iterator<ItemStack> iterator = guicontainercreative$containercreative.itemList.iterator();
         String s1 = this.searchField.getText().toLowerCase(Locale.ROOT);
 
         while (iterator.hasNext())
         {
-            ItemStack itemstack = (ItemStack)iterator.next();
+            ItemStack itemstack = iterator.next();
             boolean flag = false;
 
-            for (String s : itemstack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips))
+            for (String s : itemstack.getTooltip(this.mc.player, () -> this.mc.gameSettings.advancedItemTooltips))
             {
                 if (TextFormatting.getTextWithoutFormattingCodes(s).toLowerCase(Locale.ROOT).contains(s1))
                 {
@@ -244,7 +236,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
         if (creativetabs != null && creativetabs.drawInForegroundOfTab())
         {
             GlStateManager.disableBlend();
-            this.fontRendererObj.drawString(I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]), 8, 6, 4210752);
+            this.fontRenderer.drawString(I18n.format(creativetabs.getTranslatedTabLabel()), 8, 6, 4210752);
         }
     }
 
@@ -324,7 +316,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
                 this.searchField.setFocused(true);
                 this.searchField.setText("");
                 this.searchField.width = tab.getSearchbarWidth();
-                this.searchField.xPosition = this.guiLeft + (82 /*default left*/ + 89 /*default width*/) - this.searchField.width;
+                this.searchField.x = this.guiLeft + (82 /*default left*/ + 89 /*default width*/) - this.searchField.width;
                 this.updateCreativeSearch();
             }
             else
@@ -419,11 +411,11 @@ public class GuiPickBlock extends InventoryEffectRenderer
         if (maxPages != 0)
         {
             String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
-            int width = fontRendererObj.getStringWidth(page);
+            int width = fontRenderer.getStringWidth(page);
             GlStateManager.disableLighting();
             this.zLevel = 300.0F;
             itemRender.zLevel = 300.0F;
-            fontRendererObj.drawString(page, guiLeft + (xSize / 2) - (width / 2), guiTop - 44, -1);
+            fontRenderer.drawString(page, guiLeft + (xSize / 2) - (width / 2), guiTop - 44, -1);
             this.zLevel = 0.0F;
             itemRender.zLevel = 0.0F;
         }
@@ -436,7 +428,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
     {
         if (selectedTabIndex == CreativeTabs.SEARCH.getTabIndex())
         {
-            List<String> list = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips);
+            List<String> list = stack.getTooltip(this.mc.player, () -> this.mc.gameSettings.advancedItemTooltips);
             CreativeTabs creativetabs = stack.getItem().getCreativeTab();
 
             if (creativetabs == null && stack.getItem() == Items.ENCHANTED_BOOK)
@@ -445,7 +437,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
 
                 if (map.size() == 1)
                 {
-                    Enchantment enchantment = (Enchantment)map.keySet().iterator().next();
+                    Enchantment enchantment = map.keySet().iterator().next();
 
                     for (CreativeTabs creativetabs1 : CreativeTabs.CREATIVE_TAB_ARRAY)
                     {
@@ -460,18 +452,18 @@ public class GuiPickBlock extends InventoryEffectRenderer
 
             if (creativetabs != null)
             {
-                list.add(1, "" + TextFormatting.BOLD + TextFormatting.BLUE + I18n.format(creativetabs.getTranslatedTabLabel(), new Object[0]));
+                list.add(1, "" + TextFormatting.BOLD + TextFormatting.BLUE + I18n.format(creativetabs.getTranslatedTabLabel()));
             }
 
             for (int i = 0; i < list.size(); ++i)
             {
                 if (i == 0)
                 {
-                    list.set(i, stack.getRarity().rarityColor + (String)list.get(i));
+                    list.set(i, stack.getRarity().rarityColor + list.get(i));
                 }
                 else
                 {
-                    list.set(i, TextFormatting.GRAY + (String)list.get(i));
+                    list.set(i, TextFormatting.GRAY + list.get(i));
                 }
             }
 
@@ -613,7 +605,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
         if (this.isPointInRegion(j + 3, k + 3, 23, 27, mouseX, mouseY))
         {
             if(tab==CreativeTabs.INVENTORY) return false;
-            this.drawCreativeTabHoveringText(I18n.format(tab.getTranslatedTabLabel(), new Object[0]), mouseX, mouseY);
+            this.drawHoveringText(I18n.format(tab.getTranslatedTabLabel(), new Object[0]), mouseX, mouseY);
             return true;
         }
         else
@@ -674,7 +666,7 @@ public class GuiPickBlock extends InventoryEffectRenderer
         GlStateManager.enableRescaleNormal();
         ItemStack itemstack = tab.getIconItemStack();
         this.itemRender.renderItemAndEffectIntoGUI(itemstack, l, i1);
-        this.itemRender.renderItemOverlays(this.fontRendererObj, itemstack, l, i1);
+        this.itemRender.renderItemOverlays(this.fontRenderer, itemstack, l, i1);
         GlStateManager.disableLighting();
         this.itemRender.zLevel = 0.0F;
         this.zLevel = 0.0F;

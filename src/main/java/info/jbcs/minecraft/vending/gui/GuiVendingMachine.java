@@ -49,7 +49,7 @@ public class GuiVendingMachine extends GuiContainer {
 
     @Override
     protected void drawGuiContainerForegroundLayer(int a, int b) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawString(net.minecraft.client.resources.I18n.format("gui.vendingBlock.storage").trim(), 69, 6, 0x404040);
         fontRenderer.drawString(net.minecraft.client.resources.I18n.format("gui.vendingBlock.selling").trim(), 18, 20, 0x404040);
         fontRenderer.drawString(net.minecraft.client.resources.I18n.format("gui.vendingBlock.buying").trim(), 126, 20, 0x404040);

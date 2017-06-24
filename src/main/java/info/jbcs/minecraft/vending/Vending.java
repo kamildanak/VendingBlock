@@ -30,19 +30,20 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
 
 @Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION,
-        dependencies = "after:enderpay", acceptedMinecraftVersions = "[1.11,1.11.2]")
+        dependencies = "after:enderpay", acceptedMinecraftVersions = "[1.12]")
 
 public class Vending {
     public static final String MOD_ID = "vending";
     @SuppressWarnings("WeakerAccess")
     public static final String MOD_NAME = "vending";
     @SuppressWarnings("WeakerAccess")
-    public static final String VERSION = "1.4.3";
+    public static final String VERSION = "1.4.4";
 
     @Instance(MOD_ID)
     public static Vending instance;
@@ -84,7 +85,7 @@ public class Vending {
 
         itemWrench = new Item().setRegistryName("vendingMachineWrench").setUnlocalizedName("vendingMachineWrench")
                 .setCreativeTab(tabVending).setContainerItem(itemWrench);
-        GameRegistry.register(itemWrench);
+        ForgeRegistries.ITEMS.register(itemWrench);
     }
 
     @EventHandler
@@ -92,8 +93,8 @@ public class Vending {
     public void init(FMLInitializationEvent event) {
         proxy.registerPackets();
         proxy.registerEventHandlers();
-        proxy.registerRenderers();
         proxy.registerCraftingRecipes();
+        proxy.registerRenderers();
 
         if (config.get("general", "use_custom_creative_tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)) {
             tabVending = new CreativeTabs("tabVending") {
@@ -186,15 +187,16 @@ public class Vending {
         };
 
         GuiHandler.register(this);
+        sound_processed = new SoundEvent(
+                new ResourceLocation("vending", "vending.sound.processed"));
+        sound_processed.setRegistryName("vending.sound.processed");
+        ForgeRegistries.SOUND_EVENTS.register(sound_processed);
 
-        int soundEventId = SoundEvent.REGISTRY.getKeys().size();
-        ResourceLocation resourcelocation = new ResourceLocation("vending", "vending.sound.processed");
-        SoundEvent.REGISTRY.register(soundEventId++, resourcelocation, new SoundEvent(resourcelocation));
-        sound_processed = SoundEvent.REGISTRY.getObject(resourcelocation);
 
-        resourcelocation = new ResourceLocation("vending", "vending.sound.forbidden");
-        SoundEvent.REGISTRY.register(soundEventId, resourcelocation, new SoundEvent(resourcelocation));
-        sound_forbidden = SoundEvent.REGISTRY.getObject(resourcelocation);
+        sound_forbidden = new SoundEvent(
+                new ResourceLocation("vending", "vending.sound.forbidden"));
+        sound_forbidden.setRegistryName("vending.sound.forbidden");
+        ForgeRegistries.SOUND_EVENTS.register(sound_forbidden);
     }
 }
 

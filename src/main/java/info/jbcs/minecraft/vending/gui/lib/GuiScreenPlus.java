@@ -160,27 +160,27 @@ public class GuiScreenPlus extends GuiContainer implements IGuiWrapper {
     }
 
     public void drawString(String text, int sx, int sy, int color) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawString(text, sx, sy, color);
     }
 
     public void drawCenteredString(String text, int sx, int sy, int color) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawString(text, sx - fontRenderer.getStringWidth(text) / 2, sy - fontRenderer.FONT_HEIGHT / 2, color);
     }
 
     public void drawStringWithShadow(String text, int sx, int sy, int color) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawStringWithShadow(text, sx, sy, color);
     }
 
     public void drawCenteredStringWithShadow(String text, int sx, int sy, int color) {
-        FontRenderer fontRenderer = this.fontRendererObj;
+        FontRenderer fontRenderer = this.fontRenderer;
         fontRenderer.drawStringWithShadow(text, sx - fontRenderer.getStringWidth(text) / 2, sy - fontRenderer.FONT_HEIGHT / 2, color);
     }
 
     public FontRenderer fontRenderer() {
-        return mc.fontRendererObj;
+        return mc.fontRenderer;
     }
 
     protected void drawRect(int gx, int gy, int gw, int gh, int c1, int c2) {
