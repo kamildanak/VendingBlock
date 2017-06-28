@@ -198,7 +198,7 @@ public abstract class InventoryStatic implements IInventory {
             return j;
         } else {
             j -= l;
-            items.get(k).setCount(items.get(k).getCount()+1);
+            items.get(k).setCount(items.get(k).getCount()+l);
             items.get(k).setAnimationsToGo(5);
             onInventoryChanged();
             onInventoryChanged(k);
