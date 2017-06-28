@@ -2,7 +2,7 @@ package info.jbcs.minecraft.vending.tileentity;
 
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
-import info.jbcs.minecraft.vending.inventory.InventoryStatic;
+import com.kamildanak.minecraft.foamflower.inventory.InventoryStatic;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

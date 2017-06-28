@@ -1,10 +1,10 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.gui.lib.GuiScreenPlus;
-import info.jbcs.minecraft.vending.gui.lib.IGuiWrapper;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiEdit;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiExButton;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabel;
+import com.kamildanak.minecraft.foamflower.gui.GuiScreenPlus;
+import com.kamildanak.minecraft.foamflower.gui.IGuiWrapper;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiEdit;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiExButton;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabel;
 import info.jbcs.minecraft.vending.network.PacketDispatcher;
 import info.jbcs.minecraft.vending.network.server.MessageWrench;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;

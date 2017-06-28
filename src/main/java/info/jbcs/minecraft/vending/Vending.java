@@ -1,15 +1,15 @@
 package info.jbcs.minecraft.vending;
 
+import com.kamildanak.minecraft.foamflower.gui.GuiHandler;
+import com.kamildanak.minecraft.foamflower.inventory.DummyContainer;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiMultipleVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
-import info.jbcs.minecraft.vending.gui.lib.GuiHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
-import info.jbcs.minecraft.vending.inventory.DummyContainer;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.Block;

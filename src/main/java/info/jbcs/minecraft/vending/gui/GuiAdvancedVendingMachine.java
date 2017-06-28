@@ -1,7 +1,7 @@
 package info.jbcs.minecraft.vending.gui;
 
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiPickBlock;
-import info.jbcs.minecraft.vending.gui.lib.input.IPickBlockHandler;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiPickBlock;
+import com.kamildanak.minecraft.foamflower.gui.input.IPickBlockHandler;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.network.PacketDispatcher;
 import info.jbcs.minecraft.vending.network.server.MessageAdvVenSetItem;

@@ -1,15 +1,16 @@
 package info.jbcs.minecraft.vending.gui.hud;
 
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiElement;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiItemsList;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabel;
+import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabelCarousel;
+import com.kamildanak.minecraft.foamflower.gui.hud.HUD;
+import com.kamildanak.minecraft.foamflower.gui.layouts.CenteredLayout;
+import com.kamildanak.minecraft.foamflower.gui.layouts.LinearLayout;
 import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiElement;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiItemsList;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabel;
-import info.jbcs.minecraft.vending.gui.lib.elements.GuiLabelCarousel;
-import info.jbcs.minecraft.vending.gui.lib.layouts.CenteredLayout;
-import info.jbcs.minecraft.vending.gui.lib.layouts.LinearLayout;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -190,12 +191,12 @@ public class HintHUD extends HUD {
         Vector<String> tooltips = new Vector<>();
         for (ItemStack stack : itemStacks) {
             if (stack.isEmpty()) continue;
-            String tooltip = "";
+            StringBuilder tooltip = new StringBuilder();
             for (int i = 0; i < stack.getTooltip(mc.player, () -> false).size(); i++) {
-                if (i != 0) tooltip += "\n";
-                tooltip += stack.getTooltip(mc.player, () -> false).get(i);
+                if (i != 0) tooltip.append("\n");
+                tooltip.append(stack.getTooltip(mc.player, () -> false).get(i));
             }
-            tooltips.add(tooltip);
+            tooltips.add(tooltip.toString());
         }
         return tooltips.toArray(new String[tooltips.size()]);
     }
