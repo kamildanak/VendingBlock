@@ -1,6 +1,7 @@
 {
-  "vending.sound.processed": {
-    "category": "master music",
+  "sound_processed": {
+    "category": "block",
+    "subtitle": "subtitles.block.vendingMachine.dispense",
     "replace": false,
     "sounds": [
       {
@@ -11,8 +12,9 @@
       },
       "vending:cha-ching" ]
   },
-  "vending.sound.forbidden": {
-    "category": "master music",
+  "sound_forbidden": {
+    "category": "block",
+    "subtitle": "subtitles.block.vendingMachine.click",
     "replace": false,
     "sounds": [
       {

@@ -2,24 +2,21 @@ package info.jbcs.minecraft.vending;
 
 import com.kamildanak.minecraft.foamflower.gui.GuiHandler;
 import com.kamildanak.minecraft.foamflower.inventory.DummyContainer;
-import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiMultipleVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
+import info.jbcs.minecraft.vending.init.VendingBlocks;
+import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
-import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
@@ -30,7 +27,6 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
@@ -47,14 +43,6 @@ public class Vending {
 
     @Instance(MOD_ID)
     public static Vending instance;
-
-    public static Block blockVendingMachine;
-    public static Block blockAdvancedVendingMachine;
-    public static Block blockMultipleVendingMachine;
-    public static Item itemWrench;
-
-    public static SoundEvent sound_processed;
-    public static SoundEvent sound_forbidden;
 
     public static GuiHandler guiVending;
     public static GuiHandler guiWrench;
@@ -75,17 +63,9 @@ public class Vending {
     }
 
     @EventHandler
-    @SuppressWarnings("unused")
     public void preInit(FMLPreInitializationEvent event) {
         config = new Configuration(event.getSuggestedConfigurationFile());
         config.load();
-        blockVendingMachine = new BlockVendingMachine(false, false, "vendingMachine");
-        blockAdvancedVendingMachine = new BlockVendingMachine(true, false, "vendingMachineAdvanced");
-        blockMultipleVendingMachine = new BlockVendingMachine(false, true, "vendingMachineMultiple");
-
-        itemWrench = new Item().setRegistryName("vendingMachineWrench").setUnlocalizedName("vendingMachineWrench")
-                .setCreativeTab(tabVending).setContainerItem(itemWrench);
-        ForgeRegistries.ITEMS.register(itemWrench);
     }
 
     @EventHandler
@@ -101,13 +81,13 @@ public class Vending {
                 @Override
                 @Nonnull
                 public ItemStack getIconItemStack() {
-                    return new ItemStack(blockVendingMachine, 1, 4);
+                    return new ItemStack(VendingBlocks.BLOCK_VENDING_MACHINE, 1, 4);
                 }
 
                 @Override
                 @Nonnull
                 public ItemStack getTabIconItem() {
-                    return new ItemStack(blockVendingMachine, 1, 4);
+                    return new ItemStack(VendingBlocks.BLOCK_VENDING_MACHINE, 1, 4);
                 }
             };
         } else {
@@ -128,10 +108,10 @@ public class Vending {
                 "Set Y offset of HUD").getInt(defaultOffset);
 
         config.save();
-        blockVendingMachine.setCreativeTab(tabVending);
-        blockAdvancedVendingMachine.setCreativeTab(tabVending);
-        blockMultipleVendingMachine.setCreativeTab(tabVending);
-        itemWrench.setCreativeTab(tabVending);
+        VendingBlocks.BLOCK_VENDING_MACHINE.setCreativeTab(tabVending);
+        VendingBlocks.BLOCK_VENDING_MACHINE_ADVANCED.setCreativeTab(tabVending);
+        VendingBlocks.BLOCK_VENDING_MACHINE_MULTIPLE.setCreativeTab(tabVending);
+        VendingItems.ITEM_WRENCH.setCreativeTab(tabVending);
 
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
 
@@ -187,16 +167,6 @@ public class Vending {
         };
 
         GuiHandler.register(this);
-        sound_processed = new SoundEvent(
-                new ResourceLocation("vending", "vending.sound.processed"));
-        sound_processed.setRegistryName("vending.sound.processed");
-        ForgeRegistries.SOUND_EVENTS.register(sound_processed);
-
-
-        sound_forbidden = new SoundEvent(
-                new ResourceLocation("vending", "vending.sound.forbidden"));
-        sound_forbidden.setRegistryName("vending.sound.forbidden");
-        ForgeRegistries.SOUND_EVENTS.register(sound_forbidden);
     }
 }
 

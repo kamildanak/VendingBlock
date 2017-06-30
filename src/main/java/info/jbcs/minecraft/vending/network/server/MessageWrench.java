@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.network.server;
 
-import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.network.AbstractMessage;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.entity.player.EntityPlayer;
@@ -51,7 +51,7 @@ public class MessageWrench extends AbstractMessage.AbstractServerMessage<Message
 
     @Override
     public void process(EntityPlayer player, Side side) {
-        if (player.inventory.getCurrentItem().isEmpty() || player.inventory.getCurrentItem().getItem() != Vending.itemWrench)
+        if (player.inventory.getCurrentItem().isEmpty() || player.inventory.getCurrentItem().getItem() != VendingItems.ITEM_WRENCH)
             return;
         TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
         if (!(tileEntity instanceof TileEntityVendingMachine))

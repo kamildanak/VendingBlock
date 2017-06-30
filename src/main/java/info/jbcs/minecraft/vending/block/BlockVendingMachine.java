@@ -5,6 +5,8 @@ import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.init.VendingItems;
+import info.jbcs.minecraft.vending.init.VendingSoundEvents;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDoor;
@@ -46,11 +48,15 @@ public class BlockVendingMachine extends BlockContainer {
     public BlockVendingMachine(boolean advanced, boolean multiple, String name) {
         super(Material.GLASS);
         setProperties();
-        register(name);
 
         isAdvanced = advanced;
         isMultiple = multiple;
         isOpen = true;
+
+        this.name = name;
+        setUnlocalizedName(name);
+        setRegistryName(name);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
     }
 
     private static boolean checkIfFits(@Nonnull ItemStack bought, @Nonnull ItemStack offered, NonNullList<ItemStack> soldItems, TileEntityVendingMachine tileEntity) {
@@ -158,20 +164,11 @@ public class BlockVendingMachine extends BlockContainer {
         setCreativeTab(Vending.tabVending);
     }
 
-    private void register(String name) {
-        this.name = name;
-        setUnlocalizedName(name);
-        setRegistryName(name);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(SUPPORT, EnumSupports.STONE));
-        ForgeRegistries.BLOCKS.register(this);
-        ForgeRegistries.ITEMS.register(new ItemBlock(this).setRegistryName(name).setHasSubtypes(true).setMaxDamage(0));
-    }
-
     private void vend(World world, BlockPos blockPos, EntityPlayer entityplayer) {
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
         if (tileEntity == null) return;
         if (!tileEntity.isOpen()) {
-            world.playSound(entityplayer, blockPos, Vending.sound_forbidden, SoundCategory.MASTER, 0.3f, 0.6f);
+            world.playSound(entityplayer, blockPos, VendingSoundEvents.FORBIDDEN, SoundCategory.MASTER, 0.3f, 0.6f);
             return;
         }
 
@@ -208,7 +205,8 @@ public class BlockVendingMachine extends BlockContainer {
             if (!tileEntity.isInfinite())
                 tileEntity.inventory.onInventoryChanged();
         }
-        world.playSound(entityplayer, blockPos, fits ? Vending.sound_processed : Vending.sound_forbidden, SoundCategory.MASTER, 0.3f, 0.6f);
+        world.playSound(entityplayer, blockPos, fits ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
+                SoundCategory.MASTER, 0.3f, 0.6f);
     }
 
     private boolean checkIfMachineHasEnoughtCredits(TileEntityVendingMachine tileEntity) {
@@ -286,7 +284,8 @@ public class BlockVendingMachine extends BlockContainer {
         dropBlockAsItem(world, blockPos, world.getBlockState(blockPos), 0);
         world.setBlockToAir(blockPos);
 
-        world.playSound(entityplayer, blockPos, Vending.sound_processed, SoundCategory.MASTER, 0.3f, 0.6f);
+        world.playSound(entityplayer, blockPos, VendingSoundEvents.PROCESSED,
+                SoundCategory.MASTER, 0.3f, 0.6f);
     }
 
     @Override
@@ -295,7 +294,7 @@ public class BlockVendingMachine extends BlockContainer {
         if (tileEntity == null)
             return false;
 
-        if (!entityPlayer.inventory.getCurrentItem().isEmpty() && entityPlayer.inventory.getCurrentItem().getItem() == Vending.itemWrench) {
+        if (!entityPlayer.inventory.getCurrentItem().isEmpty() && entityPlayer.inventory.getCurrentItem().getItem() == VendingItems.ITEM_WRENCH) {
             Vending.guiWrench.open(entityPlayer, world, blockPos);
             return true;
         }

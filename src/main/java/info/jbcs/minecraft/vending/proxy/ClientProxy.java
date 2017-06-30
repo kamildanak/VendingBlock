@@ -4,6 +4,8 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.block.BlockVendingMachine;
 import info.jbcs.minecraft.vending.block.EnumSupports;
 import info.jbcs.minecraft.vending.gui.hud.HintHUD;
+import info.jbcs.minecraft.vending.init.VendingBlocks;
+import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.renderer.TileEntityVendingMachineRenderer;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
@@ -27,23 +29,20 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void registerRenderers() {
-        //noinspection unchecked
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityVendingMachine.class, new TileEntityVendingMachineRenderer());
         RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
-        renderItem.getItemModelMesher().register(Vending.itemWrench, 0, new ModelResourceLocation(Vending.MOD_ID + ":" + "vendingMachineWrench", "inventory"));
+        renderItem.getItemModelMesher().register(VendingItems.ITEM_WRENCH, 0, new ModelResourceLocation(Vending.MOD_ID + ":" + "vendingMachineWrench", "inventory"));
         for (int i = 0; i < EnumSupports.length; i++) {
-            renderItem.getItemModelMesher().register(Item.getItemFromBlock(Vending.blockVendingMachine), i,
-                    new ModelResourceLocation(Vending.MOD_ID + ":" + ((BlockVendingMachine) Vending.blockVendingMachine).getName(),
-                            "support=" + EnumSupports.byMetadata(i).getUnlocalizedName()));
-
-            renderItem.getItemModelMesher().register(Item.getItemFromBlock(Vending.blockAdvancedVendingMachine), i,
-                    new ModelResourceLocation(Vending.MOD_ID + ":" + ((BlockVendingMachine) Vending.blockAdvancedVendingMachine).getName(),
-                            "support=" + EnumSupports.byMetadata(i).getUnlocalizedName()));
-
-            renderItem.getItemModelMesher().register(Item.getItemFromBlock(Vending.blockMultipleVendingMachine), i,
-                    new ModelResourceLocation(Vending.MOD_ID + ":" + ((BlockVendingMachine) Vending.blockMultipleVendingMachine).getName(),
-                            "support=" + EnumSupports.byMetadata(i).getUnlocalizedName()));
+            registerVendingMachineRenderer(renderItem, VendingBlocks.BLOCK_VENDING_MACHINE, i);
+            registerVendingMachineRenderer(renderItem, VendingBlocks.BLOCK_VENDING_MACHINE_ADVANCED, i);
+            registerVendingMachineRenderer(renderItem, VendingBlocks.BLOCK_VENDING_MACHINE_MULTIPLE, i);
         }
+    }
+
+    private void registerVendingMachineRenderer(RenderItem renderItem, BlockVendingMachine block, int i) {
+        renderItem.getItemModelMesher().register(Item.getItemFromBlock(block), i,
+                new ModelResourceLocation(Vending.MOD_ID + ":" + block.getName(),
+                        "support=" + EnumSupports.byMetadata(i).getUnlocalizedName()));
     }
 
     @Override
