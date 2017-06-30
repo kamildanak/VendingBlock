@@ -408,7 +408,6 @@ public class BlockVendingMachine extends BlockContainer {
         return name;
     }
 
-
     /* EnderPay optional methods below */
 
     @Override
