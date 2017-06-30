@@ -8,7 +8,6 @@ import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabelCarousel;
 import com.kamildanak.minecraft.foamflower.gui.hud.HUD;
 import com.kamildanak.minecraft.foamflower.gui.layouts.CenteredLayout;
 import com.kamildanak.minecraft.foamflower.gui.layouts.LinearLayout;
-import info.jbcs.minecraft.vending.General;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
@@ -89,7 +88,7 @@ public class HintHUD extends HUD {
         if (event.isCancelable() || event.getType() != RenderGameOverlayEvent.ElementType.EXPERIENCE) return;
 
         if (mc == null || mc.player == null || mc.world == null) return;
-        RayTraceResult mop = General.getMovingObjectPositionFromPlayer(mc.world, mc.player, false);
+        RayTraceResult mop = this.mc.objectMouseOver;
         if (mop == null) return;
         TileEntity te = mc.world.getTileEntity(mop.getBlockPos());
         if (te == null) return;
