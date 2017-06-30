@@ -396,8 +396,6 @@ public class BlockVendingMachine extends BlockContainer {
         return false;
     }
 
-    /* EnderPay related methods below */
-
     @Override
     @Nonnull
     public BlockRenderLayer getBlockLayer() {
@@ -407,8 +405,6 @@ public class BlockVendingMachine extends BlockContainer {
     public String getName() {
         return name;
     }
-
-    /* EnderPay optional methods below */
 
     @Override
     @Nonnull
