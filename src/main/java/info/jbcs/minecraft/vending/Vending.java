@@ -113,15 +113,15 @@ public class Vending {
         } else {
             tabVending = CreativeTabs.DECORATIONS;
         }
-        close_on_sold_out = config.get("general", "close_on_sold_out", false, "Stop accepting items after last item is sold out.").getBoolean(false);
+        close_on_sold_out = config.get("general", "close_on_sold_out", false, "Stop accepting item after last item is sold out.").getBoolean(false);
         close_on_partial_sold_out = config.get("general", "close_on_partial_sold_out", false,
-                "Stop accepting items after some items were sold out.").getBoolean(false);
+                "Stop accepting item after some item were sold out.").getBoolean(false);
         block_placing_next_to_doors = config.get("general", "block_placing_next_to_doors", false,
                 "Check for nearby doors when block is placed " +
                         "(Use specialized mod if you want more advanced restrictions)").getBoolean(false);
 
         transfer_to_inventory = config.get("general", "transfer_to_inventory", false,
-                "Transfer sold items directly to player's inventory.").getBoolean(false);
+                "Transfer sold item directly to player's inventory.").getBoolean(false);
 
         int defaultOffset = (Loader.isModLoaded("waila"))?40:15;
         offsetY = config.get("general", "offsetY", defaultOffset,
