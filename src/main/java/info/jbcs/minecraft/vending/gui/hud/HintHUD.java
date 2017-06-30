@@ -102,7 +102,7 @@ public class HintHUD extends HUD {
         boughtAndSold.setHorizontal(mc.player.isSneaking());
 
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) te;
-        root.y = Vending.offsetY;
+        root.y = Vending.settings.getOffsetY();
         labelSeller.setCaption(tileEntity.getOwnerName());
         labelSeller.center = true;
 

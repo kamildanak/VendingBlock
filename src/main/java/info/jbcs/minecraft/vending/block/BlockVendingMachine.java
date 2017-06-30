@@ -233,7 +233,7 @@ public class BlockVendingMachine extends BlockContainer {
         if (countNotNull(soldItems) == 0) return;
 
         NonNullList<ItemStack> soldItemsOld = NonNullList.withSize(soldItems.size(), ItemStack.EMPTY);
-        if (Vending.close_on_partial_sold_out)
+        if (Vending.settings.shouldCloseOnPartialSoldOut())
             for (int i = 0; i < soldItems.size(); i++)
                 if (!soldItems.get(i).isEmpty())
                     soldItemsOld.set(i,soldItems.get(i).copy());
@@ -249,12 +249,12 @@ public class BlockVendingMachine extends BlockContainer {
             }
 
             boolean spawnItem = true;
-            if (Vending.transfer_to_inventory) spawnItem = !entityPlayer.inventory.addItemStackToInventory(vended);
+            if (Vending.settings.shouldTransferToInventory()) spawnItem = !entityPlayer.inventory.addItemStackToInventory(vended);
             if (spawnItem) Utils.throwItemAtPlayer(entityPlayer, world, blockPos, vended);
         }
-        if (Vending.close_on_sold_out && countNotNull(tileEntity.getSoldItems()) == 0)
+        if (Vending.settings.shouldCloseOnSoldOut() && countNotNull(tileEntity.getSoldItems()) == 0)
             tileEntity.setOpen(false);
-        if (Vending.close_on_partial_sold_out)
+        if (Vending.settings.shouldCloseOnPartialSoldOut())
             closeIfSoldChanged(tileEntity, soldItems, soldItemsOld);
     }
 
@@ -319,7 +319,7 @@ public class BlockVendingMachine extends BlockContainer {
     @Override
     public boolean canPlaceBlockAt(World worldIn, @Nonnull BlockPos pos) {
         if (!worldIn.getBlockState(pos).getBlock().isReplaceable(worldIn, pos)) return false;
-        if (!Vending.block_placing_next_to_doors) return true;
+        if (!Vending.settings.isPlacingNextToDoorsBlocked()) return true;
         for (int x = -1; x < 2; x++)
             for (int z = -1; z < 2; z++)
                 if (worldIn.getBlockState(pos.add(x, 0, z)).getBlock() instanceof BlockDoor) return false;

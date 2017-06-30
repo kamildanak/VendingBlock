@@ -6,25 +6,23 @@ import info.jbcs.minecraft.vending.gui.GuiAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiMultipleVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiVendingMachine;
 import info.jbcs.minecraft.vending.gui.GuiWrenchVendingMachine;
-import info.jbcs.minecraft.vending.init.VendingBlocks;
-import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
 import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
 import info.jbcs.minecraft.vending.proxy.CommonProxy;
+import info.jbcs.minecraft.vending.settings.ISettings;
+import info.jbcs.minecraft.vending.settings.Settings;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -41,16 +39,11 @@ public class Vending {
 
     public static GuiHandler guiVending;
     public static GuiHandler guiWrench;
-    public static int offsetY;
 
     public static CreativeTabs tabVending;
-    public static boolean close_on_partial_sold_out;
-    public static boolean close_on_sold_out;
-    public static boolean block_placing_next_to_doors;
-    public static boolean transfer_to_inventory;
     @SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
     public static CommonProxy proxy;
-    private static Configuration config;
+    public static ISettings settings;
 
     public Vending() {
 
@@ -58,53 +51,16 @@ public class Vending {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        config = new Configuration(event.getSuggestedConfigurationFile());
-        config.load();
+        settings = new Settings();
+        settings.loadConfig(event);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.registerPackets();
         proxy.registerEventHandlers();
-        proxy.registerCraftingRecipes();
         proxy.registerRenderers();
-
-        if (config.get("general", "use_custom_creative_tab", true, "Add a new tab to creative mode and put all vending blocks there.").getBoolean(true)) {
-            tabVending = new CreativeTabs("tabVending") {
-                @Override
-                @Nonnull
-                public ItemStack getIconItemStack() {
-                    return new ItemStack(VendingBlocks.BLOCK_VENDING_MACHINE, 1, 4);
-                }
-
-                @Override
-                @Nonnull
-                public ItemStack getTabIconItem() {
-                    return new ItemStack(VendingBlocks.BLOCK_VENDING_MACHINE, 1, 4);
-                }
-            };
-        } else {
-            tabVending = CreativeTabs.DECORATIONS;
-        }
-        close_on_sold_out = config.get("general", "close_on_sold_out", false, "Stop accepting item after last item is sold out.").getBoolean(false);
-        close_on_partial_sold_out = config.get("general", "close_on_partial_sold_out", false,
-                "Stop accepting item after some item were sold out.").getBoolean(false);
-        block_placing_next_to_doors = config.get("general", "block_placing_next_to_doors", false,
-                "Check for nearby doors when block is placed " +
-                        "(Use specialized mod if you want more advanced restrictions)").getBoolean(false);
-
-        transfer_to_inventory = config.get("general", "transfer_to_inventory", false,
-                "Transfer sold item directly to player's inventory.").getBoolean(false);
-
-        int defaultOffset = (Loader.isModLoaded("waila"))?40:15;
-        offsetY = config.get("general", "offsetY", defaultOffset,
-                "Set Y offset of HUD").getInt(defaultOffset);
-
-        config.save();
-        VendingBlocks.BLOCK_VENDING_MACHINE.setCreativeTab(tabVending);
-        VendingBlocks.BLOCK_VENDING_MACHINE_ADVANCED.setCreativeTab(tabVending);
-        VendingBlocks.BLOCK_VENDING_MACHINE_MULTIPLE.setCreativeTab(tabVending);
-        VendingItems.ITEM_WRENCH.setCreativeTab(tabVending);
+        proxy.setCreativeTabs();
 
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
 
@@ -160,6 +116,12 @@ public class Vending {
         };
 
         GuiHandler.register(this);
+    }
+
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        settings.save();
     }
 }
 
