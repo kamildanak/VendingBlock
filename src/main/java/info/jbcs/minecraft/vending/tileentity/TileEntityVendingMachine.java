@@ -90,7 +90,7 @@ public class TileEntityVendingMachine extends TileEntity implements IInventory, 
 
     @Override
     public int getSizeInventory() {
-        return inventory.getSizeInventory() + (advanced ? -1 : 0);
+        return inventory.getSizeInventory() + (advanced ? -1 : 0) + (multiple ? 0 : -3);
     }
 
     @Override

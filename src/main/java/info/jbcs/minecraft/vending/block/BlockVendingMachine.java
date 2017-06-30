@@ -17,9 +17,9 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -30,7 +30,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -349,43 +348,14 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     @Override
-    public void breakBlock(World world, @Nonnull BlockPos blockPos, @Nonnull IBlockState state) {
-        TileEntityVendingMachine tileEntityChest = (TileEntityVendingMachine) world.getTileEntity(blockPos);
-
-        if (tileEntityChest == null)
-            return;
-
-        for (int l = 0; l < tileEntityChest.getSizeInventory(); l++) {
-            ItemStack itemstack = tileEntityChest.getStackInSlot(l);
-            if (itemstack.isEmpty())
-                continue;
-            if (l == 10 && tileEntityChest.isAdvanced())
-                continue;
-
-            float f = world.rand.nextFloat() * 0.8F + 0.1F;
-            float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-            float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-            while (itemstack.getCount() > 0) {
-                int i1 = world.rand.nextInt(21) + 10;
-                if (i1 > itemstack.getCount()) {
-                    i1 = itemstack.getCount();
-                }
-
-                itemstack.setCount(itemstack.getCount()-i1);
-                NBTTagCompound tag = new NBTTagCompound();
-                itemstack.writeToNBT(tag);
-                ItemStack toSpawn = new ItemStack(tag);
-                toSpawn.setCount(i1);
-                EntityItem entityitem = new EntityItem(world, blockPos.getX() + f, blockPos.getY() + f1, blockPos.getZ() + f2, toSpawn);
-                float f3 = 0.05F;
-                entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-                entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 0.2F;
-                entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-                world.spawnEntity(entityitem);
-            }
+    public void breakBlock(World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+        if (tileentity instanceof IInventory) {
+            InventoryHelper.dropInventoryItems(worldIn, pos, (IInventory) tileentity);
+            worldIn.updateComparatorOutputLevel(pos, this);
         }
 
-        super.breakBlock(world, blockPos, state);
+        super.breakBlock(worldIn, pos, state);
     }
 
     @SuppressWarnings("deprecation")
