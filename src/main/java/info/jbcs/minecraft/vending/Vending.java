@@ -23,7 +23,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -32,17 +31,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import javax.annotation.Nonnull;
 
 @Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION,
-        dependencies = "after:enderpay", acceptedMinecraftVersions = "[1.12]")
+        dependencies = "after:enderpay", acceptedMinecraftVersions = Vending.ACCEPTED_MC_VERSIONS)
 
 public class Vending {
     public static final String MOD_ID = "vending";
-    @SuppressWarnings("WeakerAccess")
-    public static final String MOD_NAME = "vending";
-    @SuppressWarnings("WeakerAccess")
-    public static final String VERSION = "1.4.4";
-
-    @Instance(MOD_ID)
-    public static Vending instance;
+    static final String MOD_NAME = "vending";
+    static final String VERSION = "{@vendingVersion}";
+    static final String ACCEPTED_MC_VERSIONS = "{@mcVersion}";
 
     public static GuiHandler guiVending;
     public static GuiHandler guiWrench;
@@ -54,7 +49,6 @@ public class Vending {
     public static boolean block_placing_next_to_doors;
     public static boolean transfer_to_inventory;
     @SidedProxy(clientSide = "info.jbcs.minecraft.vending.proxy.ClientProxy", serverSide = "info.jbcs.minecraft.vending.proxy.CommonProxy")
-    @SuppressWarnings("WeakerAccess")
     public static CommonProxy proxy;
     private static Configuration config;
 
@@ -69,7 +63,6 @@ public class Vending {
     }
 
     @EventHandler
-    @SuppressWarnings("unused")
     public void init(FMLInitializationEvent event) {
         proxy.registerPackets();
         proxy.registerEventHandlers();
