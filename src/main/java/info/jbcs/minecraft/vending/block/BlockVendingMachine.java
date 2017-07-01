@@ -164,36 +164,34 @@ public class BlockVendingMachine extends BlockContainer {
     }
 
     private void vend(World world, BlockPos blockPos, EntityPlayer entityplayer) {
+        if (world.isRemote) return;
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos);
         if (tileEntity == null) return;
-        if (!tileEntity.isOpen()) {
-            world.playSound(entityplayer, blockPos, VendingSoundEvents.FORBIDDEN, SoundCategory.MASTER, 0.3f, 0.6f);
-            return;
-        }
 
         NonNullList<ItemStack> soldItems = tileEntity.getSoldItems();
         ItemStack bought = tileEntity.getBoughtItems().get(0);
         ItemStack offered = entityplayer.inventory.getCurrentItem();
 
-        boolean fits = checkIfFitsEnderPay(entityplayer, tileEntity, soldItems, bought) &&
-                checkIfFits(bought, offered, soldItems, tileEntity);
-
-        if (fits && !world.isRemote) {
-            giveItems(soldItems, entityplayer, world, blockPos, tileEntity);
-            boolean takeItems = true;
-            if (Loader.isModLoaded("enderpay")) {
-                if (tileEntity.soldCreditsSum() > 0)
-                    giveCredits(entityplayer, tileEntity);
-                if (tileEntity.boughtCreditsSum() > 0)
-                    takeCredits(entityplayer, tileEntity, bought);
-                if (tileEntity.getBoughtItems().size() > 0 &&
-                        Utils.isBanknote(tileEntity.getBoughtItems().get(0)))
-                    takeItems = false;
-            }
-            if(takeItems) takeItems(entityplayer, tileEntity, bought, offered);
+        if (!tileEntity.isOpen() || !checkIfMachineHasEnoughtCredits(tileEntity) ||
+                !checkIfPlayerHasEnoughtCredits(entityplayer, tileEntity, bought) ||
+                !checkIfFits(bought, offered, soldItems, tileEntity)) {
+            world.playSound(null, blockPos, VendingSoundEvents.FORBIDDEN, SoundCategory.MASTER, 0.3f, 0.6f);
+            return;
         }
-        world.playSound(entityplayer, blockPos, fits ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
-                SoundCategory.MASTER, 0.3f, 0.6f);
+
+        giveItems(soldItems, entityplayer, world, blockPos, tileEntity);
+        boolean takeItems = true;
+        if (Loader.isModLoaded("enderpay")) {
+            if (tileEntity.soldCreditsSum() > 0)
+                giveCredits(entityplayer, tileEntity);
+            if (tileEntity.boughtCreditsSum() > 0)
+                takeCredits(entityplayer, tileEntity, bought);
+            if (tileEntity.getBoughtItems().size() > 0 &&
+                    Utils.isBanknote(tileEntity.getBoughtItems().get(0)))
+                takeItems = false;
+        }
+        if (takeItems) takeItems(entityplayer, tileEntity, bought, offered);
+        world.playSound(null, blockPos, VendingSoundEvents.PROCESSED, SoundCategory.MASTER, 0.3f, 0.6f);
     }
 
     private void takeItems(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, @Nonnull ItemStack bought, @Nonnull ItemStack offered) {
@@ -294,7 +292,7 @@ public class BlockVendingMachine extends BlockContainer {
 
         vend(world, blockPos, entityPlayer);
         tileEntity.markDirty();
-        tileEntity.markBlockForUpdate(world, blockPos);
+        TileEntityVendingMachine.markBlockForUpdate(world, blockPos);
 
         return true;
     }
@@ -317,7 +315,7 @@ public class BlockVendingMachine extends BlockContainer {
 
         if (entityLiving != null) {
             EntityPlayer player = (EntityPlayer) entityLiving;
-            e.setOwnerName(player.getDisplayNameString());
+            e.setOwner(player);
             world.setTileEntity(blockPos, e);
         }
     }
@@ -412,17 +410,12 @@ public class BlockVendingMachine extends BlockContainer {
         return net.minecraft.client.resources.I18n.format("tile." + getName() + ".name").trim();
     }
 
-    private boolean checkIfFitsEnderPay(EntityPlayer entityplayer, TileEntityVendingMachine tileEntity, NonNullList<ItemStack> soldItems, ItemStack bought) {
-        boolean playerHasEnoughtCredits = true;
-        boolean machineHasEnoughtCredits = true;
-        if (Loader.isModLoaded("enderpay")) {
-            for (int i = 0; i < soldItems.size(); i++) {
-                if (Utils.isBanknote(soldItems.get(i))) soldItems.set(i, ItemStack.EMPTY);
-            }
-            playerHasEnoughtCredits = checkIfPlayerHasEnoughtCredits(entityplayer, tileEntity, bought);
-            machineHasEnoughtCredits = checkIfMachineHasEnoughtCredits(tileEntity);
+    private NonNullList<ItemStack> filterBanknotes(NonNullList<ItemStack> soldItems) {
+        if (!Loader.isModLoaded("enderpay")) return soldItems;
+        for (int i = 0; i < soldItems.size(); i++) {
+            if (Utils.isBanknote(soldItems.get(i))) soldItems.set(i, ItemStack.EMPTY);
         }
-        return playerHasEnoughtCredits && machineHasEnoughtCredits;
+        return soldItems;
     }
 
     private boolean checkIfMachineHasEnoughtCredits(TileEntityVendingMachine tileEntity) {
