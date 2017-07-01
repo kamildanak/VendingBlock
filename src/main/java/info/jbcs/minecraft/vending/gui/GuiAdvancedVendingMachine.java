@@ -40,7 +40,7 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
     protected void actionPerformed(GuiButton button) {
         super.actionPerformed(button);
         if (button.id == 100) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.getBoughtItems().get(0), this));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBlock(player, container.entity.inventory.getBoughtItems().get(0), this));
         }
     }
 

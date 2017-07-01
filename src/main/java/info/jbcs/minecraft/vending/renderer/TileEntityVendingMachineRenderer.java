@@ -24,8 +24,8 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer<
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F);
         int A = 0;
-        int notNullSold = General.countNotNull(machine.getSoldItems());
-        for (ItemStack itemStack : machine.getSoldItems()) {
+        int notNullSold = General.countNotNull(machine.inventory.getSoldItems());
+        for (ItemStack itemStack : machine.inventory.getSoldItems()) {
             if (itemStack == ItemStack.EMPTY) {
                 continue;
             }

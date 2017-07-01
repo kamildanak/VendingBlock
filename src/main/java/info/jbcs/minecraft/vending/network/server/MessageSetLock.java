@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.network.server;
 
+import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.network.AbstractMessage;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,6 +47,6 @@ public class MessageSetLock extends AbstractMessage.AbstractServerMessage<Messag
         TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
         if (!(tileEntity instanceof TileEntityVendingMachine)) return;
         ((TileEntityVendingMachine) tileEntity).setOpen(!locked);
-        ((TileEntityVendingMachine) tileEntity).markBlockForUpdate(player.world, new BlockPos(x, y, z));
+        Utils.markBlockForUpdate(player.world, new BlockPos(x, y, z));
     }
 }

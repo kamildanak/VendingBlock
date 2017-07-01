@@ -17,7 +17,8 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = Vending.MOD_ID, name = Vending.MOD_NAME, version = Vending.VERSION,
-        dependencies = "after:enderpay", acceptedMinecraftVersions = Vending.ACCEPTED_MC_VERSIONS)
+        dependencies = "after:enderpay;required-after:foamflower",
+        acceptedMinecraftVersions = Vending.ACCEPTED_MC_VERSIONS)
 
 public class Vending {
     public static final String MOD_ID = "vending";

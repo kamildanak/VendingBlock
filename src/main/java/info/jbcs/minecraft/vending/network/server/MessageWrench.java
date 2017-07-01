@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.network.server;
 
+import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.network.AbstractMessage;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
@@ -59,6 +60,6 @@ public class MessageWrench extends AbstractMessage.AbstractServerMessage<Message
         TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
         entity.setInfinite(infinite);
         entity.setOwnerName(ownerName);
-        entity.markBlockForUpdate(player.world, new BlockPos(x, y, z));
+        Utils.markBlockForUpdate(player.world, new BlockPos(x, y, z));
     }
 }

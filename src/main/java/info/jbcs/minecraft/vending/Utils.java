@@ -1,13 +1,17 @@
 package info.jbcs.minecraft.vending;
 
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
 import java.util.HashMap;
@@ -72,5 +76,28 @@ public class Utils {
     @Optional.Method(modid = "enderpay")
     public static boolean isFilledBanknote(ItemStack bought) {
         return EnderPayApi.isFilledBanknote(bought);
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static boolean checkIfPlayerHasEnoughCredits(EntityPlayer entityPlayer, long requiredAmount) {
+        try {
+            return EnderPayApi.getBalance(entityPlayer.getUniqueID()) >= requiredAmount;
+        } catch (NoSuchAccountException ignored) {
+            return false;
+        }
+    }
+
+    public static void markBlockForUpdate(World world, BlockPos pos) {
+        if (world == null) return;
+        IBlockState blockState = world.getBlockState(pos);
+        world.notifyBlockUpdate(pos, blockState, blockState, 3);
+    }
+
+    public static NonNullList<ItemStack> filterBanknotes(NonNullList<ItemStack> soldItems) {
+        if (!Loader.isModLoaded("enderpay")) return soldItems;
+        for (int i = 0; i < soldItems.size(); i++) {
+            if (Utils.isBanknote(soldItems.get(i))) soldItems.set(i, ItemStack.EMPTY);
+        }
+        return soldItems;
     }
 }

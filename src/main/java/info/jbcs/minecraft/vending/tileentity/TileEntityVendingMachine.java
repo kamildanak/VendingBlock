@@ -1,12 +1,6 @@
 package info.jbcs.minecraft.vending.tileentity;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
-import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
-import com.kamildanak.minecraft.foamflower.inventory.InventoryStatic;
-import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
-import info.jbcs.minecraft.vending.inventory.ContainerMultipleVendingMachine;
-import info.jbcs.minecraft.vending.inventory.ContainerVendingMachine;
-import net.minecraft.block.state.IBlockState;
+import info.jbcs.minecraft.vending.inventory.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -17,38 +11,33 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nonnull;
-import java.util.UUID;
+import javax.annotation.Nullable;
 
-public class TileEntityVendingMachine extends TileEntityLockable implements ITickable, ISidedInventory {
-    private static final int[] side0 = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
-    public InventoryStatic inventory = new InventoryStatic(14) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            markBlockForUpdate(world, pos);
-        }
-    };
-    IItemHandler itemHandler = new SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
+public class TileEntityVendingMachine extends TileEntityLockable implements ISidedInventory {
+    private static final int[] side0 = new int[]{};
+    //private static final int[] side0 = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8}; Uncomment to enable hoppers
+    public InventoryVendingMachine inventory;
+    private IItemHandler itemHandler = new SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
     private boolean advanced;
     private boolean infinite;
     private boolean multiple;
     private boolean open = true;
     private String ownerName;
-    private UUID ownerUUID;
 
     public TileEntityVendingMachine() {
         advanced = infinite = multiple = false;
         open = true;
         ownerName = "";
-        ownerUUID = new UUID(0, 0);
+        inventory = (Loader.isModLoaded("enderpay")) ?
+                new InventoryVendingMachineEnderPay(this) :
+                new InventoryVendingMachine(this);
     }
 
     public TileEntityVendingMachine(boolean advanced, boolean infinite, boolean multiple) {
@@ -58,12 +47,6 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
         this.multiple = multiple;
     }
 
-    public static void markBlockForUpdate(World world, BlockPos pos) {
-        if (world == null) return;
-        IBlockState blockState = world.getBlockState(pos);
-        world.notifyBlockUpdate(pos, blockState, blockState, 3);
-    }
-
     @Override
     @Nonnull
     public int[] getSlotsForFace(@Nonnull EnumFacing side) {
@@ -71,12 +54,12 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
     }
 
     @Override
-    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+    public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull EnumFacing direction) {
         return this.isItemValidForSlot(index, itemStackIn);
     }
 
     @Override
-    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
         return this.isItemValidForSlot(index, stack);
     }
 
@@ -128,12 +111,12 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
     }
 
     @Override
-    public void openInventory(EntityPlayer player) {
+    public void openInventory(@Nonnull EntityPlayer player) {
 
     }
 
     @Override
-    public void closeInventory(EntityPlayer player) {
+    public void closeInventory(@Nonnull EntityPlayer player) {
 
     }
 
@@ -160,11 +143,6 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
     @Override
     public void clear() {
         this.inventory.clear();
-    }
-
-    @Override
-    public void update() {
-
     }
 
     @Override
@@ -222,14 +200,8 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
         return ownerName;
     }
 
-    @Deprecated
     public void setOwnerName(String name) {
         ownerName = name;
-    }
-
-    public void setOwner(EntityPlayer player) {
-        ownerName = player.getName();
-        ownerUUID = player.getUniqueID();
     }
 
     @Override
@@ -237,7 +209,6 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
         super.readFromNBT(nbttagcompound);
         inventory.deserializeNBT(nbttagcompound);
         ownerName = nbttagcompound.getString("owner");
-        ownerUUID = nbttagcompound.getUniqueId("ownerUUID");
         advanced = nbttagcompound.getBoolean("advanced");
         infinite = nbttagcompound.getBoolean("infinite");
         multiple = nbttagcompound.getBoolean("multiple");
@@ -249,7 +220,6 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
         nbttagcompound.merge(inventory.serializeNBT());
         nbttagcompound.setString("owner", ownerName);
-        nbttagcompound.setUniqueId("ownerUUID", ownerUUID);
         nbttagcompound.setBoolean("advanced", advanced);
         nbttagcompound.setBoolean("infinite", infinite);
         nbttagcompound.setBoolean("multiple", multiple);
@@ -257,101 +227,7 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
         return super.writeToNBT(nbttagcompound);
     }
 
-    @Optional.Method(modid = "enderpay")
-    public long soldCreditsSum() {
-        return creditsSum(getSoldItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public long boughtCreditsSum() {
-        return creditsSum(getBoughtItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
-    private long creditsSum(NonNullList<ItemStack> stacks) {
-        long sum = 0;
-        for (ItemStack itemStack : stacks) {
-            if (itemStack.isEmpty()) continue;
-            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
-                try {
-                    sum += EnderPayApi.getBanknoteOriginalValue(itemStack);
-                } catch (NotABanknoteException ignored) {
-                }
-            }
-        }
-        return sum;
-    }
-
-    @Optional.Method(modid = "enderpay")
-    private long realCreditsSum(NonNullList<ItemStack> stacks) {
-        long sum = 0;
-        for (ItemStack itemStack : stacks) {
-            if (itemStack.isEmpty()) continue;
-            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
-                try {
-                    sum += EnderPayApi.getBanknoteCurrentValue(itemStack);
-                } catch (NotABanknoteException ignored) {
-                }
-            }
-        }
-        return sum;
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public long realInventoryCreditsSum() {
-        return realCreditsSum(getInventoryItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public long realTotalCreditsSum() {
-        return realCreditsSum(getInventoryItems()) + realCreditsSum(getSoldItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public boolean hasPlaceForBanknote() {
-        NonNullList<ItemStack> stacks = getInventoryItems();
-        for (ItemStack itemStack : stacks) {
-            if (itemStack.isEmpty() || EnderPayApi.isFilledBanknote(itemStack)) return true;
-        }
-        return false;
-    }
-
-    @Nonnull
-    public NonNullList<ItemStack> getSoldItems() {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        stackNonNullList.add(inventory.getStackInSlot(9));
-        if (multiple)
-            for (int i = 10; i < 13; i++)
-                stackNonNullList.add(inventory.getStackInSlot(i));
-        return stackNonNullList;
-    }
-
-    @Nonnull
-    public NonNullList<ItemStack> getBoughtItems() {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        stackNonNullList.add(inventory.getStackInSlot(multiple ? 13 : 10));
-        return stackNonNullList;
-    }
-
-    @Nonnull
-    public NonNullList<ItemStack> getInventoryItems() {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        for (int i = 0; i < 9; i++)
-            stackNonNullList.add(inventory.getStackInSlot(i));
-        return stackNonNullList;
-    }
-
-    public void setBoughtItem(ItemStack stack) {
-        inventory.setInventorySlotContents(multiple ? 13 : 10, stack);
-    }
-
-    public boolean doesStackFit(ItemStack itemstack) {
-        for (int i = 0; i < 9; i++) {
-            itemstack = inventory.insertItem(i, itemstack, true);
-        }
-        return itemstack.isEmpty();
-    }
-
+    @Override
     @Nonnull
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
@@ -373,8 +249,8 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ITic
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing) {
-        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return (T) itemHandler;
         return super.getCapability(capability, facing);
     }

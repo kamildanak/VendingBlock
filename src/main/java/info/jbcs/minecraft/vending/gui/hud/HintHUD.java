@@ -10,7 +10,9 @@ import com.kamildanak.minecraft.foamflower.gui.layouts.CenteredLayout;
 import com.kamildanak.minecraft.foamflower.gui.layouts.LinearLayout;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
+import info.jbcs.minecraft.vending.inventory.InventoryVendingMachineEnderPay;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
@@ -89,10 +91,12 @@ public class HintHUD extends HUD {
 
         if (mc == null || mc.player == null || mc.world == null) return;
         RayTraceResult mop = this.mc.objectMouseOver;
-        if (mop == null) return;
+        if (mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK) return;
+        IBlockState blockState = mc.world.getBlockState(mop.getBlockPos());
+        if (!blockState.getBlock().hasTileEntity(blockState)) return;
         TileEntity te = mc.world.getTileEntity(mop.getBlockPos());
         if (te == null) return;
-        if (!(te instanceof TileEntityVendingMachine)) return;
+        if (!(mc.world.getTileEntity(mop.getBlockPos()) instanceof TileEntityVendingMachine)) return;
 
         ScaledResolution resolution = new ScaledResolution(mc);
         root.h = resolution.getScaledHeight();
@@ -108,9 +112,11 @@ public class HintHUD extends HUD {
         boolean isOpened = tileEntity.isOpen();
         if (Loader.isModLoaded("enderpay")) {
             if (isOpened && !tileEntity.isInfinite()) {
-                long soldSum = tileEntity.soldCreditsSum();
-                long realTotalSum = tileEntity.realTotalCreditsSum();
-                isOpened = soldSum <= realTotalSum;
+                if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay) {
+                    long soldSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).soldCreditsSum();
+                    long realTotalSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).realTotalCreditsSum();
+                    isOpened = soldSum <= realTotalSum;
+                }
                 if (!isOpened) labelClosed.setCaption("gui.vendingBlock.shopNotEnoughCredits");
             } else {
                 labelClosed.setCaption("gui.vendingBlock.closed");
@@ -125,18 +131,15 @@ public class HintHUD extends HUD {
 
         NonNullList<ItemStack> soldItemStacks = NonNullList.create();
         NonNullList<ItemStack> boughtItemStacks = NonNullList.create();
-        soldItemStacks.addAll(tileEntity.getSoldItems());
-        boughtItemStacks.addAll(tileEntity.getBoughtItems());
+        soldItemStacks.addAll(tileEntity.inventory.getSoldItems());
+        boughtItemStacks.addAll(tileEntity.inventory.getBoughtItems());
         if (Loader.isModLoaded("enderpay")) {
-            for (int i = 0; i < soldItemStacks.size(); i++) {
-                if (Utils.isBanknote(soldItemStacks.get(i))) soldItemStacks.set(i, ItemStack.EMPTY);
+            long amountSold = 0;
+            long amountBought = 0;
+            if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay) {
+                amountSold = ((InventoryVendingMachineEnderPay) tileEntity.inventory).soldCreditsSum();
+                amountBought = ((InventoryVendingMachineEnderPay) tileEntity.inventory).boughtCreditsSum();
             }
-            for (int i = 0; i < boughtItemStacks.size(); i++) {
-                if (Utils.isBanknote(boughtItemStacks.get(i))) boughtItemStacks.set(i,ItemStack.EMPTY);
-            }
-
-            long amountSold = tileEntity.soldCreditsSum();
-            long amountBought = tileEntity.boughtCreditsSum();
 
             String label = countNotNull(soldItemStacks) == 0 ?
                     (amountBought == 0 && countNotNull(boughtItemStacks) == 0 ?
