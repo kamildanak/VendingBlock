@@ -191,9 +191,6 @@ public class BlockVendingMachine extends BlockContainer {
                     takeItems = false;
             }
             if(takeItems) takeItems(entityplayer, tileEntity, bought, offered);
-
-            if (!tileEntity.isInfinite())
-                tileEntity.inventory.onInventoryChanged();
         }
         world.playSound(entityplayer, blockPos, fits ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
                 SoundCategory.MASTER, 0.3f, 0.6f);
@@ -207,7 +204,7 @@ public class BlockVendingMachine extends BlockContainer {
             }
 
             if (!tileEntity.isInfinite())
-                tileEntity.inventory.addItemStackToInventory(paid, 0, 8);
+                tileEntity.inventory.insertItem(paid, 0, 8, false);
         }
     }
 
@@ -228,7 +225,10 @@ public class BlockVendingMachine extends BlockContainer {
             ItemStack vended = new ItemStack(tag);
 
             if (!tileEntity.isInfinite()) {
-                tileEntity.inventory.takeItems(sold, sold.getItemDamage(), sold.getCount());
+                ItemStack stackFromInventory = tileEntity.inventory.extractItem(sold, sold.getCount(),
+                        0, 8, false);
+                tileEntity.inventory.extractItem(sold, sold.getCount() - stackFromInventory.getCount(),
+                        9, 12, false);
             }
 
             boolean spawnItem = true;
@@ -294,7 +294,7 @@ public class BlockVendingMachine extends BlockContainer {
 
         vend(world, blockPos, entityPlayer);
         tileEntity.markDirty();
-        tileEntity.markBlockForUpdate(blockPos);
+        tileEntity.markBlockForUpdate(world, blockPos);
 
         return true;
     }

@@ -46,6 +46,6 @@ public class MessageSetLock extends AbstractMessage.AbstractServerMessage<Messag
         TileEntity tileEntity = player.world.getTileEntity(new BlockPos(x, y, z));
         if (!(tileEntity instanceof TileEntityVendingMachine)) return;
         ((TileEntityVendingMachine) tileEntity).setOpen(!locked);
-        ((TileEntityVendingMachine) tileEntity).markBlockForUpdate(new BlockPos(x, y, z));
+        ((TileEntityVendingMachine) tileEntity).markBlockForUpdate(player.world, new BlockPos(x, y, z));
     }
 }

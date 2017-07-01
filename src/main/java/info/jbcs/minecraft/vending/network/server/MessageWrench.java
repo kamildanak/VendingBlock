@@ -59,6 +59,6 @@ public class MessageWrench extends AbstractMessage.AbstractServerMessage<Message
         TileEntityVendingMachine entity = (TileEntityVendingMachine) tileEntity;
         entity.setInfinite(infinite);
         entity.setOwnerName(ownerName);
-        entity.markBlockForUpdate(new BlockPos(x, y, z));
+        entity.markBlockForUpdate(player.world, new BlockPos(x, y, z));
     }
 }
