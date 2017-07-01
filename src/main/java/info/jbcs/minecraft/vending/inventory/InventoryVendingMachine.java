@@ -85,8 +85,10 @@ public class InventoryVendingMachine extends InventoryStatic {
                 continue;
             Utils.throwItemAtPlayer(entityPlayer, te.getWorld(), te.getPos(), vended);
         }
-        if (Vending.settings.shouldCloseOnSoldOut() && countNotNull(getSoldItems()) == 0)
-            te.setOpen(false);
+    }
+
+    public boolean hasSomethingToSell() {
+        return countNotNull(getSoldItems()) != 0;
     }
 
     public void takeItems(EntityPlayer entityplayer, @Nonnull ItemStack offered) {
@@ -114,20 +116,25 @@ public class InventoryVendingMachine extends InventoryStatic {
                 Objects.equals(bought.getTagCompound(), offered.getTagCompound());
     }
 
-    public boolean vend(EntityPlayer entityplayer) {
+    public void vend(EntityPlayer entityPlayer) {
+        boolean result = vend0(entityPlayer);
+        if (Vending.settings.shouldCloseOnSoldOut() && !hasSomethingToSell())
+            te.setOpen(false);
+        te.getWorld().playSound(null, te.getPos(),
+                result ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
+                SoundCategory.MASTER, 0.3f, 0.6f);
+    }
+
+    public boolean vend0(EntityPlayer entityplayer) {
         if (te.getWorld().isRemote) return false;
         ItemStack offered = entityplayer.inventory.getCurrentItem();
 
         if (!te.isOpen() || !checkIfFits(offered)) {
-            te.getWorld().playSound(null, te.getPos(), VendingSoundEvents.FORBIDDEN, SoundCategory.MASTER,
-                    0.3f, 0.6f);
             return false;
         }
 
         giveItems(entityplayer);
         takeItems(entityplayer, offered);
-        te.getWorld().playSound(null, te.getPos(), VendingSoundEvents.PROCESSED, SoundCategory.MASTER,
-                0.3f, 0.6f);
         return true;
     }
 }

@@ -4,12 +4,11 @@ import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import info.jbcs.minecraft.vending.Utils;
-import info.jbcs.minecraft.vending.init.VendingSoundEvents;
+import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
@@ -128,7 +127,8 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
                     }
                     for (int i = 9; i < 13; i++) {
                         if (te.inventory.getStackInSlot(i).isEmpty()) {
-                            te.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(totalSum - soldAmount));
+                            if (totalSum - soldAmount > 0)
+                                te.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(totalSum - soldAmount));
                             break;
                         }
                     }
@@ -136,6 +136,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
                     te.inventory.setInventorySlotContents(9,
                             totalSum - soldAmount > 0 ? EnderPayApi.getBanknote(totalSum - soldAmount) : ItemStack.EMPTY);
                 }
+                if (Vending.settings.shouldCloseOnPartialSoldOut()) te.setOpen(false);
             }
         } catch (NoSuchAccountException e) {
             e.printStackTrace();
@@ -188,13 +189,11 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
         return super.checkIfFits(offered);
     }
 
-    public boolean vend(EntityPlayer entityplayer) {
+    public boolean vend0(EntityPlayer entityplayer) {
         if (!hasEnoughCredits() || !checkIfPlayerHasEnoughCreditsForMachine(entityplayer)) {
-            te.getWorld().playSound(null, te.getPos(), VendingSoundEvents.FORBIDDEN, SoundCategory.MASTER,
-                    0.3f, 0.6f);
             return false;
         }
-        if (!super.vend(entityplayer))
+        if (!super.vend0(entityplayer))
             return false;
 
         if (Loader.isModLoaded("enderpay")) {
@@ -213,6 +212,11 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     public NonNullList<ItemStack> getSoldItems() {
         if (!Loader.isModLoaded("enderpay")) return super.getSoldItems();
         return Utils.filterBanknotes(super.getSoldItems());
+    }
+
+    @Override
+    public boolean hasSomethingToSell() {
+        return soldCreditsSum() > 0 || super.hasSomethingToSell();
     }
 
     @Override
