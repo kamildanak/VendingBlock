@@ -3,7 +3,7 @@ def majorModVersion   = "2" // Removing items/blocks, changing mechanics, updati
 def majorApiModVersion     = "0" // Changing the order of enums, return types of methods, removing methods
 def minorModVersion   = "0" // Adding items, blocks, tile entities, Adding new mechanics., Deprecating public methods.
 def patchVersion = "0" //Bugfixes.
-def suffix = "-beta1" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
+def suffix = "-beta2" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
 version = mcVersion+"-"+majorModVersion+"."+majorApiModVersion+"."+minorModVersion+"."+patchVersion+suffix
 
 buildscript {

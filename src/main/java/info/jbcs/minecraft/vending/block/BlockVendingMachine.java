@@ -208,10 +208,4 @@ public class BlockVendingMachine extends BlockContainer {
     public String getName() {
         return name;
     }
-
-    @Override
-    @Nonnull
-    public String getLocalizedName() {
-        return net.minecraft.client.resources.I18n.format("tile." + getName() + ".name").trim();
-    }
 }
