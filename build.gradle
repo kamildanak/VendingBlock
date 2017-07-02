@@ -1,8 +1,10 @@
-def mcVersion         = "1.12"
-def majorModVersion   = "1"
-def minorModVersion   = "4"
-def patchVersion = "4"
-version = mcVersion+"-"+majorModVersion+"."+minorModVersion+"."+patchVersion
+def mcVersion         = "1.12" // Always matches the Minecraft version the mod is for.
+def majorModVersion   = "2" // Removing items/blocks, changing mechanics, updating to a new Minecraft version.
+def majorApiModVersion     = "0" // Changing the order of enums, return types of methods, removing methods
+def minorModVersion   = "0" // Adding items, blocks, tile entities, Adding new mechanics., Deprecating public methods.
+def patchVersion = "0" //Bugfixes.
+def suffix = "-beta1" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
+version = mcVersion+"-"+majorModVersion+"."+majorApiModVersion+"."+minorModVersion+"."+patchVersion+suffix
 
 buildscript {
     repositories {
@@ -36,9 +38,15 @@ minecraft {
     replace "{@mcVersion}":"["+mcVersion+"]"
 }
 
+repositories {
+    maven {
+        url "../local-repo"
+    }
+}
+
 dependencies {
-    compile project(':EnderPay')
-    compile project(':Foamflower')
+    compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12-0.0.1.0", classifier: "deobf"
+    compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12-0.0.5.0", classifier: "deobf"
 }
 
 processResources {
@@ -54,4 +62,16 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+tasks.build.dependsOn('sourceJar', 'deobfJar')
+
+artifacts {
+    archives deobfJar
+    archives sourceJar
+    archives jar
 }
