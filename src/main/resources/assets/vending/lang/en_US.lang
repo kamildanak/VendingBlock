@@ -26,3 +26,5 @@ gui.vendingBlock.shopNotEnoughCredits=Shop has not enough credits
 # Subtitles
 subtitles.block.vendingMachine.click=Vending Machine clicks
 subtitles.block.vendingMachine.dispense=Vending Machine dispensed item
+
+gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Put banknote into Storage to accept payments

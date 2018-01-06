@@ -118,6 +118,12 @@ public class HintHUD extends HUD {
                     isOpened = soldSum <= realTotalSum;
                 }
                 if (!isOpened) labelClosed.setCaption("gui.vendingBlock.shopNotEnoughCredits");
+                else if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay)
+                {
+                    isOpened = !(((InventoryVendingMachineEnderPay) tileEntity.inventory).boughtCreditsSum() > 0
+                            && !((InventoryVendingMachineEnderPay) tileEntity.inventory).hasBanknoteInStorage());
+                    if (!isOpened) labelClosed.setCaption("gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments");
+                }
             } else {
                 labelClosed.setCaption("gui.vendingBlock.closed");
             }

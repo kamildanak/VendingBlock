@@ -22,3 +22,9 @@ gui.vendingBlock.isGivingAway=rozdaje za darmo
 gui.vendingBlock.isAccepting=przyjmuje
 gui.vendingBlock.closed=Sklep jest zamknięty
 gui.vendingBlock.shopNotEnoughCredits=W automacie jest za mało środków
+
+# Subtitles
+subtitles.block.vendingMachine.click=Maszyna vendingowa kliknęła
+subtitles.block.vendingMachine.dispense=Maszyna vendingowa wydała przedmiot
+
+gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Umieść banknot w magazynie aby akceptować płatności
