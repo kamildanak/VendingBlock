@@ -137,4 +137,9 @@ public class InventoryVendingMachine extends InventoryStatic {
         takeItems(entityplayer, offered);
         return true;
     }
+
+    @Nonnull
+    public NonNullList<ItemStack> getSoldItemsWithFilledBanknotes() {
+        return getSoldItems();
+    }
 }

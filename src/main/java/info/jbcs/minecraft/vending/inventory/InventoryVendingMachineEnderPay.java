@@ -225,4 +225,11 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
         if (!Loader.isModLoaded("enderpay")) return super.getBoughtItems();
         return Utils.filterBanknotes(super.getBoughtItems());
     }
+
+    @Override
+    @Nonnull
+    public NonNullList<ItemStack> getSoldItemsWithFilledBanknotes() {
+        if (!Loader.isModLoaded("enderpay")) return super.getSoldItems();
+        return Utils.filterBlankBanknotes(super.getSoldItems());
+    }
 }

@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -24,8 +25,9 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer<
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F);
         int A = 0;
-        int notNullSold = General.countNotNull(machine.inventory.getSoldItems());
-        for (ItemStack itemStack : machine.inventory.getSoldItems()) {
+        NonNullList<ItemStack> soldItems = machine.inventory.getSoldItemsWithFilledBanknotes();
+        int notNullSold = General.countNotNull(soldItems);
+        for (ItemStack itemStack : soldItems) {
             if (itemStack == ItemStack.EMPTY) {
                 continue;
             }

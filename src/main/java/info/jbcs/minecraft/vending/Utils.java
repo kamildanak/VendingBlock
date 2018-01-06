@@ -100,4 +100,13 @@ public class Utils {
         }
         return soldItems;
     }
+
+    public static NonNullList<ItemStack> filterBlankBanknotes(NonNullList<ItemStack> soldItems) {
+        if (!Loader.isModLoaded("enderpay")) return soldItems;
+        for (int i = 0; i < soldItems.size(); i++) {
+            if (Utils.isBanknote(soldItems.get(i)) && !Utils.isFilledBanknote(soldItems.get(i)))
+                soldItems.set(i, ItemStack.EMPTY);
+        }
+        return soldItems;
+    }
 }
