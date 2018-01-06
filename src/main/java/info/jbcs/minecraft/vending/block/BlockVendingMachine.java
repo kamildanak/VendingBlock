@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -115,7 +116,19 @@ public class BlockVendingMachine extends BlockContainer {
     @Override
     public void onBlockPlacedBy(World world, BlockPos blockPos, IBlockState state, EntityLivingBase entityLiving, @Nonnull ItemStack stack) {
         world.setBlockState(blockPos, getStateFromMeta(stack.getMetadata()));
-        TileEntityVendingMachine e = new TileEntityVendingMachine(isAdvanced, false, isMultiple);
+        TileEntityVendingMachine e;
+        NBTTagCompound tagCompound = stack.getTagCompound();
+        if (tagCompound != null && tagCompound.hasKey("preConfigured") && tagCompound.getBoolean("preConfigured"))
+        {
+            e = new TileEntityVendingMachine(isAdvanced, tagCompound.getBoolean("infinite"), isMultiple);
+            e.setOpen(true);
+            e.setOwnerName(tagCompound.getString("ownerName"));
+            world.setTileEntity(blockPos, e);
+            return;
+        } else
+        {
+            e = new TileEntityVendingMachine(isAdvanced, false, isMultiple);
+        }
         e.setOpen(isOpen);
 
         if (entityLiving != null) {

@@ -7,6 +7,7 @@ import com.kamildanak.minecraft.foamflower.gui.elements.GuiExButton;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabel;
 import info.jbcs.minecraft.vending.network.PacketDispatcher;
 import info.jbcs.minecraft.vending.network.server.MessageWrench;
+import info.jbcs.minecraft.vending.network.server.MessageWrenchToInventory;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +23,7 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus implements IGuiWrappe
     private boolean infinite;
 
     public GuiWrenchVendingMachine(World world, BlockPos blockPos, EntityPlayer entityplayer) {
-        super(166, 120, "vending:textures/wrench-gui.png");
+        super(166, 147, "vending:textures/wrench-gui.png");
 
         addChild(new GuiLabel(9, 9, "gui.vendingBlock.settings"));
         addChild(new GuiLabel(9, 29, "gui.vendingBlock.owner"));
@@ -37,7 +38,16 @@ public class GuiWrenchVendingMachine extends GuiScreenPlus implements IGuiWrappe
             }
         });
 
-        addChild(new GuiExButton(9, 91, 148, 20, "gui.vendingBlock.apply") {
+        addChild(new GuiExButton(9, 91, 148, 20, "gui.vendingBlock.toInventory") {
+            @Override
+            public void onClick() {
+                MessageWrenchToInventory msg = new MessageWrenchToInventory(entity, infinite, ownerNameEdit.getText());
+                PacketDispatcher.sendToServer(msg);
+                mc.player.closeScreen();
+            }
+        });
+
+        addChild(new GuiExButton(9, 118, 148, 20, "gui.vendingBlock.apply") {
             @Override
             public void onClick() {
                 MessageWrench msg = new MessageWrench(entity, infinite, ownerNameEdit.getText());

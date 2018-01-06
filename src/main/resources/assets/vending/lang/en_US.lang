@@ -25,6 +25,7 @@ gui.vendingBlock.shopNotEnoughCredits=Shop has not enough credits
 gui.vendingBlock.ok=Ok
 gui.vendingBlock.cancel=Cancel
 gui.vendingBlock.number_of_credits=Number of credits
+gui.vendingBlock.toInventory=Add to Inventory
 
 # Subtitles
 subtitles.block.vendingMachine.click=Vending Machine clicks
