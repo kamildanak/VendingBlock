@@ -1,0 +1,43 @@
+package info.jbcs.minecraft.vending.network.server;
+
+import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
+import info.jbcs.minecraft.vending.network.AbstractMessage;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.IOException;
+
+public class MessageAdvVenSetBanknote extends AbstractMessage.AbstractServerMessage<MessageAdvVenSetBanknote> {
+    private long value;
+
+    @SuppressWarnings("unused")
+    public MessageAdvVenSetBanknote(){
+    }
+
+    public MessageAdvVenSetBanknote(long value) {
+        this.value = value;
+    }
+
+    @Override
+    protected void read(PacketBuffer buffer) throws IOException {
+        this.value = buffer.readLong();
+    }
+
+    @Override
+    protected void write(PacketBuffer buffer) throws IOException {
+        buffer.writeLong(this.value);
+    }
+
+    @Override
+    public void process(EntityPlayer player, Side side) {
+        Container con = player.openContainer;
+        if (con == null || !(con instanceof ContainerAdvancedVendingMachine))
+            return;
+        ContainerAdvancedVendingMachine container = (ContainerAdvancedVendingMachine) con;
+
+        container.entity.inventory.setBoughtItem(EnderPayApi.getBanknote(this.value));
+    }
+}

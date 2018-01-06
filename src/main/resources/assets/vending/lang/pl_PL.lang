@@ -22,6 +22,9 @@ gui.vendingBlock.isGivingAway=rozdaje za darmo
 gui.vendingBlock.isAccepting=przyjmuje
 gui.vendingBlock.closed=Sklep jest zamknięty
 gui.vendingBlock.shopNotEnoughCredits=W automacie jest za mało środków
+gui.vendingBlock.ok=Ok
+gui.vendingBlock.cancel=Anuluj
+gui.vendingBlock.number_of_credits=Ilość środków
 
 # Subtitles
 subtitles.block.vendingMachine.click=Maszyna vendingowa kliknęła

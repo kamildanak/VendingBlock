@@ -4,6 +4,7 @@ import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.init.VendingBlocks;
 import info.jbcs.minecraft.vending.init.VendingItems;
 import info.jbcs.minecraft.vending.network.PacketDispatcher;
+import info.jbcs.minecraft.vending.network.server.MessageAdvVenSetBanknote;
 import info.jbcs.minecraft.vending.network.server.MessageAdvVenSetItem;
 import info.jbcs.minecraft.vending.network.server.MessageSetLock;
 import info.jbcs.minecraft.vending.network.server.MessageWrench;
@@ -25,6 +26,7 @@ public class CommonProxy {
         PacketDispatcher.registerMessage(MessageAdvVenSetItem.class);
         PacketDispatcher.registerMessage(MessageWrench.class);
         PacketDispatcher.registerMessage(MessageSetLock.class);
+        PacketDispatcher.registerMessage(MessageAdvVenSetBanknote.class);
     }
 
     /**
