@@ -1,9 +1,9 @@
-def mcVersion         = "1.12" // Always matches the Minecraft version the mod is for.
-def majorModVersion   = "2" // Removing items/blocks, changing mechanics, updating to a new Minecraft version.
+def mcVersion         = "1.12.2" // Always matches the Minecraft version the mod is for.
+def majorModVersion   = "3" // Removing item/blocks, changing mechanics, updating to a new Minecraft version.
 def majorApiModVersion     = "0" // Changing the order of enums, return types of methods, removing methods
-def minorModVersion   = "0" // Adding items, blocks, tile entities, Adding new mechanics., Deprecating public methods.
+def minorModVersion   = "1" // Adding item, blocks, tile entities, Adding new mechanics., Deprecating public methods.
 def patchVersion = "0" //Bugfixes.
-def suffix = "-beta2" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
+def suffix = "-rc1" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
 version = mcVersion+"-"+majorModVersion+"."+majorApiModVersion+"."+minorModVersion+"."+patchVersion+suffix
 
 buildscript {
@@ -26,7 +26,7 @@ sourceCompatibility = "1.8"
 
 
 minecraft {
-    version = "1.12-14.21.1.2387"
+    version = "1.12.2-14.23.0.2491"
     mappings = "snapshot_20170624"
 
     if (file("../run").exists()) {
@@ -45,8 +45,8 @@ repositories {
 }
 
 dependencies {
-    compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12-0.0.1.0", classifier: "deobf"
-    compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12-0.0.5.0", classifier: "deobf"
+    compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
+    compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
 }
 
 processResources {
