@@ -14,7 +14,7 @@ import org.lwjgl.opengl.GL12;
 
 @SideOnly(Side.CLIENT)
 public class TileEntityVendingStorageAttachmentRenderer extends TileEntitySpecialRenderer<TileEntityVendingStorageAttachment> {
-    public static final ResourceLocation texture = new ResourceLocation("safe:textures/entity/safe/metal.png");
+    public static final ResourceLocation texture = new ResourceLocation("vending:textures/entity/storage_attachment/metal.png");
     public static ModelVendingStorageAttachment model = new ModelVendingStorageAttachment();
 
     public static void bind(ResourceLocation par1ResourceLocation) {

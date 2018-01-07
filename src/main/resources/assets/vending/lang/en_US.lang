@@ -27,6 +27,9 @@ gui.vendingBlock.ok=Ok
 gui.vendingBlock.cancel=Cancel
 gui.vendingBlock.number_of_credits=Number of credits
 gui.vendingBlock.toInventory=Add to Inventory
+gui.vendingBlock.buy_buffer=Buy buffer
+gui.vendingBlock.sell_buffer=Sell buffer
+gui.vendingBlock.inventory=Inventory
 
 # Subtitles
 subtitles.block.vendingMachine.click=Vending Machine clicks

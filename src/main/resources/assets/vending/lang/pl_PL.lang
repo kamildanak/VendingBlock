@@ -26,7 +26,10 @@ gui.vendingBlock.shopNotEnoughCredits=W automacie jest za mało środków
 gui.vendingBlock.ok=Ok
 gui.vendingBlock.cancel=Anuluj
 gui.vendingBlock.number_of_credits=Ilość środków
-gui.vendingBlock.toInventory=Dodaj do Ewkipunku
+gui.vendingBlock.toInventory=Dodaj do Ekwipunku
+gui.vendingBlock.buy_buffer=Kolejka produktów do kupienia
+gui.vendingBlock.sell_buffer=Kolejka produktów do sprzedania
+gui.vendingBlock.inventory=Ekwipunek
 
 # Subtitles
 subtitles.block.vendingMachine.click=Maszyna vendingowa kliknęła
