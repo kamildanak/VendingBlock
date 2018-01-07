@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "BIB",
+    "IMI",
+    "BIB"
+  ],
+  "key": {
+    "M": {
+      "item": "vending:vendingMachine"
+    },
+    "B": {
+      "item": "minecraft:iron_block"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "result": {
+    "item": "Vending:vendingStorageAttachment"
+  }
+}

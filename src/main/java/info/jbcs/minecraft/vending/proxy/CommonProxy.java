@@ -68,6 +68,7 @@ public class CommonProxy {
         VendingBlocks.BLOCK_VENDING_MACHINE.setCreativeTab(tabVending);
         VendingBlocks.BLOCK_VENDING_MACHINE_ADVANCED.setCreativeTab(tabVending);
         VendingBlocks.BLOCK_VENDING_MACHINE_MULTIPLE.setCreativeTab(tabVending);
+        VendingBlocks.BLOCK_VENDING_STORAGE_ATTACHMENT.setCreativeTab(tabVending);
         VendingItems.ITEM_WRENCH.setCreativeTab(tabVending);
     }
 }

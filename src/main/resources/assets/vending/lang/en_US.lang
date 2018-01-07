@@ -3,6 +3,7 @@ tile.vendingMachineAdvanced.name=Advanced Vending Block
 tile.vendingMachineMultiple.name=Multiple Vending Block
 item.vendingMachineWrench.name=Vending Block Wrench
 itemGroup.tabVending=Vending
+tile.vendingStorageAttachment.name=Vending Storage Attachment
 
 # GUI
 gui.vendingBlock.select=Select...
@@ -30,5 +31,7 @@ gui.vendingBlock.toInventory=Add to Inventory
 # Subtitles
 subtitles.block.vendingMachine.click=Vending Machine clicks
 subtitles.block.vendingMachine.dispense=Vending Machine dispensed item
+subtitles.block.vendingMachineStorage.open=Vending Machine storage opens
+subtitles.block.vendingMachineStorage.close=Vending Machine storage closes
 
 gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Put banknote into Storage to accept payments

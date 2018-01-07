@@ -24,5 +24,31 @@
         "pitch": 1
       },
       "vending:forbidden" ]
+  },
+  "storage_open": {
+    "category": "block",
+    "subtitle": "subtitles.block.vendingMachineStorage.open",
+    "replace": false,
+    "sounds": [
+      {
+        "name": "storage_open",
+        "type": "event",
+        "volume": 1,
+        "pitch": 1
+      },
+      "vending:storage-open" ]
+  },
+  "storage_close": {
+    "category": "block",
+    "subtitle": "subtitles.block.vendingMachineStorage.close",
+    "replace": false,
+    "sounds": [
+      {
+        "name": "storage_close",
+        "type": "event",
+        "volume": 1,
+        "pitch": 1
+      },
+      "vending:storage-close" ]
   }
 }

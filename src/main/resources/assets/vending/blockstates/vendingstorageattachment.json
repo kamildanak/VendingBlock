@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "facing=up": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "facing=north": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "facing=south": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "facing=west": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "facing=east": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=down": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=up": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=north": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=south": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=west": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal,facing=east": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "normal": {
+      "model": "Vending:vending_storage_attachment"
+    },
+    "inventory": {
+      "model": "Vending:vending_storage_attachment"
+    }
+  }
+}

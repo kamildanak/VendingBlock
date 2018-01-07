@@ -3,6 +3,7 @@ tile.vendingMachineAdvanced.name=Zaawansowany automat sprzedający
 tile.vendingMachineMultiple.name=Wielokrotny automat sprzedający
 item.vendingMachineWrench.name=Klucz do automatu sprzedającego
 itemGroup.tabVending=Automaty sprzedające
+tile.vendingStorageAttachment.name=Magazyn do automatu sprzedającego
 
 # GUI
 gui.vendingBlock.select=Wybierz...
@@ -30,5 +31,7 @@ gui.vendingBlock.toInventory=Dodaj do Ewkipunku
 # Subtitles
 subtitles.block.vendingMachine.click=Maszyna vendingowa kliknęła
 subtitles.block.vendingMachine.dispense=Maszyna vendingowa wydała przedmiot
+subtitles.block.vendingMachineStorage.open=Magazyn maszyny vendingowej otworzył się
+subtitles.block.vendingMachineStorage.close=Magazyn maszyny vendingowej zamknął się
 
 gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Umieść banknot w magazynie aby akceptować płatności
