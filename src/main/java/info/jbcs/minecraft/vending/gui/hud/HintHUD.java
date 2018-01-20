@@ -114,7 +114,7 @@ public class HintHUD extends HUD {
             if (isOpened && !tileEntity.isInfinite()) {
                 if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay) {
                     long soldSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).soldCreditsSum();
-                    long realTotalSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).realTotalCreditsSum();
+                    long realTotalSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).getCurrentValueTotalCreditsSum();
                     isOpened = soldSum <= realTotalSum;
                 }
                 if (!isOpened) labelClosed.setCaption("gui.vendingBlock.shopNotEnoughCredits");

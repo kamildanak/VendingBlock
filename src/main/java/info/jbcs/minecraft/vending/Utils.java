@@ -175,4 +175,34 @@ public class Utils {
             }
         }
     }
+
+    @Optional.Method(modid = "enderpay")
+    public static long originalValueCreditsSum(NonNullList<ItemStack> stacks) {
+        long sum = 0;
+        for (ItemStack itemStack : stacks) {
+            if (itemStack.isEmpty()) continue;
+            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
+                try {
+                    sum += EnderPayApi.getBanknoteOriginalValue(itemStack);
+                } catch (NotABanknoteException ignored) {
+                }
+            }
+        }
+        return sum;
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static long currentValueCreditsSum(NonNullList<ItemStack> stacks) {
+        long sum = 0;
+        for (ItemStack itemStack : stacks) {
+            if (itemStack.isEmpty()) continue;
+            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
+                try {
+                    sum += EnderPayApi.getBanknoteCurrentValue(itemStack);
+                } catch (NotABanknoteException ignored) {
+                }
+            }
+        }
+        return sum;
+    }
 }

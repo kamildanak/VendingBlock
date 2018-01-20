@@ -24,44 +24,14 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
 
     @Optional.Method(modid = "enderpay")
     public long soldCreditsSum() {
-        return creditsSum(super.getSoldItems());
+        return Utils.originalValueCreditsSum(super.getSoldItems());
     }
 
     @Optional.Method(modid = "enderpay")
     public long boughtCreditsSum() {
-        return creditsSum(super.getBoughtItems());
+        return Utils.originalValueCreditsSum(super.getBoughtItems());
     }
 
-
-    @Optional.Method(modid = "enderpay")
-    private long creditsSum(NonNullList<ItemStack> stacks) {
-        long sum = 0;
-        for (ItemStack itemStack : stacks) {
-            if (itemStack.isEmpty()) continue;
-            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
-                try {
-                    sum += EnderPayApi.getBanknoteOriginalValue(itemStack);
-                } catch (NotABanknoteException ignored) {
-                }
-            }
-        }
-        return sum;
-    }
-
-    @Optional.Method(modid = "enderpay")
-    private long realCreditsSum(NonNullList<ItemStack> stacks) {
-        long sum = 0;
-        for (ItemStack itemStack : stacks) {
-            if (itemStack.isEmpty()) continue;
-            if (EnderPayApi.isValidFilledBanknote(itemStack)) {
-                try {
-                    sum += EnderPayApi.getBanknoteCurrentValue(itemStack);
-                } catch (NotABanknoteException ignored) {
-                }
-            }
-        }
-        return sum;
-    }
 
     @Optional.Method(modid = "enderpay")
     public ItemStack takeCredits(EntityPlayer entityplayer) {
@@ -80,8 +50,8 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             long soldAmount = soldCreditsSum();
             EnderPayApi.addToBalance(entityplayer.getUniqueID(), soldAmount);
             if (te.isInfinite()) return;
-            long inventorySum = realInventoryCreditsSum();
-            long totalSum = realTotalCreditsSum();
+            long inventorySum = getCurrentValueInventoryCreditsSum();
+            long totalSum = getCurrentValueTotalCreditsSum();
             int banknotes = 0;
             for (int i = 0; i < 9; i++) {
                 if (Utils.isBanknote(te.inventory.getStackInSlot(i))) {
@@ -129,13 +99,13 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Optional.Method(modid = "enderpay")
-    public long realInventoryCreditsSum() {
-        return realCreditsSum(getInventoryItems());
+    public long getCurrentValueInventoryCreditsSum() {
+        return Utils.currentValueCreditsSum(getInventoryItems());
     }
 
     @Optional.Method(modid = "enderpay")
-    public long realTotalCreditsSum() {
-        return realCreditsSum(getInventoryItems()) + realCreditsSum(super.getSoldItems());
+    public long getCurrentValueTotalCreditsSum() {
+        return Utils.currentValueCreditsSum(getInventoryItems()) + Utils.currentValueCreditsSum(super.getSoldItems());
     }
 
     @Optional.Method(modid = "enderpay")
@@ -155,7 +125,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     private boolean hasEnoughCredits() {
         if (te.isInfinite() || !Loader.isModLoaded("enderpay")) return true;
         long soldSum = soldCreditsSum();
-        long realTotalSum = realTotalCreditsSum();
+        long realTotalSum = getCurrentValueTotalCreditsSum();
         return soldSum <= realTotalSum;
     }
 
