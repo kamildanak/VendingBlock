@@ -65,4 +65,10 @@ public class GuiVendingMachine extends GuiContainer {
     @Override
     public void onGuiClosed() {
     }
+    
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks){
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }
