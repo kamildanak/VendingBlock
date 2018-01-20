@@ -50,49 +50,16 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             long soldAmount = soldCreditsSum();
             EnderPayApi.addToBalance(entityplayer.getUniqueID(), soldAmount);
             if (te.isInfinite()) return;
-            long inventorySum = getCurrentValueInventoryCreditsSum();
-            long totalSum = getCurrentValueTotalCreditsSum();
-            int banknotes = 0;
-            for (int i = 0; i < 9; i++) {
-                if (Utils.isBanknote(te.inventory.getStackInSlot(i))) {
-                    banknotes+=te.inventory.getStackInSlot(i).getCount();
-                    te.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
-                }
-            }
-            if (inventorySum >= soldAmount) {
-                for (int i = 0; i < 9; i++) {
-                    if (te.inventory.getStackInSlot(i).isEmpty()) {
-                        if (inventorySum - soldAmount > 0)
-                        {
-                            te.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(inventorySum - soldAmount));
-                            banknotes--;
-                        }
-                        break;
-                    }
-                }
-            } else {
+            long leftToTake = Utils.takeCredits(this, 0, 8, soldAmount);
+            if (leftToTake > 0)
+            {
                 if (te.isMultiple()) {
-                    for (int i = 9; i < 13; i++) {
-                        if (Utils.isFilledBanknote(te.inventory.getStackInSlot(i))) {
-                            te.inventory.setInventorySlotContents(i,
-                                    new ItemStack(EnderPay.itemBlankBanknote, 1));
-                        }
-                    }
-                    for (int i = 9; i < 13; i++) {
-                        if (Utils.isBanknote(te.inventory.getStackInSlot(i)) && te.inventory.getStackInSlot(i).getCount() == 1) {
-                            if (totalSum - soldAmount > 0)
-                                te.inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(totalSum - soldAmount));
-                            break;
-                        }
-                    }
+                    Utils.takeCredits(this, 9,12, leftToTake);
                 } else {
-                    te.inventory.setInventorySlotContents(9,
-                            totalSum - soldAmount > 0 ? EnderPayApi.getBanknote(totalSum - soldAmount) :
-                                    new ItemStack(EnderPay.itemBlankBanknote, 1));
+                    Utils.takeCredits(this, 9,9, leftToTake);
                 }
                 if (Vending.settings.shouldCloseOnPartialSoldOut()) te.setOpen(false);
             }
-            storeBlankBanknotes(banknotes);
         } catch (NoSuchAccountException e) {
             e.printStackTrace();
         }

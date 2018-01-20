@@ -204,4 +204,34 @@ public class Utils {
         }
         return sum;
     }
+
+    @Optional.Method(modid = "enderpay")
+    public static long takeCredits(IInventory inventory, int start, int end, long credits){
+        int banknotes = 0;
+        long creditsSum = 0;
+        for (int i = start; i <= end; i++) {
+            if (Utils.isBanknote(inventory.getStackInSlot(i))) {
+                banknotes += inventory.getStackInSlot(i).getCount();
+                try {
+                    creditsSum += EnderPayApi.getBanknoteCurrentValue(inventory.getStackInSlot(i));
+                } catch (NotABanknoteException ignored) {
+                }
+                inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+            }
+        }
+        for (int i = start; i <= end; i++) {
+            if (inventory.getStackInSlot(i).isEmpty()) {
+                long toStoreBack = creditsSum - credits;
+                if (toStoreBack > 0)
+                {
+                    inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(toStoreBack));
+                    banknotes--;
+                }
+                storeBlankBanknotes(inventory, start, end, banknotes);
+                if (toStoreBack > 0) return 0;
+                return -toStoreBack;
+            }
+        }
+        return creditsSum;
+    }
 }
