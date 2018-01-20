@@ -23,52 +23,6 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Optional.Method(modid = "enderpay")
-    public void storeBanknote(ItemStack banknote) {
-        int banknotes = 0;
-        try {
-            for (int i = 0; i < 9; i++) {
-                ItemStack itemStack = te.inventory.getStackInSlot(i);
-                if (Utils.isBanknote(itemStack)) {
-                    if (itemStack.getCount() == 1) {
-                        te.inventory.setInventorySlotContents(i,
-                                EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote) +
-                                        EnderPayApi.getBanknoteCurrentValue(itemStack)));
-
-                        return;
-                    }
-                    banknotes += itemStack.getCount();
-                }
-            }
-            for (int i = 0; i < 9; i++) {
-                if (Utils.isBanknote(te.inventory.getStackInSlot(i))) {
-                    te.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
-                }
-            }
-            for (int i = 0; i < 9; i++) {
-                if (te.inventory.getStackInSlot(i).isEmpty()) {
-                    te.inventory.setInventorySlotContents(i,EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote)));
-                    banknotes--;
-                    break;
-                }
-            }
-            storeBlankBanknotes(banknotes);
-        } catch (NotABanknoteException ignored) {
-        }
-    }
-
-    private void storeBlankBanknotes(int banknotes) {
-        for (int i = 0; i < 9; i++) {
-            if (te.inventory.getStackInSlot(i).isEmpty()) {
-                if(banknotes<=0) break;
-                int m = Math.min(banknotes, 64);
-                banknotes -= m;
-                te.inventory.setInventorySlotContents(i, new ItemStack(EnderPay.itemBlankBanknote, m));
-            }
-        }
-    }
-
-
-    @Optional.Method(modid = "enderpay")
     public long soldCreditsSum() {
         return creditsSum(super.getSoldItems());
     }
@@ -185,23 +139,6 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Optional.Method(modid = "enderpay")
-    public boolean hasPlaceForBanknote() {
-        NonNullList<ItemStack> stacks = getInventoryItems();
-        int spacesForBanknotes = 0;
-        int banknotes = 0;
-        for (ItemStack itemStack : stacks) {
-            if (Utils.isBanknote(itemStack) && itemStack.getCount()==1) return true;
-            if (itemStack.isEmpty()) spacesForBanknotes++;
-            if (Utils.isBanknote(itemStack))
-            {
-                banknotes += itemStack.getCount();
-                spacesForBanknotes++;
-            }
-        }
-        return (banknotes-2)/64 < spacesForBanknotes - 1;
-    }
-
-    @Optional.Method(modid = "enderpay")
     public boolean hasBanknoteInStorage() {
         NonNullList<ItemStack> stacks = getInventoryItems();
         for (ItemStack itemStack : stacks) {
@@ -232,7 +169,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             if (Utils.isBanknote(bought) && boughtCreditsSum() == 0)
                 return countNotNull(soldItems) > 0 || soldCreditsSum() > 0;
             if (Utils.isFilledBanknote(bought))
-                return (boughtCreditsSum() > 0 && hasPlaceForBanknote());
+                return (boughtCreditsSum() > 0 && Utils.hasPlaceForBanknote(getInventoryItems()));
         }
         return super.checkIfFits(offered);
     }
@@ -254,6 +191,14 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             }
         }
         return true;
+    }
+
+    private void storeBanknote(ItemStack takenBanknote) {
+        Utils.storeBanknote(this, 0,8, takenBanknote);
+    }
+
+    private void storeBlankBanknotes(int banknotes) {
+        Utils.storeBlankBanknotes(this, 0,8, banknotes);
     }
 
     @Override

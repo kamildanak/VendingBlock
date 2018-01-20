@@ -1,11 +1,14 @@
 package info.jbcs.minecraft.vending;
 
+import com.kamildanak.minecraft.enderpay.EnderPay;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
+import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -108,5 +111,68 @@ public class Utils {
                 soldItems.set(i, ItemStack.EMPTY);
         }
         return soldItems;
+    }
+
+
+    @Optional.Method(modid = "enderpay")
+    public static boolean hasPlaceForBanknote(NonNullList<ItemStack> stacks) {
+        int spacesForBanknotes = 0;
+        int banknotes = 0;
+        for (ItemStack itemStack : stacks) {
+            if (Utils.isBanknote(itemStack) && itemStack.getCount()==1) return true;
+            if (itemStack.isEmpty()) spacesForBanknotes++;
+            if (Utils.isBanknote(itemStack))
+            {
+                banknotes += itemStack.getCount();
+                spacesForBanknotes++;
+            }
+        }
+        return (banknotes-2)/64 < spacesForBanknotes - 1;
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static void storeBanknote(IInventory inventory, int start, int end, ItemStack banknote) {
+        int banknotes = 0;
+        try {
+            for (int i = start; i <= end; i++) {
+                ItemStack itemStack = inventory.getStackInSlot(i);
+                if (Utils.isBanknote(itemStack)) {
+                    if (itemStack.getCount() == 1) {
+                        inventory.setInventorySlotContents(i,
+                                EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote) +
+                                        EnderPayApi.getBanknoteCurrentValue(itemStack)));
+
+                        return;
+                    }
+                    banknotes += itemStack.getCount();
+                }
+            }
+            for (int i = start; i <= end; i++) {
+                if (Utils.isBanknote(inventory.getStackInSlot(i))) {
+                    inventory.setInventorySlotContents(i, ItemStack.EMPTY);
+                }
+            }
+            for (int i = start; i <= end; i++) {
+                if (inventory.getStackInSlot(i).isEmpty()) {
+                    inventory.setInventorySlotContents(i,EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote)));
+                    banknotes--;
+                    break;
+                }
+            }
+            storeBlankBanknotes(inventory, start, end, banknotes);
+        } catch (NotABanknoteException ignored) {
+        }
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public static void storeBlankBanknotes(IInventory inventory, int start, int end, int banknotes) {
+        for (int i = start; i <= end; i++) {
+            if (inventory.getStackInSlot(i).isEmpty()) {
+                if(banknotes<=0) break;
+                int m = Math.min(banknotes, 64);
+                banknotes -= m;
+                inventory.setInventorySlotContents(i, new ItemStack(EnderPay.itemBlankBanknote, m));
+            }
+        }
     }
 }

@@ -9,14 +9,14 @@ public class InventoryVendingStorageAttachment extends InventoryStatic {
         super(54);
     }
 
-    public boolean doesStackFit(ItemStack itemstack, int fromInclusive, int toInclusive) {
-        for (int i = fromInclusive; i <= toInclusive; i++) {
+    public boolean doesStackFit(ItemStack itemstack, int start, int end) {
+        for (int i = start; i <= end; i++) {
             itemstack = insertItem(i, itemstack, true);
         }
         return itemstack.isEmpty();
     }
 
-    public boolean doesStacksFit(NonNullList<ItemStack> items, int fromInclusive, int toInclusive) {
+    public boolean doesStacksFit(NonNullList<ItemStack> items, int start, int end) {
         NonNullList<ItemStack> itemStacksToFit = NonNullList.create();
         for (ItemStack itemStack : items)
         {
@@ -32,7 +32,7 @@ public class InventoryVendingStorageAttachment extends InventoryStatic {
         }
         for (ItemStack itemStack2 : itemStacksToFit)
         {
-            if (!doesStackFit(itemStack2, fromInclusive, toInclusive)) return false;
+            if (!doesStackFit(itemStack2, start, end)) return false;
         }
         return true;
     }
