@@ -131,7 +131,7 @@ public class Utils {
     }
 
     @Optional.Method(modid = "enderpay")
-    public static void storeBanknote(IInventory inventory, int start, int end, ItemStack banknote) {
+    public static void storeCredits(IInventory inventory, int start, int end, long credits) {
         int banknotes = 0;
         try {
             for (int i = start; i <= end; i++) {
@@ -139,8 +139,7 @@ public class Utils {
                 if (Utils.isBanknote(itemStack)) {
                     if (itemStack.getCount() == 1) {
                         inventory.setInventorySlotContents(i,
-                                EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote) +
-                                        EnderPayApi.getBanknoteCurrentValue(itemStack)));
+                                EnderPayApi.getBanknote(credits + EnderPayApi.getBanknoteCurrentValue(itemStack)));
 
                         return;
                     }
@@ -154,7 +153,7 @@ public class Utils {
             }
             for (int i = start; i <= end; i++) {
                 if (inventory.getStackInSlot(i).isEmpty()) {
-                    inventory.setInventorySlotContents(i,EnderPayApi.getBanknote(EnderPayApi.getBanknoteCurrentValue(banknote)));
+                    inventory.setInventorySlotContents(i,EnderPayApi.getBanknote(credits));
                     banknotes--;
                     break;
                 }

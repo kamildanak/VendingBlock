@@ -34,14 +34,14 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
 
 
     @Optional.Method(modid = "enderpay")
-    public ItemStack takeCredits(EntityPlayer entityplayer) {
+    public long takeCredits(EntityPlayer entityplayer) {
         try {
             long amount = EnderPayApi.getBanknoteOriginalValue(super.getBoughtItems().get(0));
             EnderPayApi.addToBalance(entityplayer.getUniqueID(), -amount);
-            return EnderPayApi.getBanknote(amount);
+            return amount;
         } catch (NoSuchAccountException | NotABanknoteException ignored) {
         }
-        return ItemStack.EMPTY;
+        return 0;
     }
 
     @Optional.Method(modid = "enderpay")
@@ -153,18 +153,18 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             return false;
 
         if (Loader.isModLoaded("enderpay")) {
+            long takenCredits = takeCredits(entityplayer);
             if (soldCreditsSum() > 0)
                 giveCredits(entityplayer);
             if (boughtCreditsSum() > 0) {
-                ItemStack takenBanknote = takeCredits(entityplayer);
-                if (!te.isInfinite()) storeBanknote(takenBanknote);
+                if (!te.isInfinite()) storeBanknote(takenCredits);
             }
         }
         return true;
     }
 
-    private void storeBanknote(ItemStack takenBanknote) {
-        Utils.storeBanknote(this, 0,8, takenBanknote);
+    private void storeBanknote(long takenBanknote) {
+        Utils.storeCredits(this, 0,8, takenBanknote);
     }
 
     private void storeBlankBanknotes(int banknotes) {
