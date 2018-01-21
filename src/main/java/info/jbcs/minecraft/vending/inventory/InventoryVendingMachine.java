@@ -8,7 +8,6 @@ import info.jbcs.minecraft.vending.init.VendingSoundEvents;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingStorageAttachment;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
@@ -132,8 +131,10 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
 
     private void extractItem(ItemStack stack) {
         ItemStack extractedItem = extractItem(stack, getInventorySlots(), false);
-        if (extractItem(stack, stack.getCount() - extractedItem.getCount(),
-                9, 12, false).getCount() > 0 && Vending.settings.shouldCloseOnPartialSoldOut()) {
+        ItemStack leftToExtract = stack.copy();
+        leftToExtract.setCount(stack.getCount()-extractedItem.getCount());
+        if (extractItem(leftToExtract, getSellSlots(), false).getCount() > 0
+                && Vending.settings.shouldCloseOnPartialSoldOut()) {
             te.setOpen(false);
         }
     }
@@ -264,7 +265,7 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
             TileEntityVendingStorageAttachment attachment = getAttachment();
             if (attachment != null) attachment.inventory.decrStackSize(index, amount);
         }
-        return ItemStackHelper.getAndSplit(this.stacks, index, amount);
+        return super.decrStackSize(index, amount);
     }
 
     @Override
@@ -274,6 +275,6 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
             TileEntityVendingStorageAttachment attachment = getAttachment();
             if (attachment != null) attachment.inventory.removeStackFromSlot(index);
         }
-        return ItemStackHelper.getAndRemove(this.stacks, index);
+        return super.removeStackFromSlot(index);
     }
 }

@@ -120,10 +120,6 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
             }
         }
     }
-
-    public ItemStack extractItemFromStorage(ItemStack sold, int count, boolean simulate) {
-        return inventory.extractItem(sold, count, 0, 27, simulate);
-    }
 }
 
 
