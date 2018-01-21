@@ -46,10 +46,10 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     @Optional.Method(modid = "enderpay")
     public void giveCredits(long amount) {
         if (te.isInfinite()) return;
-        long leftToTake = Utils.takeCredits(this, getInventorySlots(), amount);
+        long leftToTake = takeCredits(getInventorySlots(), amount);
         if (leftToTake > 0)
         {
-            Utils.takeCredits(this, getSellSlots(), leftToTake);
+            takeCredits(getSellSlots(), leftToTake);
             if (Vending.settings.shouldCloseOnPartialSoldOut()) te.setOpen(false);
         }
     }
@@ -91,7 +91,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
                 return countNotNull(soldItems) > 0 || soldCreditsSum() > 0;
             if (Utils.isFilledBanknote(bought))
                 return (boughtCreditsSum() > 0 && hasBanknoteInStorage() &&
-                        Utils.hasPlaceForBanknote(getInventoryItems()));
+                        canStoreCredits(getInventoryItems()));
         }
         return super.checkIfFits(offered);
     }
@@ -107,7 +107,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
         {
             long creditsDelta = boughtCreditsSum() - soldCreditsSum();
             if (creditsDelta > 0) {
-                Utils.storeCredits(this, getInventorySlots(), creditsDelta);
+                storeCredits(getInventorySlots(), creditsDelta);
             } else {
                 giveCredits(-creditsDelta);
             }

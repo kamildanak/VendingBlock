@@ -105,10 +105,10 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
     }
 
     private boolean doesStackFit(ItemStack itemstack) {
-        return insertItem(itemstack, true).isEmpty();
+        return insertItem(itemstack, true).noItemsLeftToInsert();
     }
 
-    private ItemStack insertItem(ItemStack itemstack, boolean simulate) {
+    private InsertionResultSingle insertItem(ItemStack itemstack, boolean simulate) {
         return super.insertItem(itemstack, getInventorySlots(), simulate);
     }
 
@@ -192,9 +192,9 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
             inventory.setStackInSlot(i, response.getChange());
             if (Loader.isModLoaded("enderpay")) {
                 if (response.getCreditsDelta() > 0) {
-                    Utils.storeCredits(inventory, fromSlots, response.getCreditsDelta());
+                    storeCredits(fromSlots, response.getCreditsDelta());
                 } else {
-                    Utils.takeCredits(inventory, fromSlots, -response.getCreditsDelta());
+                    takeCredits(fromSlots, -response.getCreditsDelta());
                 }
             }
             for (ItemStack itemStack : response.getReturnedStacks()) {

@@ -108,11 +108,11 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
             TileEntity te = this.world.getTileEntity(this.pos.up());
             if (!(te instanceof TileEntityVendingMachine)) return;
             TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
-            InventoryStaticExtended.InsertionResultMultiple insertionResultMultiple = inventory.insertItems(
+            InsertionResultMultiple insertionResultMultiple = inventory.insertItems(
                     machine.inventory.getSoldItems(), IntStream.rangeClosed(36, 53).toArray(),true);
 
             if (insertionResultMultiple.getItemsLeft().size()==0 &&
-                    Utils.hasPlaceForBanknote(Utils.itemStacksFromInventory(inventory, IntStream.rangeClosed(27, 35).toArray()))) {
+                    inventory.canStoreCredits(Utils.itemStacksFromInventory(inventory, IntStream.rangeClosed(27, 35).toArray()))) {
                 machine.inventory.vend(inventory, IntStream.rangeClosed(27, 35).toArray(),
                         IntStream.rangeClosed(36, 53).toArray());
                 this.markDirty();
