@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import com.kamildanak.minecraft.enderpay.EnderPay;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
@@ -45,23 +44,13 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Optional.Method(modid = "enderpay")
-    public void giveCredits(EntityPlayer entityplayer) {
-        try {
-            long soldAmount = soldCreditsSum();
-            EnderPayApi.addToBalance(entityplayer.getUniqueID(), soldAmount);
-            if (te.isInfinite()) return;
-            long leftToTake = Utils.takeCredits(this, 0, 8, soldAmount);
-            if (leftToTake > 0)
-            {
-                if (te.isMultiple()) {
-                    Utils.takeCredits(this, 9,12, leftToTake);
-                } else {
-                    Utils.takeCredits(this, 9,9, leftToTake);
-                }
-                if (Vending.settings.shouldCloseOnPartialSoldOut()) te.setOpen(false);
-            }
-        } catch (NoSuchAccountException e) {
-            e.printStackTrace();
+    public void giveCredits(long amount) {
+        if (te.isInfinite()) return;
+        long leftToTake = Utils.takeCredits(this, getInventorySlots(), amount);
+        if (leftToTake > 0)
+        {
+            Utils.takeCredits(this, getSellSlots(), leftToTake);
+            if (Vending.settings.shouldCloseOnPartialSoldOut()) te.setOpen(false);
         }
     }
 
@@ -84,11 +73,6 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
         return false;
     }
 
-    public boolean checkIfPlayerHasEnoughCreditsForMachine(EntityPlayer entityPlayer) {
-        if (!Utils.isBanknote(super.getBoughtItems().get(0))) return true;
-        return Utils.checkIfPlayerHasEnoughCredits(entityPlayer, boughtCreditsSum());
-    }
-
     private boolean hasEnoughCredits() {
         if (te.isInfinite() || !Loader.isModLoaded("enderpay")) return true;
         long soldSum = soldCreditsSum();
@@ -106,36 +90,32 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             if (Utils.isBanknote(bought) && boughtCreditsSum() == 0)
                 return countNotNull(soldItems) > 0 || soldCreditsSum() > 0;
             if (Utils.isFilledBanknote(bought))
-                return (boughtCreditsSum() > 0 && Utils.hasPlaceForBanknote(getInventoryItems()));
+                return (boughtCreditsSum() > 0 && hasBanknoteInStorage() &&
+                        Utils.hasPlaceForBanknote(getInventoryItems()));
         }
         return super.checkIfFits(offered);
     }
 
     @Override
-    public boolean vend0(EntityPlayer entityplayer) {
-        if (!hasEnoughCredits() || !checkIfPlayerHasEnoughCreditsForMachine(entityplayer)) {
-            return false;
+    public BuyResponse vend(BuyRequest request) {
+        if (!hasEnoughCredits() || request.getAvailableCredits() < boughtCreditsSum()) {
+            return BuyResponse.UNCOMPLETED;
         }
-        if (!super.vend0(entityplayer))
-            return false;
-
-        if (Loader.isModLoaded("enderpay")) {
-            long takenCredits = takeCredits(entityplayer);
-            if (soldCreditsSum() > 0)
-                giveCredits(entityplayer);
-            if (boughtCreditsSum() > 0) {
-                if (!te.isInfinite()) storeBanknote(takenCredits);
+        BuyResponse response = super.vend(request);
+        if (!response.isTransactionCompleted()) return response;
+        if (!te.isInfinite())
+        {
+            long creditsDelta = boughtCreditsSum() - soldCreditsSum();
+            if (creditsDelta > 0) {
+                Utils.storeCredits(this, getInventorySlots(), creditsDelta);
+            } else {
+                giveCredits(-creditsDelta);
             }
         }
-        return true;
-    }
 
-    private void storeBanknote(long takenBanknote) {
-        Utils.storeCredits(this, 0,8, takenBanknote);
-    }
-
-    private void storeBlankBanknotes(int banknotes) {
-        Utils.storeBlankBanknotes(this, 0,8, banknotes);
+        response.setTakenCredits(boughtCreditsSum());
+        response.setReturnedCredits(soldCreditsSum());
+        return response;
     }
 
     @Override

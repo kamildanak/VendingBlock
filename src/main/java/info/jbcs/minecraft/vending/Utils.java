@@ -81,15 +81,6 @@ public class Utils {
         return EnderPayApi.isFilledBanknote(bought);
     }
 
-    @Optional.Method(modid = "enderpay")
-    public static boolean checkIfPlayerHasEnoughCredits(EntityPlayer entityPlayer, long requiredAmount) {
-        try {
-            return EnderPayApi.getBalance(entityPlayer.getUniqueID()) >= requiredAmount;
-        } catch (NoSuchAccountException ignored) {
-            return false;
-        }
-    }
-
     public static void markBlockForUpdate(World world, BlockPos pos) {
         if (world == null) return;
         IBlockState blockState = world.getBlockState(pos);
@@ -131,10 +122,10 @@ public class Utils {
     }
 
     @Optional.Method(modid = "enderpay")
-    public static void storeCredits(IInventory inventory, int start, int end, long credits) {
+    public static void storeCredits(IInventory inventory, int[] slots, long credits) {
         int banknotes = 0;
         try {
-            for (int i = start; i <= end; i++) {
+            for (int i: slots) {
                 ItemStack itemStack = inventory.getStackInSlot(i);
                 if (Utils.isBanknote(itemStack)) {
                     if (itemStack.getCount() == 1) {
@@ -146,26 +137,26 @@ public class Utils {
                     banknotes += itemStack.getCount();
                 }
             }
-            for (int i = start; i <= end; i++) {
+            for (int i: slots) {
                 if (Utils.isBanknote(inventory.getStackInSlot(i))) {
                     inventory.setInventorySlotContents(i, ItemStack.EMPTY);
                 }
             }
-            for (int i = start; i <= end; i++) {
+            for (int i: slots) {
                 if (inventory.getStackInSlot(i).isEmpty()) {
                     inventory.setInventorySlotContents(i,EnderPayApi.getBanknote(credits));
                     banknotes--;
                     break;
                 }
             }
-            storeBlankBanknotes(inventory, start, end, banknotes);
+            storeBlankBanknotes(inventory, slots, banknotes);
         } catch (NotABanknoteException ignored) {
         }
     }
 
     @Optional.Method(modid = "enderpay")
-    public static void storeBlankBanknotes(IInventory inventory, int start, int end, int banknotes) {
-        for (int i = start; i <= end; i++) {
+    public static void storeBlankBanknotes(IInventory inventory, int[] slots, int banknotes) {
+        for (int i: slots) {
             if (inventory.getStackInSlot(i).isEmpty()) {
                 if(banknotes<=0) break;
                 int m = Math.min(banknotes, 64);
@@ -206,10 +197,10 @@ public class Utils {
     }
 
     @Optional.Method(modid = "enderpay")
-    public static long takeCredits(IInventory inventory, int start, int end, long credits){
+    public static long takeCredits(IInventory inventory, int[] slots, long credits){
         int banknotes = 0;
         long creditsSum = 0;
-        for (int i = start; i <= end; i++) {
+        for (int i: slots) {
             if (Utils.isBanknote(inventory.getStackInSlot(i))) {
                 banknotes += inventory.getStackInSlot(i).getCount();
                 try {
@@ -219,7 +210,7 @@ public class Utils {
                 inventory.setInventorySlotContents(i, ItemStack.EMPTY);
             }
         }
-        for (int i = start; i <= end; i++) {
+        for (int i: slots) {
             if (inventory.getStackInSlot(i).isEmpty()) {
                 long toStoreBack = creditsSum - credits;
                 if (toStoreBack > 0)
@@ -227,11 +218,21 @@ public class Utils {
                     inventory.setInventorySlotContents(i, EnderPayApi.getBanknote(toStoreBack));
                     banknotes--;
                 }
-                storeBlankBanknotes(inventory, start, end, banknotes);
+                storeBlankBanknotes(inventory, slots, banknotes);
                 if (toStoreBack > 0) return 0;
                 return -toStoreBack;
             }
         }
         return creditsSum;
+    }
+
+    public static NonNullList<ItemStack> itemStacksFromInventory(IInventory inventory, int[] slots) {
+        NonNullList<ItemStack> itemStacks = NonNullList.create();
+        for (int i: slots) {
+            ItemStack itemStack = inventory.getStackInSlot(i);
+            if (itemStack.isEmpty()) continue;
+            itemStacks.add(itemStack);
+        }
+        return itemStacks;
     }
 }

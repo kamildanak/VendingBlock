@@ -1,24 +1,28 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import com.kamildanak.minecraft.foamflower.inventory.InventoryStatic;
+import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.init.VendingSoundEvents;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingStorageAttachment;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
+import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.stream.IntStream;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
 
-public class InventoryVendingMachine extends InventoryStatic {
+public class InventoryVendingMachine extends InventoryStaticExtended {
     TileEntityVendingMachine te;
 
     public InventoryVendingMachine(TileEntityVendingMachine tileEntityVendingMachine) {
@@ -27,7 +31,7 @@ public class InventoryVendingMachine extends InventoryStatic {
     }
 
     @Nonnull
-    private int[] getSellSlots() {
+    public int[] getSellSlots() {
         if (te.isMultiple()) return new int[]{9, 10, 11, 12};
         return new int[]{9};
     }
@@ -37,8 +41,35 @@ public class InventoryVendingMachine extends InventoryStatic {
     }
 
     @Nonnull
-    private int[] getInventorySlots() {
-        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
+    int[] getInventorySlots() {
+        if (getAttachment() != null) {
+            int firstOfAttachment = 14;
+            return IntStream.concat(IntStream.rangeClosed(0, 8),
+                    IntStream.rangeClosed(firstOfAttachment, firstOfAttachment+26)).toArray();
+        }
+        return IntStream.rangeClosed(0, 8).toArray();
+    }
+
+    @Nonnull
+    @Override
+    public ItemStack getStackInSlot(int slot) {
+        if (slot >= 14) {
+            TileEntityVendingStorageAttachment attachment = getAttachment();
+            if (attachment != null) return attachment.inventory.getStackInSlot(slot - 14);
+        }
+        return super.getStackInSlot(slot);
+    }
+
+    @Override
+    public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+        if (slot >= 14) {
+            TileEntityVendingStorageAttachment attachment = getAttachment();
+            if (attachment != null) {
+                attachment.inventory.setStackInSlot(slot - 14, stack);
+                return;
+            }
+        }
+        super.setStackInSlot(slot, stack);
     }
 
     @Override
@@ -79,10 +110,7 @@ public class InventoryVendingMachine extends InventoryStatic {
     }
 
     private ItemStack insertItem(ItemStack itemstack, boolean simulate) {
-        itemstack = super.insertItem(itemstack, 0, 8, simulate);
-        TileEntityVendingStorageAttachment attachment = getAttachment();
-        if (attachment == null) return itemstack;
-        return attachment.inventory.insertItemIntoStorage(itemstack, simulate);
+        return super.insertItem(itemstack, getInventorySlots(), simulate);
     }
 
     private NonNullList<ItemStack> giveItems() {
@@ -103,14 +131,8 @@ public class InventoryVendingMachine extends InventoryStatic {
     }
 
     private void extractItem(ItemStack stack) {
-        TileEntityVendingStorageAttachment attachment = getAttachment();
-        ItemStack stackFromMainInventory = extractItem(stack, stack.getCount(), 0, 8, false);
-        ItemStack stackFromStorage = ItemStack.EMPTY;
-        if (attachment != null) {
-            stackFromStorage = attachment.extractItemFromStorage(stack,
-                    stack.getCount() - stackFromMainInventory.getCount(), false);
-        }
-        if (extractItem(stack, stack.getCount() - stackFromMainInventory.getCount() - stackFromStorage.getCount(),
+        ItemStack extractedItem = extractItem(stack, getInventorySlots(), false);
+        if (extractItem(stack, stack.getCount() - extractedItem.getCount(),
                 9, 12, false).getCount() > 0 && Vending.settings.shouldCloseOnPartialSoldOut()) {
             te.setOpen(false);
         }
@@ -147,62 +169,69 @@ public class InventoryVendingMachine extends InventoryStatic {
                 Objects.equals(bought.getTagCompound(), offered.getTagCompound());
     }
 
-    public void vend(InventoryStatic inventory, int fromStartInclusive, int fromEndInclusive,
-                     int toStartInclusive, int toEndInclusive) {
-        if (te.getWorld().isRemote) return;
-        if (te.inventory instanceof InventoryVendingMachineEnderPay) {
-            if (((InventoryVendingMachineEnderPay) te.inventory).boughtCreditsSum() > 0) return;
-            if (((InventoryVendingMachineEnderPay) te.inventory).soldCreditsSum() > 0) return;
-        }
-        for (int i = fromStartInclusive; i <= fromEndInclusive; i++) {
-            ItemStack stack = inventory.getStackInSlot(i);
-            NonNullList<ItemStack> vended = NonNullList.create();
-            if (vend(inventory, i, stack, vended)) {
-                for (ItemStack stack2 : vended) {
-                    for (int j = toStartInclusive; j <= toEndInclusive; j++) {
-                        if (stack2.isEmpty()) break;
-                        stack2 = inventory.insertItem(j, stack2, false);
-                    }
-                }
-                return;
-            }
-        }
-    }
-
-    private boolean vend(InventoryStatic inventory, int i, ItemStack offered, NonNullList<ItemStack> itemsToReturn) {
-        ItemStack change = vend(offered, itemsToReturn);
-        inventory.setStackInSlot(i, takeItems(offered));
-        return !change.isItemEqual(offered) || change.getCount() != offered.getCount();
-    }
-
-    private ItemStack vend(ItemStack offered, NonNullList<ItemStack> itemsToReturn) {
+    public BuyResponse vend(BuyRequest request) {
+        ItemStack offered = request.getOfferedStack();
         if (!te.isOpen() || !checkIfFits(offered)) {
-            return offered;
+            return BuyResponse.UNCOMPLETED;
         }
-        itemsToReturn.addAll(giveItems());
-        return takeItems(offered);
+        return new BuyResponse(0, 0, takeItems(offered), giveItems(), true);
+    }
+
+    public void vend(InventoryStaticExtended inventory, int[] fromSlots, int[] toSlots) {
+        if (te.getWorld().isRemote) return;
+        if (!(inventory.insertItems(getSoldItems(), toSlots, true).getItemsLeft().size()==0)) return;
+
+        NonNullList<ItemStack> itemStacks = Utils.itemStacksFromInventory(inventory, fromSlots);
+        long availableFunds = Utils.currentValueCreditsSum(itemStacks);
+
+        for (int i: fromSlots) {
+            ItemStack stack = inventory.getStackInSlot(i).copy();
+            BuyResponse response = vend(new BuyRequest(availableFunds, stack));
+            if (!response.isTransactionCompleted()) continue;
+            inventory.setStackInSlot(i, response.getChange());
+            if (Loader.isModLoaded("enderpay")) {
+                if (response.getCreditsDelta() > 0) {
+                    Utils.storeCredits(inventory, fromSlots, response.getCreditsDelta());
+                } else {
+                    Utils.takeCredits(inventory, fromSlots, -response.getCreditsDelta());
+                }
+            }
+            for (ItemStack itemStack : response.getReturnedStacks()) {
+                inventory.insertItem(itemStack, toSlots, false);
+            }
+
+            if (Vending.settings.shouldCloseOnSoldOut() && !hasSomethingToSell()) {
+                te.setOpen(false);
+            }
+            return;
+        }
     }
 
     public void vend(EntityPlayer entityPlayer) {
-        boolean result = vend0(entityPlayer);
-        if (Vending.settings.shouldCloseOnSoldOut() && !hasSomethingToSell())
-            te.setOpen(false);
-        te.getWorld().playSound(null, te.getPos(),
-                result ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
-                SoundCategory.MASTER, 0.3f, 0.6f);
-    }
-
-    public boolean vend0(EntityPlayer entityplayer) {
-        if (te.getWorld().isRemote) return false;
-        ItemStack offered = entityplayer.inventory.getCurrentItem();
-
-        if (!te.isOpen() || !checkIfFits(offered)) {
-            return false;
+        if (te.getWorld().isRemote) return;
+        ItemStack offered = entityPlayer.inventory.getCurrentItem();
+        long availableCredits = 0;
+        if (Loader.isModLoaded("enderpay")) {
+            try {
+                availableCredits = EnderPayApi.getBalance(entityPlayer.getUniqueID());
+            } catch (NoSuchAccountException ignored) {
+            }
         }
+        BuyResponse response = vend(new BuyRequest(availableCredits, offered));
+        if (response.isTransactionCompleted()) {
+            dispenseItems(entityPlayer);
+            entityPlayer.inventory.setInventorySlotContents(entityPlayer.inventory.currentItem, response.getChange());
 
-        dispenseItems(entityplayer);
-        entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, takeItems(offered));
-        return true;
+            if (Loader.isModLoaded("enderpay")) {
+                try {
+                    EnderPayApi.addToBalance(entityPlayer.getUniqueID(), response.getCreditsDelta());
+                } catch (NoSuchAccountException ignored) {
+                }
+            }
+        }
+        te.getWorld().playSound(null, te.getPos(),
+                response.isTransactionCompleted() ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN,
+                SoundCategory.MASTER, 0.3f, 0.6f);
     }
 
     private void dispenseItems(EntityPlayer entityPlayer) {
@@ -225,5 +254,26 @@ public class InventoryVendingMachine extends InventoryStatic {
             return null;
         }
         return (TileEntityVendingStorageAttachment) tileEntity;
+    }
+
+
+    @Override
+    @Nonnull
+    public ItemStack decrStackSize(int index, int amount) {
+        if (index >= 14) {
+            TileEntityVendingStorageAttachment attachment = getAttachment();
+            if (attachment != null) attachment.inventory.decrStackSize(index, amount);
+        }
+        return ItemStackHelper.getAndSplit(this.stacks, index, amount);
+    }
+
+    @Override
+    @Nonnull
+    public ItemStack removeStackFromSlot(int index) {
+        if (index >= 14) {
+            TileEntityVendingStorageAttachment attachment = getAttachment();
+            if (attachment != null) attachment.inventory.removeStackFromSlot(index);
+        }
+        return ItemStackHelper.getAndRemove(this.stacks, index);
     }
 }

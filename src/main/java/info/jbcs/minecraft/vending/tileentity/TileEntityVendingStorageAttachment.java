@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending.tileentity;
 
+import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.inventory.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
+import java.util.stream.IntStream;
 
 public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
     private int transferCooldown;
@@ -106,8 +108,13 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
             TileEntity te = this.world.getTileEntity(this.pos.up());
             if (!(te instanceof TileEntityVendingMachine)) return;
             TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
-            if (inventory.doesStacksFit(machine.inventory.getSoldItems(), 36, 53)) {
-                machine.inventory.vend(inventory, 27, 35, 36, 53);
+            InventoryStaticExtended.InsertionResultMultiple insertionResultMultiple = inventory.insertItems(
+                    machine.inventory.getSoldItems(), IntStream.rangeClosed(36, 53).toArray(),true);
+
+            if (insertionResultMultiple.getItemsLeft().size()==0 &&
+                    Utils.hasPlaceForBanknote(Utils.itemStacksFromInventory(inventory, IntStream.rangeClosed(27, 35).toArray()))) {
+                machine.inventory.vend(inventory, IntStream.rangeClosed(27, 35).toArray(),
+                        IntStream.rangeClosed(36, 53).toArray());
                 this.markDirty();
                 this.transferCooldown = 8;
             }
