@@ -13,6 +13,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static info.jbcs.minecraft.vending.General.countNotNull;
@@ -25,97 +26,101 @@ public class InventoryVendingMachine extends InventoryStatic {
         te = tileEntityVendingMachine;
     }
 
+    @Nonnull
+    private int[] getSellSlots() {
+        if (te.isMultiple()) return new int[]{9, 10, 11, 12};
+        return new int[]{9};
+    }
+
+    private int getBoughtSlot() {
+        return te.isMultiple() ? 13 : 10;
+    }
+
+    @Nonnull
+    private int[] getInventorySlots() {
+        return new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8};
+    }
+
     @Override
     protected void onContentsChanged(int slot) {
         Utils.markBlockForUpdate(te.getWorld(), te.getPos());
     }
 
     @Nonnull
-    public NonNullList<ItemStack> getSoldItems() {
+    private NonNullList<ItemStack> getItemsFromSlots(int[] slots) {
         NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        stackNonNullList.add(getStackInSlot(9));
-        if (te.isMultiple())
-            for (int i = 10; i < 13; i++)
-                stackNonNullList.add(getStackInSlot(i));
+        for (int i : slots) {
+            stackNonNullList.add(getStackInSlot(i));
+        }
         return stackNonNullList;
+    }
+
+    @Nonnull
+    public NonNullList<ItemStack> getSoldItems() {
+        return getItemsFromSlots(getSellSlots());
     }
 
     @Nonnull
     public NonNullList<ItemStack> getBoughtItems() {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        stackNonNullList.add(getStackInSlot(te.isMultiple() ? 13 : 10));
-        return stackNonNullList;
+        return getItemsFromSlots(new int[]{getBoughtSlot()});
     }
 
     @Nonnull
-    public NonNullList<ItemStack> getInventoryItems() {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        for (int i = 0; i < 9; i++)
-            stackNonNullList.add(getStackInSlot(i));
-        return stackNonNullList;
+    NonNullList<ItemStack> getInventoryItems() {
+        return getItemsFromSlots(getInventorySlots());
     }
-
 
     public void setBoughtItem(ItemStack stack) {
-        setInventorySlotContents(te.isMultiple() ? 13 : 10, stack);
+        setInventorySlotContents(getBoughtSlot(), stack);
     }
 
-    public boolean doesStackFit(ItemStack itemstack) {
+    private boolean doesStackFit(ItemStack itemstack) {
         return insertItem(itemstack, true).isEmpty();
     }
 
-    private ItemStack insertItem(ItemStack itemstack, boolean simulate)
-    {
-        for (int i = 0; i < 9; i++) {
-            itemstack = insertItem(i, itemstack, simulate);
-        }
-        TileEntity tileEntity = te.getWorld().getTileEntity(te.getPos().down());
-        if (!(tileEntity instanceof TileEntityVendingStorageAttachment)) {
-            return itemstack;
-        }
-        TileEntityVendingStorageAttachment attachment = (TileEntityVendingStorageAttachment) tileEntity;
+    private ItemStack insertItem(ItemStack itemstack, boolean simulate) {
+        itemstack = super.insertItem(itemstack, 0, 8, simulate);
+        TileEntityVendingStorageAttachment attachment = getAttachment();
+        if (attachment == null) return itemstack;
         return attachment.inventory.insertItemIntoStorage(itemstack, simulate);
     }
 
-    public NonNullList<ItemStack> giveItems() {
+    private NonNullList<ItemStack> giveItems() {
         NonNullList<ItemStack> itemsToDispense = NonNullList.create();
         NonNullList<ItemStack> soldItems = getSoldItems();
         if (countNotNull(soldItems) == 0) return itemsToDispense;
-
-        TileEntity tileEntity = te.getWorld().getTileEntity(te.getPos().down());
-        TileEntityVendingStorageAttachment attachment = null;
-        if (tileEntity instanceof TileEntityVendingStorageAttachment) {
-            attachment = (TileEntityVendingStorageAttachment) tileEntity;
-        }
-
 
         for (ItemStack sold : soldItems) {
             if (sold.isEmpty()) continue;
             ItemStack vended = sold.copy();
 
             if (!te.isInfinite()) {
-                ItemStack stackFromMainInventory = extractItem(sold, sold.getCount(),
-                        0, 8, false);
-                ItemStack stackFromStorage = ItemStack.EMPTY;
-                if(attachment!=null){
-                    stackFromStorage = attachment.extractItemFromStorage(sold,
-                            sold.getCount() - stackFromMainInventory.getCount(), false);
-                }
-                if (extractItem(sold, sold.getCount() - stackFromMainInventory.getCount() - stackFromStorage.getCount(),
-                        9, 12, false).getCount() > 0 && Vending.settings.shouldCloseOnPartialSoldOut()) {
-                    te.setOpen(false);
-                }
+                extractItem(sold);
             }
             itemsToDispense.add(vended);
         }
         return itemsToDispense;
     }
 
+    private void extractItem(ItemStack stack) {
+        TileEntityVendingStorageAttachment attachment = getAttachment();
+        ItemStack stackFromMainInventory = extractItem(stack, stack.getCount(), 0, 8, false);
+        ItemStack stackFromStorage = ItemStack.EMPTY;
+        if (attachment != null) {
+            stackFromStorage = attachment.extractItemFromStorage(stack,
+                    stack.getCount() - stackFromMainInventory.getCount(), false);
+        }
+        if (extractItem(stack, stack.getCount() - stackFromMainInventory.getCount() - stackFromStorage.getCount(),
+                9, 12, false).getCount() > 0 && Vending.settings.shouldCloseOnPartialSoldOut()) {
+            te.setOpen(false);
+        }
+    }
+
     public boolean hasSomethingToSell() {
         return countNotNull(getSoldItems()) != 0;
     }
 
-    public ItemStack takeItems(@Nonnull ItemStack offered) {
+    private ItemStack takeItems(@Nonnull ItemStack offered) {
         offered = offered.copy();
         NonNullList<ItemStack> bought = getBoughtItems();
         if (countNotNull(bought) == 0) return offered;
@@ -126,7 +131,7 @@ public class InventoryVendingMachine extends InventoryStatic {
         }
 
         if (!te.isInfinite())
-            insertItem(paid,false);
+            insertItem(paid, false);
         return offered;
     }
 
@@ -143,18 +148,17 @@ public class InventoryVendingMachine extends InventoryStatic {
     }
 
     public void vend(InventoryStatic inventory, int fromStartInclusive, int fromEndInclusive,
-                                       int toStartInclusive, int toEndInclusive){
+                     int toStartInclusive, int toEndInclusive) {
         if (te.getWorld().isRemote) return;
-        if (te.inventory instanceof InventoryVendingMachineEnderPay)
-        {
-            if(((InventoryVendingMachineEnderPay) te.inventory).boughtCreditsSum()>0) return;
-            if(((InventoryVendingMachineEnderPay) te.inventory).soldCreditsSum()>0) return;
+        if (te.inventory instanceof InventoryVendingMachineEnderPay) {
+            if (((InventoryVendingMachineEnderPay) te.inventory).boughtCreditsSum() > 0) return;
+            if (((InventoryVendingMachineEnderPay) te.inventory).soldCreditsSum() > 0) return;
         }
-        for(int i=fromStartInclusive; i<=fromEndInclusive; i++){
+        for (int i = fromStartInclusive; i <= fromEndInclusive; i++) {
             ItemStack stack = inventory.getStackInSlot(i);
             NonNullList<ItemStack> vended = NonNullList.create();
-            if(vend(inventory, i, stack, vended)) {
-                for(ItemStack stack2: vended) {
+            if (vend(inventory, i, stack, vended)) {
+                for (ItemStack stack2 : vended) {
                     for (int j = toStartInclusive; j <= toEndInclusive; j++) {
                         if (stack2.isEmpty()) break;
                         stack2 = inventory.insertItem(j, stack2, false);
@@ -165,15 +169,18 @@ public class InventoryVendingMachine extends InventoryStatic {
         }
     }
 
-    private boolean vend(InventoryStatic inventory, int i, ItemStack offered, NonNullList<ItemStack> itemsToReturn)
-    {
+    private boolean vend(InventoryStatic inventory, int i, ItemStack offered, NonNullList<ItemStack> itemsToReturn) {
+        ItemStack change = vend(offered, itemsToReturn);
+        inventory.setStackInSlot(i, takeItems(offered));
+        return !change.isItemEqual(offered) || change.getCount() != offered.getCount();
+    }
+
+    private ItemStack vend(ItemStack offered, NonNullList<ItemStack> itemsToReturn) {
         if (!te.isOpen() || !checkIfFits(offered)) {
-            return false;
+            return offered;
         }
-        if (!te.isOpen() || !checkIfFits(offered)) return false;
         itemsToReturn.addAll(giveItems());
-        inventory.setStackInSlot(i,takeItems(offered));
-        return true;
+        return takeItems(offered);
     }
 
     public void vend(EntityPlayer entityPlayer) {
@@ -198,9 +205,8 @@ public class InventoryVendingMachine extends InventoryStatic {
         return true;
     }
 
-    public void dispenseItems(EntityPlayer entityPlayer)
-    {
-        for(ItemStack vended: this.giveItems()) {
+    private void dispenseItems(EntityPlayer entityPlayer) {
+        for (ItemStack vended : this.giveItems()) {
             if (Vending.settings.shouldTransferToInventory() && entityPlayer.inventory.addItemStackToInventory(vended))
                 continue;
             Utils.throwItemAtPlayer(entityPlayer, te.getWorld(), te.getPos(), vended);
@@ -210,5 +216,14 @@ public class InventoryVendingMachine extends InventoryStatic {
     @Nonnull
     public NonNullList<ItemStack> getSoldItemsWithFilledBanknotes() {
         return getSoldItems();
+    }
+
+    @Nullable
+    private TileEntityVendingStorageAttachment getAttachment() {
+        TileEntity tileEntity = te.getWorld().getTileEntity(te.getPos().down());
+        if (!(tileEntity instanceof TileEntityVendingStorageAttachment)) {
+            return null;
+        }
+        return (TileEntityVendingStorageAttachment) tileEntity;
     }
 }
