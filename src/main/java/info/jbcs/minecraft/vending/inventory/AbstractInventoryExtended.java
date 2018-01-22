@@ -20,6 +20,10 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
         return emptySlots;
     }
 
+    public boolean canStoreItems(NonNullList<ItemStack> items, int[] slots) {
+        return insertItems(items, slots,true).noItemsLeftToInsert();
+    }
+
     public InsertionResultMultiple insertItems(NonNullList<ItemStack> items, int[] slots, boolean simulate) {
         NonNullList<ItemStack> itemStacksThatDidNotFit = NonNullList.create();
         items = Utils.joinItems(items);

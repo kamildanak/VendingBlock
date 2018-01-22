@@ -10,7 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
-import java.util.stream.IntStream;
+import javax.annotation.Nullable;
 
 public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
     private int transferCooldown;
@@ -22,7 +22,7 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
 
     @Override
     public int getSizeInventory() {
-        return 54;
+        return inventory.getSizeInventory();
     }
 
     @Override
@@ -33,9 +33,9 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
         }
         if (side == EnumFacing.DOWN)
         {
-            return new int[]{36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,53};
+            return inventory.getOutputSlots();
         }
-        return new int[]{27,28,29,30,31,32,33,34,35};
+        return inventory.getInputSlots();
     }
 
     @Override
@@ -45,22 +45,22 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
 
     @Override
     public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
-        return index>35;
+        return inventory.isOutputSlot(index);
     }
 
     @Override
     public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
-        if(index>35) return false;
+        if(inventory.isOutputSlot(index)) return false;
         TileEntity te = this.world.getTileEntity(this.pos.up());
         if (!(te instanceof TileEntityVendingMachine)) return false;
         TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
         for(ItemStack itemStack : machine.inventory.getBoughtItems())
         {
-            if (index>26 && itemStack.isItemEqual(stack)) return true;
+            if (inventory.isInputSlot(index) && itemStack.isItemEqual(stack)) return true;
         }
         for(ItemStack itemStack : machine.inventory.getSoldItems())
         {
-            if (index<27 && itemStack.isItemEqual(stack)) return true;
+            if (inventory.isInventorySlot(index) && itemStack.isItemEqual(stack)) return true;
         }
         return false;
     }
@@ -97,27 +97,32 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
 
     public void update() {
         super.update();
+        if(this.world == null || this.world.isRemote) return;
+
         --this.transferCooldown;
         if(this.transferCooldown<0) {
             this.transferCooldown = 0;
         }
 
-        if (this.transferCooldown == 0 && this.world != null && !this.world.isRemote)
+        if (this.transferCooldown == 0)
         {
-            TileEntity te = this.world.getTileEntity(this.pos.up());
-            if (!(te instanceof TileEntityVendingMachine)) return;
-            TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
-            InsertionResultMultiple insertionResultMultiple = inventory.insertItems(
-                    machine.inventory.getSoldItems(), IntStream.rangeClosed(36, 53).toArray(),true);
+            TileEntityVendingMachine machine = getMachine();
+            if (machine==null) return;
 
-            if (insertionResultMultiple.getItemsLeft().size()==0 &&
-                    inventory.canStoreCredits(IntStream.rangeClosed(27, 35).toArray())) {
-                machine.inventory.vend(inventory, IntStream.rangeClosed(27, 35).toArray(),
-                        IntStream.rangeClosed(36, 53).toArray());
+            if (inventory.canStoreItems(machine.inventory.getSoldItems(), inventory.getOutputSlots()) &&
+                    inventory.canStoreCredits(inventory.getInputSlots())) {
+                machine.inventory.vend(inventory, inventory.getInputSlots(), inventory.getOutputSlots());
                 this.markDirty();
                 this.transferCooldown = 8;
             }
         }
+    }
+
+    @Nullable
+    private TileEntityVendingMachine getMachine() {
+        TileEntity te = this.world.getTileEntity(this.pos.up());
+        if (!(te instanceof TileEntityVendingMachine)) return null;
+        return (TileEntityVendingMachine) te;
     }
 }
 
