@@ -121,7 +121,7 @@ public class HintHUD extends HUD {
                 else if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay)
                 {
                     isOpened = !(((InventoryVendingMachineEnderPay) tileEntity.inventory).boughtCreditsSum() > 0
-                            && !((InventoryVendingMachineEnderPay) tileEntity.inventory).hasBanknoteInStorage());
+                            && !((InventoryVendingMachineEnderPay) tileEntity.inventory).hasBanknote(tileEntity.inventory.getInventorySlots()));
                     if (!isOpened) labelClosed.setCaption("gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments");
                 }
             } else {

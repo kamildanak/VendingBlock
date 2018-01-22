@@ -1,12 +1,8 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
-import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
-import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.Loader;
@@ -23,28 +19,16 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
 
     @Optional.Method(modid = "enderpay")
     public long soldCreditsSum() {
-        return Utils.originalValueCreditsSum(super.getSoldItems());
+        return Utils.originalValueCreditsSum(getSoldItems());
     }
 
     @Optional.Method(modid = "enderpay")
     public long boughtCreditsSum() {
-        return Utils.originalValueCreditsSum(super.getBoughtItems());
-    }
-
-
-    @Optional.Method(modid = "enderpay")
-    public long takeCredits(EntityPlayer entityplayer) {
-        try {
-            long amount = EnderPayApi.getBanknoteOriginalValue(super.getBoughtItems().get(0));
-            EnderPayApi.addToBalance(entityplayer.getUniqueID(), -amount);
-            return amount;
-        } catch (NoSuchAccountException | NotABanknoteException ignored) {
-        }
-        return 0;
+        return Utils.originalValueCreditsSum(getBoughtItems());
     }
 
     @Optional.Method(modid = "enderpay")
-    public void giveCredits(long amount) {
+    public void extractCredits(long amount) {
         if (te.isInfinite()) return;
         long leftToTake = takeCredits(getInventorySlots(), amount);
         if (leftToTake > 0)
@@ -55,22 +39,8 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Optional.Method(modid = "enderpay")
-    public long getCurrentValueInventoryCreditsSum() {
-        return Utils.currentValueCreditsSum(getInventoryItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
     public long getCurrentValueTotalCreditsSum() {
         return Utils.currentValueCreditsSum(getInventoryItems()) + Utils.currentValueCreditsSum(super.getSoldItems());
-    }
-
-    @Optional.Method(modid = "enderpay")
-    public boolean hasBanknoteInStorage() {
-        NonNullList<ItemStack> stacks = getInventoryItems();
-        for (ItemStack itemStack : stacks) {
-            if (Utils.isBanknote(itemStack)) return true;
-        }
-        return false;
     }
 
     private boolean hasEnoughCredits() {
@@ -81,19 +51,18 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Override
-    public boolean checkIfFits(@Nonnull ItemStack offered) {
-        if (!Loader.isModLoaded("enderpay")) return super.checkIfFits(offered);
+    public boolean doesNotFit(@Nonnull ItemStack offered) {
+        if (!Loader.isModLoaded("enderpay")) return super.doesNotFit(offered);
         NonNullList<ItemStack> soldItems = super.getSoldItems();
         ItemStack bought = super.getBoughtItems().get(0);
         if (Loader.isModLoaded("enderpay")) {
-            if (bought.isEmpty() && soldCreditsSum() > 0) return true;
+            if (bought.isEmpty() && soldCreditsSum() > 0) return false;
             if (Utils.isBanknote(bought) && boughtCreditsSum() == 0)
-                return countNotNull(soldItems) > 0 || soldCreditsSum() > 0;
+                return countNotNull(soldItems) <= 0 && soldCreditsSum() <= 0;
             if (Utils.isFilledBanknote(bought))
-                return (boughtCreditsSum() > 0 && hasBanknoteInStorage() &&
-                        canStoreCredits(getInventoryItems()));
+                return (boughtCreditsSum() <= 0 || !canStoreCredits(getInventorySlots()));
         }
-        return super.checkIfFits(offered);
+        return super.doesNotFit(offered);
     }
 
     @Override
@@ -109,7 +78,7 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
             if (creditsDelta > 0) {
                 storeCredits(getInventorySlots(), creditsDelta);
             } else {
-                giveCredits(-creditsDelta);
+                extractCredits(-creditsDelta);
             }
         }
 
@@ -126,8 +95,8 @@ public class InventoryVendingMachineEnderPay extends InventoryVendingMachine {
     }
 
     @Override
-    public boolean hasSomethingToSell() {
-        return soldCreditsSum() > 0 || super.hasSomethingToSell();
+    public boolean hasNothingToSell() {
+        return soldCreditsSum() <= 0 && super.hasNothingToSell();
     }
 
     @Override

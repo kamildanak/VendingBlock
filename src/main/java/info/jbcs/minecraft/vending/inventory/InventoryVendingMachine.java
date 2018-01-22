@@ -40,7 +40,7 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
     }
 
     @Nonnull
-    int[] getInventorySlots() {
+    public int[] getInventorySlots() {
         if (getAttachment() != null) {
             int firstOfAttachment = 14;
             return IntStream.concat(IntStream.rangeClosed(0, 8),
@@ -74,15 +74,6 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
     @Override
     protected void onContentsChanged(int slot) {
         Utils.markBlockForUpdate(te.getWorld(), te.getPos());
-    }
-
-    @Nonnull
-    private NonNullList<ItemStack> getItemsFromSlots(int[] slots) {
-        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
-        for (int i : slots) {
-            stackNonNullList.add(getStackInSlot(i));
-        }
-        return stackNonNullList;
     }
 
     @Nonnull
@@ -139,8 +130,8 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
         }
     }
 
-    public boolean hasSomethingToSell() {
-        return countNotNull(getSoldItems()) != 0;
+    public boolean hasNothingToSell() {
+        return countNotNull(getSoldItems()) == 0;
     }
 
     private ItemStack takeItems(@Nonnull ItemStack offered) {
@@ -158,21 +149,21 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
         return offered;
     }
 
-    public boolean checkIfFits(@Nonnull ItemStack offered) {
+    public boolean doesNotFit(@Nonnull ItemStack offered) {
         NonNullList<ItemStack> soldItems = getSoldItems();
         ItemStack bought = getBoughtItems().get(0);
-        if (bought.isEmpty()) return countNotNull(soldItems) > 0;
-        return doesStackFit(bought) &&
-                !offered.isEmpty() &&
-                bought.getItem() == offered.getItem() &&
-                bought.getItemDamage() == offered.getItemDamage() &&
-                offered.getCount() >= bought.getCount() &&
-                Objects.equals(bought.getTagCompound(), offered.getTagCompound());
+        if (bought.isEmpty()) return countNotNull(soldItems) <= 0;
+        return !doesStackFit(bought) ||
+                offered.isEmpty() ||
+                bought.getItem() != offered.getItem() ||
+                bought.getItemDamage() != offered.getItemDamage() ||
+                offered.getCount() < bought.getCount() ||
+                !Objects.equals(bought.getTagCompound(), offered.getTagCompound());
     }
 
     public BuyResponse vend(BuyRequest request) {
         ItemStack offered = request.getOfferedStack();
-        if (!te.isOpen() || !checkIfFits(offered)) {
+        if (!te.isOpen() || doesNotFit(offered)) {
             return BuyResponse.UNCOMPLETED;
         }
         return new BuyResponse(0, 0, takeItems(offered), giveItems(), true);
@@ -190,18 +181,10 @@ public class InventoryVendingMachine extends InventoryStaticExtended {
             BuyResponse response = vend(new BuyRequest(availableFunds, stack));
             if (!response.isTransactionCompleted()) continue;
             inventory.setStackInSlot(i, response.getChange());
-            if (Loader.isModLoaded("enderpay")) {
-                if (response.getCreditsDelta() > 0) {
-                    storeCredits(fromSlots, response.getCreditsDelta());
-                } else {
-                    takeCredits(fromSlots, -response.getCreditsDelta());
-                }
-            }
-            for (ItemStack itemStack : response.getReturnedStacks()) {
-                inventory.insertItem(itemStack, toSlots, false);
-            }
+            if (Loader.isModLoaded("enderpay")) storeCredits(fromSlots, response.getCreditsDelta());
+            inventory.insertItems(response.getReturnedStacks(), toSlots, false);
 
-            if (Vending.settings.shouldCloseOnSoldOut() && !hasSomethingToSell()) {
+            if (Vending.settings.shouldCloseOnSoldOut() && hasNothingToSell()) {
                 te.setOpen(false);
             }
             return;

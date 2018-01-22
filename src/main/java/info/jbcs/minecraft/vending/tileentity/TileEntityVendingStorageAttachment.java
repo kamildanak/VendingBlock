@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending.tileentity;
 
-import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.inventory.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -112,7 +111,7 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
                     machine.inventory.getSoldItems(), IntStream.rangeClosed(36, 53).toArray(),true);
 
             if (insertionResultMultiple.getItemsLeft().size()==0 &&
-                    inventory.canStoreCredits(Utils.itemStacksFromInventory(inventory, IntStream.rangeClosed(27, 35).toArray()))) {
+                    inventory.canStoreCredits(IntStream.rangeClosed(27, 35).toArray())) {
                 machine.inventory.vend(inventory, IntStream.rangeClosed(27, 35).toArray(),
                         IntStream.rangeClosed(36, 53).toArray());
                 this.markDirty();

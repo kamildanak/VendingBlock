@@ -4,11 +4,12 @@ import com.kamildanak.minecraft.enderpay.EnderPay;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import info.jbcs.minecraft.vending.Utils;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import javax.annotation.Nonnull;
 
 public abstract class AbstractInventoryExtended extends AbstractInventory{
     private int getEmptyCount(int[] slots) {
@@ -71,15 +72,22 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
         return ItemHandlerHelper.copyStackWithSize(stack, expected - count);
     }
 
-
-
-
+    @Nonnull
+    public NonNullList<ItemStack> getItemsFromSlots(int[] slots) {
+        NonNullList<ItemStack> stackNonNullList = NonNullList.create();
+        for (int i : slots) {
+            stackNonNullList.add(getStackInSlot(i));
+        }
+        return stackNonNullList;
+    }
 
     @Optional.Method(modid = "enderpay")
-    public boolean canStoreCredits(NonNullList<ItemStack> stacks) {
+    public boolean canStoreCredits(int[] slots) {
+        if(!hasBanknote(slots)) return false;
         int spacesForBanknotes = 0;
         int banknotes = 0;
-        for (ItemStack itemStack : stacks) {
+        for (int i : slots) {
+            ItemStack itemStack = getStackInSlot(i);
             if (Utils.isBanknote(itemStack) && itemStack.getCount()==1) return true;
             if (itemStack.isEmpty()) spacesForBanknotes++;
             if (Utils.isBanknote(itemStack))
@@ -93,6 +101,7 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
 
     @Optional.Method(modid = "enderpay")
     public void storeCredits(int[] slots, long credits) {
+        if (credits < 0) takeCredits(slots, -credits);
         int banknotes = 0;
         try {
             for (int i: slots) {
@@ -138,6 +147,8 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
 
     @Optional.Method(modid = "enderpay")
     public long takeCredits(int[] slots, long credits){
+        if (credits < 0) storeCredits(slots, -credits);
+        // Count banknotes, their current value and remove them from inventory
         int banknotes = 0;
         long creditsSum = 0;
         for (int i: slots) {
@@ -150,6 +161,7 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
                 setInventorySlotContents(i, ItemStack.EMPTY);
             }
         }
+        // Put one filled banknote, and multiple blank
         for (int i: slots) {
             if (getStackInSlot(i).isEmpty()) {
                 long toStoreBack = creditsSum - credits;
@@ -164,5 +176,13 @@ public abstract class AbstractInventoryExtended extends AbstractInventory{
             }
         }
         return creditsSum;
+    }
+
+    @Optional.Method(modid = "enderpay")
+    public boolean hasBanknote(int[] slots) {
+        for (int i: slots) {
+            if (Utils.isBanknote(getStackInSlot(i))) return true;
+        }
+        return false;
     }
 }
