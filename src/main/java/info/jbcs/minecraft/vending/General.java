@@ -1,8 +1,6 @@
 package info.jbcs.minecraft.vending;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 
 public class General {
 
@@ -29,13 +27,5 @@ public class General {
         double z = z1 - z2;
 
         return x * x + y * y + z * z < distance * distance;
-    }
-
-    public static int countNotNull(NonNullList<ItemStack> itemStacks) {
-        int counter = 0;
-        for (ItemStack itemStack : itemStacks) {
-            if (!itemStack.isEmpty()) counter++;
-        }
-        return counter;
     }
 }

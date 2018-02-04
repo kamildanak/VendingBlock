@@ -1,9 +1,9 @@
 package info.jbcs.minecraft.vending;
 
-import com.kamildanak.minecraft.enderpay.EnderPay;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
+import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
@@ -14,7 +14,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 
 import java.util.HashMap;
@@ -88,7 +87,7 @@ public class Utils {
     }
 
     public static NonNullList<ItemStack> filterBanknotes(NonNullList<ItemStack> soldItems) {
-        if (!Loader.isModLoaded("enderpay")) return soldItems;
+        if (!LoaderWrapper.isEnderPayLoaded()) return soldItems;
         for (int i = 0; i < soldItems.size(); i++) {
             if (Utils.isBanknote(soldItems.get(i))) soldItems.set(i, ItemStack.EMPTY);
         }
@@ -96,7 +95,7 @@ public class Utils {
     }
 
     public static NonNullList<ItemStack> filterBlankBanknotes(NonNullList<ItemStack> soldItems) {
-        if (!Loader.isModLoaded("enderpay")) return soldItems;
+        if (!LoaderWrapper.isEnderPayLoaded()) return soldItems;
         for (int i = 0; i < soldItems.size(); i++) {
             if (Utils.isBanknote(soldItems.get(i)) && !Utils.isFilledBanknote(soldItems.get(i)))
                 soldItems.set(i, ItemStack.EMPTY);
@@ -167,5 +166,24 @@ public class Utils {
             }
         }
         return sum;
+    }
+
+    public static NonNullList<ItemStack> filterFilledBanknotes(NonNullList<ItemStack> itemStacks) {
+        if (!LoaderWrapper.isEnderPayLoaded()) return itemStacks;
+        for (int i = 0; i < itemStacks.size(); i++) {
+            if (Utils.isFilledBanknote(itemStacks.get(i))) itemStacks.set(i, ItemStack.EMPTY);
+        }
+        return itemStacks;
+    }
+
+    public static long getAvailableCredits(EntityPlayer entityPlayer) {
+        long availableCredits = 0;
+        if (LoaderWrapper.isEnderPayLoaded()) {
+            try {
+                availableCredits = EnderPayApi.getBalance(entityPlayer.getUniqueID());
+            } catch (NoSuchAccountException ignored) {
+            }
+        }
+        return availableCredits;
     }
 }

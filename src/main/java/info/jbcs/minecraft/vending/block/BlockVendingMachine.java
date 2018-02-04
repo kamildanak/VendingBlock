@@ -65,8 +65,8 @@ public class BlockVendingMachine extends BlockContainer {
         if (tileEntity == null)
             return;
 
-        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !tileEntity.inventory.isEmpty()) {
-            tileEntity.inventory.vend(entityplayer);
+        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !tileEntity.isEmpty()) {
+            tileEntity.vend(entityplayer, false);
             return;
         }
 
@@ -96,7 +96,7 @@ public class BlockVendingMachine extends BlockContainer {
             return true;
         }
 
-        tileEntity.inventory.vend(entityPlayer);
+        tileEntity.vend(entityPlayer, false);
         tileEntity.markDirty();
         Utils.markBlockForUpdate(world, blockPos);
 

@@ -1,30 +1,31 @@
 package info.jbcs.minecraft.vending.tileentity;
 
+import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.init.VendingSoundEvents;
 import info.jbcs.minecraft.vending.inventory.*;
+import info.jbcs.minecraft.vending.items.wrapper.IItemHandlerAdvanced;
+import info.jbcs.minecraft.vending.items.wrapper.transactions.VendingHelper;
+import info.jbcs.minecraft.vending.items.wrapper.transactions.VendingMachineInvWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IInventoryChangedListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileEntityVendingMachine extends TileEntityLockable implements ISidedInventory {
-    private static final int[] side0 = new int[]{};
-    //private static final int[] side0 = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8}; Uncomment to enable hoppers
-    public InventoryVendingMachine inventory;
-    private IItemHandler itemHandler = new SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
+public class TileEntityVendingMachine extends TileEntityLockable implements IInventoryChangedListener {
+    private InventoryVendingMachine inventory;
+    private VendingMachineInvWrapper itemHandler;
     private boolean advanced;
     private boolean infinite;
     private boolean multiple;
@@ -35,9 +36,8 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
         advanced = infinite = multiple = false;
         open = true;
         ownerName = "";
-        inventory = (Loader.isModLoaded("enderpay")) ?
-                new InventoryVendingMachineEnderPay(this) :
-                new InventoryVendingMachine(this);
+        inventory = new InventoryVendingMachine(this);
+        itemHandler = new VendingMachineInvWrapper(this, inventory);
     }
 
     public TileEntityVendingMachine(boolean advanced, boolean infinite, boolean multiple) {
@@ -47,25 +47,18 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
         this.multiple = multiple;
     }
 
-    @Override
-    @Nonnull
-    public int[] getSlotsForFace(@Nonnull EnumFacing side) {
-        return side0;
-    }
-
-    @Override
-    public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull EnumFacing direction) {
-        return this.isItemValidForSlot(index, itemStackIn);
-    }
-
-    @Override
-    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
-        return this.isItemValidForSlot(index, stack);
+    @Nullable
+    public InventoryVendingStorageAttachment getAttachmentInventory() {
+        TileEntity tileEntity = getWorld().getTileEntity(getPos().down());
+        if (!(tileEntity instanceof TileEntityVendingStorageAttachment)) {
+            return null;
+        }
+        return ((TileEntityVendingStorageAttachment) tileEntity).inventory;
     }
 
     @Override
     public int getSizeInventory() {
-        return inventory.getSlots() + (advanced ? -1 : 0) + (multiple ? 0 : -3);
+        return inventory.getSizeInventory();
     }
 
     @Override
@@ -101,7 +94,7 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
 
     @Override
     public int getInventoryStackLimit() {
-        return inventory.getSlotLimit(0);
+        return inventory.getInventoryStackLimit();
     }
 
     @Override
@@ -207,7 +200,7 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
     @Override
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         super.readFromNBT(nbttagcompound);
-        inventory.deserializeNBT(nbttagcompound);
+        inventory.readFromNBT(nbttagcompound);
         ownerName = nbttagcompound.getString("owner");
         advanced = nbttagcompound.getBoolean("advanced");
         infinite = nbttagcompound.getBoolean("infinite");
@@ -218,7 +211,7 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
     @Override
     @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound nbttagcompound) {
-        nbttagcompound.merge(inventory.serializeNBT());
+        nbttagcompound = inventory.writeToNBT(nbttagcompound);
         nbttagcompound.setString("owner", ownerName);
         nbttagcompound.setBoolean("advanced", advanced);
         nbttagcompound.setBoolean("infinite", infinite);
@@ -247,12 +240,23 @@ public class TileEntityVendingMachine extends TileEntityLockable implements ISid
         readFromNBT(pkt.getNbtCompound());
     }
 
-    @SuppressWarnings("unchecked")
+    public void vend(EntityPlayer entityPlayer, boolean simulate) {
+        if (getWorld().isRemote) return;
+        SoundEvent sound = VendingHelper.vend(this, entityPlayer, simulate) ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN;
+        getWorld().playSound(null, getPos(), sound, SoundCategory.MASTER, 0.3f, 0.6f);
+    }
+
+    public boolean vend(IItemHandlerAdvanced input, IItemHandlerAdvanced output, boolean simulate) {
+        return VendingHelper.vend(this, input, output, simulate);
+    }
+
     @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-            return (T) itemHandler;
-        return super.getCapability(capability, facing);
+    public void onInventoryChanged(@Nonnull IInventory inventory) {
+        Utils.markBlockForUpdate(getWorld(), getPos());
+    }
+
+    public VendingMachineInvWrapper getInventoryWrapper() {
+        return itemHandler;
     }
 }
 

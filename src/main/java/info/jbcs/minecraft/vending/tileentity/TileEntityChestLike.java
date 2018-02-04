@@ -7,28 +7,20 @@ import info.jbcs.minecraft.vending.inventory.InventoryVendingStorageAttachment;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityLockable;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.SidedInvWrapper;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public abstract class TileEntityChestLike extends TileEntityLockable implements ISidedInventory, ITickable {
-    private IItemHandler itemHandler = new SidedInvWrapper(this, net.minecraft.util.EnumFacing.DOWN);
+public abstract class TileEntityChestLike extends TileEntityLockable implements ITickable {
     public InventoryVendingStorageAttachment inventory;
-    public int numPlayersUsing;
+    private int numPlayersUsing;
     public float prevLidAngle;
     public float lidAngle;
     private int ticksSinceSync;
@@ -63,7 +55,7 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
 
     @Override
     public int getInventoryStackLimit() {
-        return inventory.getSlotLimit(0);
+        return inventory.getInventoryStackLimit();
     }
 
     @Override
@@ -103,7 +95,7 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
         return false;
     }
 
-    public void openInventory(EntityPlayer player) {
+    public void openInventory(@Nonnull EntityPlayer player) {
         if (!player.isSpectator() && this.getBlockType() instanceof BlockVendingStorageAttachment) {
             if (this.numPlayersUsing < 0) {
                 this.numPlayersUsing = 0;
@@ -117,7 +109,7 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
         }
     }
 
-    public void closeInventory(EntityPlayer player) {
+    public void closeInventory(@Nonnull EntityPlayer player) {
         if (!player.isSpectator() && this.getBlockType() instanceof BlockVendingStorageAttachment) {
             --this.numPlayersUsing;
             this.world.addBlockEvent(this.pos, this.getBlockType(), 1, this.numPlayersUsing);
@@ -130,7 +122,7 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
     @Override
     public void readFromNBT(NBTTagCompound nbttagcompound) {
         super.readFromNBT(nbttagcompound);
-        inventory.deserializeNBT(nbttagcompound);
+        inventory.readFromNBT(nbttagcompound);
         if (nbttagcompound.hasKey("numPlayersUsing"))
             numPlayersUsing = nbttagcompound.getInteger("numPlayersUsing");
     }
@@ -138,7 +130,7 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
     @Override
     @Nonnull
     public NBTTagCompound writeToNBT(@Nonnull NBTTagCompound nbttagcompound) {
-        nbttagcompound.merge(inventory.serializeNBT());
+        nbttagcompound = inventory.writeToNBT(nbttagcompound);
         nbttagcompound.setInteger("numPlayersUsing", numPlayersUsing);
         return super.writeToNBT(nbttagcompound);
     }
@@ -161,14 +153,6 @@ public abstract class TileEntityChestLike extends TileEntityLockable implements 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         readFromNBT(pkt.getNbtCompound());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-            return (T) itemHandler;
-        return super.getCapability(capability, facing);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.renderer;
 
-import info.jbcs.minecraft.vending.General;
+import info.jbcs.minecraft.vending.items.wrapper.AdvancedItemHandlerHelper;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -25,8 +25,8 @@ public class TileEntityVendingMachineRenderer extends TileEntitySpecialRenderer<
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glTranslatef((float) x + 0.5F, (float) y, (float) z + 0.5F);
         int A = 0;
-        NonNullList<ItemStack> soldItems = machine.inventory.getSoldItemsWithFilledBanknotes();
-        int notNullSold = General.countNotNull(soldItems);
+        NonNullList<ItemStack> soldItems = machine.getInventoryWrapper().getSoldItems();
+        int notNullSold = AdvancedItemHandlerHelper.countNotNull(soldItems);
         for (ItemStack itemStack : soldItems) {
             if (itemStack == ItemStack.EMPTY) {
                 continue;

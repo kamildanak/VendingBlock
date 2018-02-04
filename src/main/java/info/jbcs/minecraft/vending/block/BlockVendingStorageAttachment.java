@@ -53,7 +53,7 @@ public class BlockVendingStorageAttachment extends BlockContainer {
             return;
         }
 
-        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !tileEntity.inventory.isEmpty()) {
+        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !tileEntity.isEmpty()) {
             return;
         }
         destroy(world, blockPos);

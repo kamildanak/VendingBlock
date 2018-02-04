@@ -1,12 +1,13 @@
-package info.jbcs.minecraft.vending.inventory;
+package info.jbcs.minecraft.vending.items.wrapper.transactions;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 
-public class InsertionResultSingle {
+public class InsertionResultMultiple {
     private int emptySlotsUsed;
-    private ItemStack itemsLeft;
+    private NonNullList<ItemStack> itemsLeft;
 
-    public InsertionResultSingle(ItemStack itemsLeft, int emptySlotsUsed) {
+    public InsertionResultMultiple(NonNullList<ItemStack> itemsLeft, int emptySlotsUsed) {
         this.emptySlotsUsed = emptySlotsUsed;
         this.itemsLeft = itemsLeft;
     }
@@ -15,7 +16,7 @@ public class InsertionResultSingle {
         return emptySlotsUsed;
     }
 
-    public ItemStack getItemsLeft() {
+    public NonNullList<ItemStack> getItemsLeft() {
         return itemsLeft;
     }
 

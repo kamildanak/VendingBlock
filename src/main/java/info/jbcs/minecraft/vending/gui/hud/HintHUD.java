@@ -10,7 +10,8 @@ import com.kamildanak.minecraft.foamflower.gui.layouts.CenteredLayout;
 import com.kamildanak.minecraft.foamflower.gui.layouts.LinearLayout;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
-import info.jbcs.minecraft.vending.inventory.InventoryVendingMachineEnderPay;
+import info.jbcs.minecraft.vending.forge.LoaderWrapper;
+import info.jbcs.minecraft.vending.items.wrapper.AdvancedItemHandlerHelper;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,16 +22,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Vector;
-
-import static info.jbcs.minecraft.vending.General.countNotNull;
-
 
 public class HintHUD extends HUD {
     private Minecraft mc;
@@ -110,18 +107,16 @@ public class HintHUD extends HUD {
         labelSeller.center = true;
 
         boolean isOpened = tileEntity.isOpen();
-        if (Loader.isModLoaded("enderpay")) {
+        if (LoaderWrapper.isEnderPayLoaded()) {
             if (isOpened && !tileEntity.isInfinite()) {
-                if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay) {
-                    long soldSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).soldCreditsSum();
-                    long realTotalSum = ((InventoryVendingMachineEnderPay) tileEntity.inventory).getCurrentValueTotalCreditsSum();
-                    isOpened = soldSum <= realTotalSum;
-                }
+                long soldSum = tileEntity.getInventoryWrapper().soldCreditsSum(false);
+                long realTotalSum = tileEntity.getInventoryWrapper().getTotalAvailableCreditSums(true);
+                isOpened = soldSum <= realTotalSum;
                 if (!isOpened) labelClosed.setCaption("gui.vendingBlock.shopNotEnoughCredits");
-                else if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay)
+                else
                 {
-                    isOpened = !(((InventoryVendingMachineEnderPay) tileEntity.inventory).boughtCreditsSum() > 0
-                            && !((InventoryVendingMachineEnderPay) tileEntity.inventory).hasBanknote(tileEntity.inventory.getInventorySlots()));
+                    isOpened = !(tileEntity.getInventoryWrapper().boughtCreditsSum(false) > 0
+                            && !tileEntity.getInventoryWrapper().hasBanknote());
                     if (!isOpened) labelClosed.setCaption("gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments");
                 }
             } else {
@@ -137,33 +132,31 @@ public class HintHUD extends HUD {
 
         NonNullList<ItemStack> soldItemStacks = NonNullList.create();
         NonNullList<ItemStack> boughtItemStacks = NonNullList.create();
-        soldItemStacks.addAll(tileEntity.inventory.getSoldItems());
-        boughtItemStacks.addAll(tileEntity.inventory.getBoughtItems());
-        if (Loader.isModLoaded("enderpay")) {
+        soldItemStacks.addAll(tileEntity.getInventoryWrapper().getSoldItemsWithoutFilledBanknotes());
+        boughtItemStacks.add(tileEntity.getInventoryWrapper().getBoughtItemWithoutFilledBanknotes());
+        if (LoaderWrapper.isEnderPayLoaded()) {
             long amountSold = 0;
             long amountBought = 0;
-            if (tileEntity.inventory instanceof InventoryVendingMachineEnderPay) {
-                amountSold = ((InventoryVendingMachineEnderPay) tileEntity.inventory).soldCreditsSum();
-                amountBought = ((InventoryVendingMachineEnderPay) tileEntity.inventory).boughtCreditsSum();
-            }
+            amountSold = tileEntity.getInventoryWrapper().soldCreditsSum(false);
+            amountBought = tileEntity.getInventoryWrapper().boughtCreditsSum(false);
 
-            String label = countNotNull(soldItemStacks) == 0 ?
-                    (amountBought == 0 && countNotNull(boughtItemStacks) == 0 ?
+            String label = AdvancedItemHandlerHelper.countNotNull(soldItemStacks) == 0 ?
+                    (amountBought == 0 && AdvancedItemHandlerHelper.countNotNull(boughtItemStacks) == 0 ?
                             "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
             String amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + " " + getCurrencyName(amountSold);
             labelSoldCredits.setCaption(amountStr);
             labelSoldCredits.hidden = amountSold == 0;
 
-            label = countNotNull(boughtItemStacks) == 0 ?
-                    (amountSold == 0 && countNotNull(soldItemStacks) == 0 ?
+            label = AdvancedItemHandlerHelper.countNotNull(boughtItemStacks) == 0 ?
+                    (amountSold == 0 && AdvancedItemHandlerHelper.countNotNull(soldItemStacks) == 0 ?
                             "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
             amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + " " + getCurrencyName(amountBought);
             labelBoughtCredits.setCaption(amountStr);
             labelBoughtCredits.hidden = amountBought == 0;
         }
 
-        soldItems.hidden = countNotNull(soldItemStacks) == 0;
-        boughtItems.hidden = countNotNull(boughtItemStacks) == 0;
+        soldItems.hidden = AdvancedItemHandlerHelper.countNotNull(soldItemStacks) == 0;
+        boughtItems.hidden = AdvancedItemHandlerHelper.countNotNull(boughtItemStacks) == 0;
         layout.hidden = soldItems.hidden && boughtItems.hidden && labelBoughtCredits.hidden && labelSoldCredits.hidden;
         soldItemList.setItems(soldItemStacks);
         boughtItemList.setItems(boughtItemStacks);
@@ -185,7 +178,7 @@ public class HintHUD extends HUD {
                     0xc0101010, 0xd0101010);
 
 
-        if (!Loader.isModLoaded("enderpay")) {
+        if (!LoaderWrapper.isEnderPayLoaded()) {
             labelSoldCredits.hidden = true;
             labelBoughtCredits.hidden = true;
         }

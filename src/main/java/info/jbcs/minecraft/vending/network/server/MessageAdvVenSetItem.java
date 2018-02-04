@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-
 public class MessageAdvVenSetItem extends AbstractMessage.AbstractServerMessage<MessageAdvVenSetItem> {
     private int id, count, damage;
 
@@ -25,14 +23,14 @@ public class MessageAdvVenSetItem extends AbstractMessage.AbstractServerMessage<
     }
 
     @Override
-    protected void read(PacketBuffer buffer) throws IOException {
+    protected void read(PacketBuffer buffer) {
         id = buffer.readInt();
         count = buffer.readInt();
         damage = buffer.readInt();
     }
 
     @Override
-    protected void write(PacketBuffer buffer) throws IOException {
+    protected void write(PacketBuffer buffer) {
         buffer.writeInt(id);
         buffer.writeInt(count);
         buffer.writeInt(damage);
@@ -45,7 +43,7 @@ public class MessageAdvVenSetItem extends AbstractMessage.AbstractServerMessage<
             return;
         ContainerAdvancedVendingMachine container = (ContainerAdvancedVendingMachine) con;
 
-        container.entity.inventory.setBoughtItem(id == 0 ? ItemStack.EMPTY : new ItemStack(Item.getItemById(id), count, damage));
+        container.entity.getInventoryWrapper().setBoughtItem(id == 0 ? ItemStack.EMPTY : new ItemStack(Item.getItemById(id), count, damage));
 
     }
 }

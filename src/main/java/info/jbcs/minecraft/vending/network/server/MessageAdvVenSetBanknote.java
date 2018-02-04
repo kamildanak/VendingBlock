@@ -8,8 +8,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.IOException;
-
 public class MessageAdvVenSetBanknote extends AbstractMessage.AbstractServerMessage<MessageAdvVenSetBanknote> {
     private long value;
 
@@ -22,12 +20,12 @@ public class MessageAdvVenSetBanknote extends AbstractMessage.AbstractServerMess
     }
 
     @Override
-    protected void read(PacketBuffer buffer) throws IOException {
+    protected void read(PacketBuffer buffer) {
         this.value = buffer.readLong();
     }
 
     @Override
-    protected void write(PacketBuffer buffer) throws IOException {
+    protected void write(PacketBuffer buffer) {
         buffer.writeLong(this.value);
     }
 
@@ -38,6 +36,6 @@ public class MessageAdvVenSetBanknote extends AbstractMessage.AbstractServerMess
             return;
         ContainerAdvancedVendingMachine container = (ContainerAdvancedVendingMachine) con;
 
-        container.entity.inventory.setBoughtItem(EnderPayApi.getBanknote(this.value));
+        container.entity.getInventoryWrapper().setBoughtItem(EnderPayApi.getBanknote(this.value));
     }
 }

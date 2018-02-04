@@ -1,22 +1,28 @@
 package info.jbcs.minecraft.vending.tileentity;
 
-import info.jbcs.minecraft.vending.inventory.*;
+import info.jbcs.minecraft.vending.inventory.ContainerVendingStorageAttachment;
+import info.jbcs.minecraft.vending.inventory.InventoryVendingStorageAttachment;
+import info.jbcs.minecraft.vending.items.wrapper.StorageAttachmentInvWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
     private int transferCooldown;
+    private StorageAttachmentInvWrapper inventoryWrapper;
 
     public TileEntityVendingStorageAttachment() {
-        inventory = new InventoryVendingStorageAttachment();
+        inventory = new InventoryVendingStorageAttachment(this);
+        inventoryWrapper = new StorageAttachmentInvWrapper(inventory);
         transferCooldown = -1;
     }
 
@@ -26,43 +32,8 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
     }
 
     @Override
-    @Nonnull
-    public int[] getSlotsForFace(@Nonnull EnumFacing side) {
-        if (side == EnumFacing.UP){
-            return new int[]{};
-        }
-        if (side == EnumFacing.DOWN)
-        {
-            return inventory.getOutputSlots();
-        }
-        return inventory.getInputSlots();
-    }
-
-    @Override
-    public boolean canInsertItem(int index, @Nonnull ItemStack itemStackIn, @Nonnull EnumFacing direction) {
-        return this.isItemValidForSlot(index, itemStackIn);
-    }
-
-    @Override
-    public boolean canExtractItem(int index, @Nonnull ItemStack stack, @Nonnull EnumFacing direction) {
-        return inventory.isOutputSlot(index);
-    }
-
-    @Override
     public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
-        if(inventory.isOutputSlot(index)) return false;
-        TileEntity te = this.world.getTileEntity(this.pos.up());
-        if (!(te instanceof TileEntityVendingMachine)) return false;
-        TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
-        for(ItemStack itemStack : machine.inventory.getBoughtItems())
-        {
-            if (inventory.isInputSlot(index) && itemStack.isItemEqual(stack)) return true;
-        }
-        for(ItemStack itemStack : machine.inventory.getSoldItems())
-        {
-            if (inventory.isInventorySlot(index) && itemStack.isItemEqual(stack)) return true;
-        }
-        return false;
+        return inventory.isItemValidForSlot(index, stack);
     }
 
     @Override
@@ -109,9 +80,7 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
             TileEntityVendingMachine machine = getMachine();
             if (machine==null) return;
 
-            if (inventory.canStoreItems(machine.inventory.getSoldItems(), inventory.getOutputSlots()) &&
-                    inventory.canStoreCredits(inventory.getInputSlots())) {
-                machine.inventory.vend(inventory, inventory.getInputSlots(), inventory.getOutputSlots());
+            if (machine.vend(inventoryWrapper.getInputWrapper(), inventoryWrapper.getOutputWrapper(), false)) {
                 this.markDirty();
                 this.transferCooldown = 8;
             }
@@ -123,6 +92,14 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
         TileEntity te = this.world.getTileEntity(this.pos.up());
         if (!(te instanceof TileEntityVendingMachine)) return null;
         return (TileEntityVendingMachine) te;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return (T) inventoryWrapper;
+        return super.getCapability(capability, facing);
     }
 }
 

@@ -1,7 +1,7 @@
 package info.jbcs.minecraft.vending.settings;
 
+import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 public class Settings implements ISettings {
@@ -30,7 +30,7 @@ public class Settings implements ISettings {
         transfer_to_inventory = config.get("general", "transfer_to_inventory", false,
                 "Transfer sold item directly to player's inventory.").getBoolean(false);
 
-        int defaultOffset = (Loader.isModLoaded("waila"))?40:15;
+        int defaultOffset = (LoaderWrapper.isWAILALoaded()) ? 40 : 15;
         offsetY = config.get("general", "offsetY", defaultOffset,
                 "Set Y offset of HUD").getInt(defaultOffset);
     }
