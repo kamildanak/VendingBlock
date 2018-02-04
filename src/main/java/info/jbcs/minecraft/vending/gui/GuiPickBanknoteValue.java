@@ -1,10 +1,10 @@
 package info.jbcs.minecraft.vending.gui;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.foamflower.gui.GuiScreenPlus;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiEditBigInteger;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiExButton;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabel;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -23,7 +23,7 @@ public class GuiPickBanknoteValue extends GuiScreenPlus {
         {
             @Override
             public void onClick() {
-                guiAdvancedVendingMachine.blockPicked(EnderPayApi.getBanknote(editBigInteger.getValue().longValue()));
+                guiAdvancedVendingMachine.blockPicked(EnderPayApiUtils.getBanknote(editBigInteger.getValue().longValue()));
                 Minecraft.getMinecraft().displayGuiScreen(guiAdvancedVendingMachine);
             }
         });

@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.items.wrapper.transactions;
 
-import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import info.jbcs.minecraft.vending.inventory.InventoryVendingMachine;
@@ -81,7 +81,7 @@ public class VendingMachineInvWrapper {
         if (machine.isInfinite()) return 0;
         long leftToTake = getStorageHandler().storeCredits(amount, simulate);
         if (leftToTake > 0) {
-            leftToTake = soldHandler.storeCredits(-leftToTake, simulate);
+            leftToTake = soldHandler.storeCredits(leftToTake, simulate);
             if (Vending.settings.shouldCloseOnPartialSoldOut()) machine.setOpen(false);
             return leftToTake;
         }
@@ -114,7 +114,7 @@ public class VendingMachineInvWrapper {
 
     public ItemStack getBoughtItemWithoutFilledBanknotes() {
         ItemStack itemStack = this.boughtHandler.getStackInSlot(0);
-        if (!LoaderWrapper.isEnderPayLoaded() || !Utils.isFilledBanknote(itemStack)) return itemStack;
+        if (!LoaderWrapper.isEnderPayLoaded() || !EnderPayApiUtils.isFilledBanknote(itemStack)) return itemStack;
         return ItemStack.EMPTY;
     }
 

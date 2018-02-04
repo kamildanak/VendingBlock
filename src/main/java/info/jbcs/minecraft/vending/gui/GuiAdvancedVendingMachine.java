@@ -1,9 +1,8 @@
 package info.jbcs.minecraft.vending.gui;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
-import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiPickBlock;
 import com.kamildanak.minecraft.foamflower.gui.input.IPickBlockHandler;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.network.PacketDispatcher;
@@ -59,13 +58,10 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
 
     @Override
     public void blockPicked(final ItemStack stack) {
-        if (EnderPayApi.isFilledBanknote(stack))
+        if (EnderPayApiUtils.isFilledBanknote(stack))
         {
-            try {
-                PacketDispatcher.sendToServer(new MessageAdvVenSetBanknote(EnderPayApi.getBanknoteOriginalValue(stack)));
-                return;
-            } catch (NotABanknoteException ignored) {
-            }
+            PacketDispatcher.sendToServer(new MessageAdvVenSetBanknote(EnderPayApiUtils.getBanknoteOriginalValue(stack)));
+            return;
         }
         MessageAdvVenSetItem msg;
         if (stack.isEmpty()) {

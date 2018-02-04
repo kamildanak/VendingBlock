@@ -3,7 +3,7 @@ package info.jbcs.minecraft.vending.items.wrapper;
 import com.kamildanak.minecraft.enderpay.EnderPay;
 import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.enderpay.api.NotABanknoteException;
-import info.jbcs.minecraft.vending.Utils;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -29,7 +29,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         int banknotes = 0;
         long creditsSum = 0;
         for (int i = 0; i < getSlots(); i++) {
-            if (Utils.isBanknote(getStackInSlot(i))) {
+            if (EnderPayApiUtils.isBanknote(getStackInSlot(i))) {
                 banknotes += getStackInSlot(i).getCount();
                 try {
                     creditsSum += EnderPayApi.getBanknoteCurrentValue(getStackInSlot(i));
@@ -65,7 +65,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         try {
             for (int i = 0; i < getSlots(); i++) {
                 ItemStack itemStack = getStackInSlot(i);
-                if (Utils.isBanknote(itemStack)) {
+                if (EnderPayApiUtils.isBanknote(itemStack)) {
                     if (itemStack.getCount() == 1) {
                         setStackInSlot(i,
                                 EnderPayApi.getBanknote(credits + EnderPayApi.getBanknoteCurrentValue(itemStack)));
@@ -76,7 +76,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
                 }
             }
             for (int i = 0; i < getSlots(); i++) {
-                if (Utils.isBanknote(getStackInSlot(i))) {
+                if (EnderPayApiUtils.isBanknote(getStackInSlot(i))) {
                     setStackInSlot(i, ItemStack.EMPTY);
                 }
             }
@@ -101,9 +101,9 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         int banknotes = 0;
         for (int i = 0; i < getSlots(); i++) {
             ItemStack itemStack = getStackInSlot(i);
-            if (Utils.isBanknote(itemStack) && itemStack.getCount() == 1) return true;
+            if (EnderPayApiUtils.isBanknote(itemStack) && itemStack.getCount() == 1) return true;
             if (itemStack.isEmpty()) spacesForBanknotes++;
-            if (Utils.isBanknote(itemStack)) {
+            if (EnderPayApiUtils.isBanknote(itemStack)) {
                 banknotes += itemStack.getCount();
                 spacesForBanknotes++;
             }
@@ -114,7 +114,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
     @Optional.Method(modid = "enderpay")
     public boolean hasBanknote() {
         for (int i = 0; i < getSlots(); i++) {
-            if (Utils.isBanknote(getStackInSlot(i))) return true;
+            if (EnderPayApiUtils.isBanknote(getStackInSlot(i))) return true;
         }
         return false;
     }
@@ -153,13 +153,13 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
     @Override
     public NonNullList<ItemStack> getItemStacksWithoutFilledBanknotes() {
         if (!LoaderWrapper.isEnderPayLoaded()) return getItemStacks();
-        return Utils.filterFilledBanknotes(getItemStacks());
+        return EnderPayApiUtils.filterFilledBanknotes(getItemStacks());
     }
 
     @Override
     public long getCreditsSum(boolean subtractTax) {
         if (!LoaderWrapper.isEnderPayLoaded()) return 0;
-        return subtractTax ? Utils.currentValueCreditsSum(getItemStacks()) : Utils.originalValueCreditsSum(getItemStacks());
+        return subtractTax ? EnderPayApiUtils.currentValueCreditsSum(getItemStacks()) : EnderPayApiUtils.originalValueCreditsSum(getItemStacks());
     }
 
     @Nonnull

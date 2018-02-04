@@ -1,6 +1,5 @@
 package info.jbcs.minecraft.vending.gui.hud;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiElement;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiItemsList;
 import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabel;
@@ -8,6 +7,7 @@ import com.kamildanak.minecraft.foamflower.gui.elements.GuiLabelCarousel;
 import com.kamildanak.minecraft.foamflower.gui.hud.HUD;
 import com.kamildanak.minecraft.foamflower.gui.layouts.CenteredLayout;
 import com.kamildanak.minecraft.foamflower.gui.layouts.LinearLayout;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
 import info.jbcs.minecraft.vending.forge.LoaderWrapper;
@@ -22,7 +22,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
@@ -202,8 +201,7 @@ public class HintHUD extends HUD {
         return tooltips.toArray(new String[tooltips.size()]);
     }
 
-    @Optional.Method(modid = "enderpay")
     private String getCurrencyName(long amount) {
-        return EnderPayApi.getCurrencyName(amount);
+        return EnderPayApiUtils.getCurrencyName(amount);
     }
 }

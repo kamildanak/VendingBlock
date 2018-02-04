@@ -1,10 +1,8 @@
 package info.jbcs.minecraft.vending.items.wrapper.transactions;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
-import com.kamildanak.minecraft.enderpay.api.NoSuchAccountException;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.Utils;
 import info.jbcs.minecraft.vending.Vending;
-import info.jbcs.minecraft.vending.forge.LoaderWrapper;
 import info.jbcs.minecraft.vending.items.wrapper.AdvancedInventoryWrapper;
 import info.jbcs.minecraft.vending.items.wrapper.AdvancedItemHandlerHelper;
 import info.jbcs.minecraft.vending.items.wrapper.IItemHandlerAdvanced;
@@ -38,7 +36,7 @@ public class VendingHelper {
     public static boolean vend(TileEntityVendingMachine machine, EntityPlayer entityPlayer, boolean simulate) {
         VendingMachineInvWrapper machineInvWrapper = machine.getInventoryWrapper();
         ItemStack offeredItem = entityPlayer.inventory.getCurrentItem();
-        long availableCredits = Utils.getAvailableCredits(entityPlayer);
+        long availableCredits = EnderPayApiUtils.getAvailableCredits(entityPlayer);
         IItemHandlerAdvanced playerInventory = new AdvancedInventoryWrapper(new PlayerMainInvWrapper(entityPlayer.inventory));
         if (Vending.settings.shouldTransferToInventory()) {
             if (AdvancedItemHandlerHelper.countNotNull(playerInventory.insertItems(machineInvWrapper.getSoldItems(), true)) != 0)
@@ -54,12 +52,7 @@ public class VendingHelper {
             } else {
                 dispenseItems(machine, response.getReturnedStacks(), entityPlayer);
             }
-            if (LoaderWrapper.isEnderPayLoaded()) {
-                try {
-                    EnderPayApi.addToBalance(entityPlayer.getUniqueID(), response.getCreditsToReturn());
-                } catch (NoSuchAccountException ignored) {
-                }
-            }
+            EnderPayApiUtils.addToBalance(entityPlayer, response.getCreditsToReturn());
             return true;
         }
         return false;

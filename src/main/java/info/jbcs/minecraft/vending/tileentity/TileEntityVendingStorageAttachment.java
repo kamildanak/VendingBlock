@@ -97,8 +97,10 @@ public class TileEntityVendingStorageAttachment extends TileEntityChestLike{
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-            return (T) inventoryWrapper;
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            if (facing == EnumFacing.DOWN) return (T) inventoryWrapper.getOutputWrapper();
+            if (facing != EnumFacing.UP) return (T) inventoryWrapper.getInputWrapper();
+        }
         return super.getCapability(capability, facing);
     }
 }

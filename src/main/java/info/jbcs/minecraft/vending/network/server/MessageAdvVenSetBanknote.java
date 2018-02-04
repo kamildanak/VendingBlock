@@ -1,6 +1,6 @@
 package info.jbcs.minecraft.vending.network.server;
 
-import com.kamildanak.minecraft.enderpay.api.EnderPayApi;
+import info.jbcs.minecraft.vending.EnderPayApiUtils;
 import info.jbcs.minecraft.vending.inventory.ContainerAdvancedVendingMachine;
 import info.jbcs.minecraft.vending.network.AbstractMessage;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,6 +36,6 @@ public class MessageAdvVenSetBanknote extends AbstractMessage.AbstractServerMess
             return;
         ContainerAdvancedVendingMachine container = (ContainerAdvancedVendingMachine) con;
 
-        container.entity.getInventoryWrapper().setBoughtItem(EnderPayApi.getBanknote(this.value));
+        container.entity.getInventoryWrapper().setBoughtItem(EnderPayApiUtils.getBanknote(this.value));
     }
 }
