@@ -24,7 +24,10 @@ public class TestUtils {
         return new VendingMachineInvWrapper(machine, new InventoryVendingMachine(machine));
     }
 
+    private static boolean initialized = false;
+
     public static void initializeEnderPay() {
+        if (initialized) return;
         EnderPay.settings = mock(com.kamildanak.minecraft.enderpay.proxy.Settings.class);
         when(EnderPay.settings.getDaysAfterBanknotesExpires()).thenReturn(1);
         when(EnderPay.settings.isStampedMoney()).thenReturn(true);
@@ -32,5 +35,6 @@ public class TestUtils {
                 new DayHelper(), new PlayerHelper());
         EnderPay.itemBlankBanknote = new ItemBlankBanknote("blank_banknote");
         EnderPay.itemFilledBanknote = new ItemFilledBanknote("filled_banknote");
+        initialized = true;
     }
 }

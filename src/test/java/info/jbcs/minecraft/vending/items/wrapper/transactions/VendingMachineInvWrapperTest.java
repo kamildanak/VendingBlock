@@ -11,6 +11,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static info.jbcs.minecraft.vending.items.wrapper.AdvancedItemHandlerHelper.countNotNull;
@@ -20,16 +21,21 @@ import static org.mockito.Mockito.when;
 public class VendingMachineInvWrapperTest {
     private VendingMachineInvWrapper inventory;
 
-    @Before
-    public void Before() {
+    @BeforeClass
+    public static void BeforeClass() {
         Bootstrap.register();
+        TestUtils.initializeEnderPay();
+
         LoaderWrapper wrapper = mock(LoaderWrapper.class);
         when(wrapper.isModLoaded("enderpay")).thenReturn(true);
         LoaderWrapper.setTestWrapper(wrapper);
+    }
+
+    @Before
+    public void Before() {
         TileEntityVendingMachine machine = mock(TileEntityVendingMachine.class);
         when(machine.isOpen()).thenReturn(true);
         inventory = new VendingMachineInvWrapper(machine, new InventoryVendingMachine(machine));
-        TestUtils.initializeEnderPay();
     }
 
     @Test

@@ -219,4 +219,10 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         return AdvancedItemHandlerHelper.copyStackWithSize(itemStack, extracted);
     }
 
+    public boolean isEmpty() {
+        for (int i = 0; i < getSlots(); i++) {
+            if (!getStackInSlot(i).isEmpty()) return false;
+        }
+        return true;
+    }
 }

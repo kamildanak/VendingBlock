@@ -70,6 +70,7 @@ public class BlockVendingMachine extends BlockContainer {
             return;
         }
 
+        if (tileEntity.isAdvanced()) tileEntity.getInventoryWrapper().setBoughtItem(ItemStack.EMPTY);
         dropBlockAsItem(world, blockPos, world.getBlockState(blockPos), 0);
         world.setBlockToAir(blockPos);
 
