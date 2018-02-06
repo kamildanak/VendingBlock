@@ -71,4 +71,14 @@ public class AdvancedItemHandlerHelper extends ItemHandlerHelper {
         }
         return emptySlots;
     }
+
+    public static boolean areStacksEqualIgnoreCount(ItemStack stack1, ItemStack stack2) {
+        if (stack1.isEmpty() && stack2.isEmpty()) return true;
+        if (stack1.getCount() == 0 || stack2.getCount() == 0) return false;
+        stack1 = stack1.copy();
+        stack2 = stack2.copy();
+        stack1.setCount(1);
+        stack2.setCount(1);
+        return ItemStack.areItemStacksEqual(stack1, stack2);
+    }
 }

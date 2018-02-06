@@ -29,4 +29,6 @@ public interface IItemHandlerAdvanced extends IItemHandlerModifiable {
     ItemStack extractItem(ItemStack itemStack, boolean simulate);
 
     boolean hasBanknote();
+
+    boolean hasEmptySlots();
 }

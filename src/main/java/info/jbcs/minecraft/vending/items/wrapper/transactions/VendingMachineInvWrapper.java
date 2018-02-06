@@ -26,7 +26,11 @@ public class VendingMachineInvWrapper {
         this.machine = machine;
     }
 
-    IItemHandlerAdvanced getStorageHandler() {
+    public IItemHandlerAdvanced getSoldHandler() {
+        return soldHandler;
+    }
+
+    public IItemHandlerAdvanced getStorageHandler() {
         if (inventory.hasAttachedStorage()) {
             return new AdvancedInventoryWrapper(new VendingMachineCombinedInvWrapper(
                     new VendingMachineStorageInvWrapper(inventory),
@@ -37,11 +41,11 @@ public class VendingMachineInvWrapper {
     }
 
     public boolean Accepts(ItemStack stack) {
-        return boughtHandler.containsItem(stack);
+        return !EnderPayApiUtils.isFilledBanknote(stack) && boughtHandler.containsItem(stack);
     }
 
     public boolean Vends(ItemStack stack) {
-        return soldHandler.containsItem(stack);
+        return !EnderPayApiUtils.isFilledBanknote(stack) && soldHandler.containsItem(stack);
     }
 
     public boolean isInfinite() {
@@ -81,7 +85,7 @@ public class VendingMachineInvWrapper {
         if (machine.isInfinite()) return 0;
         long leftToTake = getStorageHandler().storeCredits(amount, simulate);
         if (leftToTake > 0) {
-            leftToTake = soldHandler.storeCredits(leftToTake, simulate);
+            leftToTake = soldHandler.storeCredits(-leftToTake, simulate);
             if (Vending.settings.shouldCloseOnPartialSoldOut()) machine.setOpen(false);
             return leftToTake;
         }
@@ -174,7 +178,8 @@ public class VendingMachineInvWrapper {
         VendingStatus status = getVendingStatus();
         if (status != VendingStatus.OPEN) return status;
         if (getBoughtItemWithoutFilledBanknotes() != ItemStack.EMPTY) {
-            if (!getBoughtItem().isItemEqual(offeredStack)) return VendingStatus.WRONG_ITEM_OFFERED_TYPE;
+            if (!AdvancedItemHandlerHelper.areStacksEqualIgnoreCount(getBoughtItem(), offeredStack))
+                return VendingStatus.WRONG_ITEM_OFFERED_TYPE;
             if (offeredStack.getCount() < getBoughtItem().getCount()) return VendingStatus.NOT_ENOUGH_ITEM_OFFERED;
         }
         if (offeredCredits < boughtCreditsSum(false)) return VendingStatus.NOT_ENOUGH_CREDITS_OFFERED;

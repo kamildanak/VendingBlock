@@ -1,5 +1,6 @@
 package info.jbcs.minecraft.vending;
 
+import info.jbcs.minecraft.vending.items.wrapper.AdvancedItemHandlerHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
@@ -85,7 +86,7 @@ public class Utils {
         for (ItemStack itemStack : items) {
             boolean added = false;
             for (ItemStack itemStack2 : joinedItems) {
-                if (itemStack.isItemEqual(itemStack2)) {
+                if (AdvancedItemHandlerHelper.areStacksEqualIgnoreCount(itemStack, itemStack2)) {
                     itemStack2.setCount(itemStack2.getCount() + itemStack.getCount());
                     added = true;
                 }

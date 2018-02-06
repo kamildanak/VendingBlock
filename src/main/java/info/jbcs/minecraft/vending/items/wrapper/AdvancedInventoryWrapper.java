@@ -25,6 +25,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
     @Optional.Method(modid = "enderpay")
     private long takeCreditsOptional(long credits, boolean simulate) {
         if (credits < 0) return storeCreditsOptional(-credits, simulate);
+        if (credits == 0) return 0;
         // Count banknotes, their current value and remove them from inventory
         int banknotes = 0;
         long creditsSum = 0;
@@ -59,6 +60,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
     @Optional.Method(modid = "enderpay")
     private long storeCreditsOptional(long credits, boolean simulate) {
         if (credits < 0) return takeCreditsOptional(-credits, simulate);
+        if (credits == 0) return 0;
         if (!canStoreCredits()) return credits;
         if (simulate) return 0;
         int banknotes = 0;
@@ -119,6 +121,13 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         return false;
     }
 
+    public boolean hasEmptySlots() {
+        for (int i = 0; i < getSlots(); i++) {
+            if (getStackInSlot(i).isEmpty()) return true;
+        }
+        return false;
+    }
+
     @Optional.Method(modid = "enderpay")
     private void storeBlankBanknotes(int banknotes) {
         for (int i = 0; i < getSlots(); i++) {
@@ -134,7 +143,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
     @Override
     public boolean containsItem(ItemStack stack) {
         for (int i = 0; i < getSlots(); i++) {
-            if (getStackInSlot(i).isItemEqual(stack)) return true;
+            if (AdvancedItemHandlerHelper.areStacksEqualIgnoreCount(stack, getStackInSlot(i))) return true;
         }
         return false;
     }
@@ -203,7 +212,7 @@ public class AdvancedInventoryWrapper extends DummyInventoryWrapper implements I
         int count = itemStack.getCount();
         int extracted = 0;
         for (int i = 0; i < getSlots(); i++) {
-            if (itemStack.isItemEqual(this.getStackInSlot(i))) {
+            if (AdvancedItemHandlerHelper.areStacksEqualIgnoreCount(itemStack, this.getStackInSlot(i))) {
                 extracted += this.extractItem(i, count - extracted, simulate).getCount();
             }
         }

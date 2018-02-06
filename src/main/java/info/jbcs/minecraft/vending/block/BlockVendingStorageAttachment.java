@@ -48,12 +48,13 @@ public class BlockVendingStorageAttachment extends BlockContainer {
     @Override
     public void onBlockClicked(World world, BlockPos blockPos, EntityPlayer entityplayer) {
         TileEntityVendingMachine tileEntity = (TileEntityVendingMachine) world.getTileEntity(blockPos.up());
-        if (tileEntity == null) {
+        TileEntityVendingStorageAttachment storageAttachment = (TileEntityVendingStorageAttachment) world.getTileEntity(blockPos);
+        if (tileEntity == null || storageAttachment == null) {
             destroy(world, blockPos);
             return;
         }
 
-        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !tileEntity.isEmpty()) {
+        if (!entityplayer.getDisplayNameString().equals(tileEntity.getOwnerName()) || !storageAttachment.isEmpty()) {
             return;
         }
         destroy(world, blockPos);
@@ -106,7 +107,10 @@ public class BlockVendingStorageAttachment extends BlockContainer {
     }
 
     @Nonnull
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    @Override
+    public IBlockState getStateForPlacement(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing facing,
+                                            float hitX, float hitY, float hitZ, int meta,
+                                            @Nonnull EntityLivingBase placer, EnumHand hand) {
         return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
     }
 

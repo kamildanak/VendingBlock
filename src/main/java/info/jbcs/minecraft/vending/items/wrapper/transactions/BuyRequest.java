@@ -29,8 +29,8 @@ public class BuyRequest {
 
         if (!simulate && !vendingMachineInvWrapper.isInfinite()) {
             vendingMachineInvWrapper.getStorageHandler().insertItem(vendingMachineInvWrapper.getBoughtItemWithoutFilledBanknotes(), false);
-            vendingMachineInvWrapper.extractItems(vendingMachineInvWrapper.getSoldItemsWithoutFilledBanknotes());
             vendingMachineInvWrapper.storeCredits(vendingMachineInvWrapper.getCreditsToTake(), false);
+            vendingMachineInvWrapper.extractItems(vendingMachineInvWrapper.getSoldItemsWithoutFilledBanknotes());
             if (Vending.settings.shouldCloseOnSoldOut() && vendingMachineInvWrapper.hasNothingToSell()) {
                 vendingMachineInvWrapper.setOpen(false);
             }

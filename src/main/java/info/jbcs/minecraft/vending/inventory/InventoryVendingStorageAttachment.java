@@ -1,10 +1,8 @@
 package info.jbcs.minecraft.vending.inventory;
 
-import info.jbcs.minecraft.vending.tileentity.TileEntityVendingMachine;
 import info.jbcs.minecraft.vending.tileentity.TileEntityVendingStorageAttachment;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nonnull;
@@ -57,11 +55,12 @@ public class InventoryVendingStorageAttachment extends InventorySerializable imp
 
     @Override
     public boolean isItemValidForSlot(int index, @Nonnull ItemStack stack) {
-        if (isOutputSlot(index)) return true;
-        TileEntity te = teSA.getWorld().getTileEntity(teSA.getPos().up());
+        return isOutputSlot(index) || isInputSlot(index);
+        /*TileEntity te = teSA.getWorld().getTileEntity(teSA.getPos().up());
         if (!(te instanceof TileEntityVendingMachine)) return false;
         TileEntityVendingMachine machine = (TileEntityVendingMachine) te;
         return isInputSlot(index) && machine.getInventoryWrapper().Accepts(stack) ||
                 isInventorySlot(index) && machine.getInventoryWrapper().Vends(stack);
+                */
     }
 }
