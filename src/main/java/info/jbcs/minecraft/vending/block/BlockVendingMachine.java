@@ -30,6 +30,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
+import static info.jbcs.minecraft.vending.stats.ModStats.VENDING_MACHINES_OPENED;
+
 public class BlockVendingMachine extends BlockContainer {
     private static final PropertyEnum<EnumSupports> SUPPORT =
             PropertyEnum.create("support", EnumSupports.class);
@@ -93,6 +95,7 @@ public class BlockVendingMachine extends BlockContainer {
 
         if ((entityPlayer.getDisplayNameString().equals(tileEntity.getOwnerName()) && !entityPlayer.isSneaking()) ||
                 entityPlayer.capabilities.isCreativeMode && !entityPlayer.isSneaking()) {
+            entityPlayer.addStat(VENDING_MACHINES_OPENED);
             Vending.guiVending.open(entityPlayer, world, blockPos);
             return true;
         }

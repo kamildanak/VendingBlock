@@ -38,3 +38,8 @@ subtitles.block.vendingMachineStorage.open=Magazyn maszyny vendingowej otworzył
 subtitles.block.vendingMachineStorage.close=Magazyn maszyny vendingowej zamknął się
 
 gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Umieść banknot w magazynie aby akceptować płatności
+
+# Stats
+vending:stat.vendingMachinesUsed=Użyte automaty sprzedające
+vending:stat.vendingMachinesOpened=Otwarte automaty sprzedające
+vending:stat.storageAttachmentsOpened=Otwarte magazyny maszyny sprzedającej

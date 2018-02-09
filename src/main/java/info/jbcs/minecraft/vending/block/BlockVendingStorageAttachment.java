@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
+import static info.jbcs.minecraft.vending.stats.ModStats.STORAGE_ATTACHMENTS_OPENED;
+
 public class BlockVendingStorageAttachment extends BlockContainer {
     public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
@@ -63,6 +65,7 @@ public class BlockVendingStorageAttachment extends BlockContainer {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
                                     EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!isBlocked(worldIn, pos))
+            playerIn.addStat(STORAGE_ATTACHMENTS_OPENED);
             Vending.guiStorage.open(playerIn, worldIn, pos);
         return true;
     }

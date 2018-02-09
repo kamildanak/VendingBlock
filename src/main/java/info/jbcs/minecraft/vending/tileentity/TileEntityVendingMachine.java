@@ -23,6 +23,8 @@ import net.minecraft.util.SoundEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static info.jbcs.minecraft.vending.stats.ModStats.VENDING_MACHINES_USED;
+
 public class TileEntityVendingMachine extends TileEntityLockable implements IInventoryChangedListener {
     private InventoryVendingMachine inventory;
     private VendingMachineInvWrapper itemHandler;
@@ -242,7 +244,9 @@ public class TileEntityVendingMachine extends TileEntityLockable implements IInv
 
     public void vend(EntityPlayer entityPlayer, boolean simulate) {
         if (getWorld().isRemote) return;
-        SoundEvent sound = VendingHelper.vend(this, entityPlayer, simulate) ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN;
+        boolean vended = VendingHelper.vend(this, entityPlayer, simulate);
+        if (vended) entityPlayer.addStat(VENDING_MACHINES_USED);
+        SoundEvent sound = vended ? VendingSoundEvents.PROCESSED : VendingSoundEvents.FORBIDDEN;
         getWorld().playSound(null, getPos(), sound, SoundCategory.MASTER, 0.3f, 0.6f);
     }
 
