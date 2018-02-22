@@ -40,17 +40,17 @@ minecraft {
 
 repositories {
     maven {
-        url "../local-repo"
+        url "http://kamildanak.com/maven/"
     }
 }
 
 dependencies {
     //build
-    //compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
-    //compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
+    compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
+    compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
     //Development
-    compile project(':Foamflower')
-    compile project(':EnderPay')
+    //compile project(':Foamflower')
+    //compile project(':EnderPay')
 }
 
 processResources {
