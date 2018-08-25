@@ -6,6 +6,9 @@ def patchVersion = "1" //Bugfixes.
 def suffix = "" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
 version = mcVersion+"-"+majorModVersion+"."+majorApiModVersion+"."+minorModVersion+"."+patchVersion+suffix
 
+def env = System.getenv()
+def minecraftModdingEnv = env['MinecraftModdingEnv'] != null ? env['MinecraftModdingEnv'].trim() : "dev"
+
 buildscript {
     repositories {
         jcenter()
@@ -44,13 +47,16 @@ repositories {
     }
 }
 
-dependencies {
-    //build
-    compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
-    compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
-    //Development
-    //compile project(':Foamflower')
-    //compile project(':EnderPay')
+if ( minecraftModdingEnv == "production" ) {
+    dependencies {
+        compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
+        compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
+    }
+} else {
+    dependencies {
+        compile project(':Foamflower')
+        compile project(':EnderPay')
+    }
 }
 
 processResources {
