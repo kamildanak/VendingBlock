@@ -142,14 +142,26 @@ public class HintHUD extends HUD {
             String label = AdvancedItemHandlerHelper.countNotNull(soldItemStacks) == 0 ?
                     (amountBought == 0 && AdvancedItemHandlerHelper.countNotNull(boughtItemStacks) == 0 ?
                             "gui.vendingBlock.isGivingAway" : "gui.vendingBlock.isSelling") : "gui.vendingBlock.and";
-            String amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + " " + getCurrencyName(amountSold);
+
+            String amountStr;
+            if (mc.player.isSneaking()){
+                amountStr = I18n.format(label).trim() + " " + amountSold + " " + getCurrencyName(amountSold);
+            } else {
+                amountStr = I18n.format(label).trim() + " " + Utils.format(amountSold) + " " + getCurrencyName(amountSold);
+            }
+
             labelSoldCredits.setCaption(amountStr);
             labelSoldCredits.hidden = amountSold == 0;
 
             label = AdvancedItemHandlerHelper.countNotNull(boughtItemStacks) == 0 ?
                     (amountSold == 0 && AdvancedItemHandlerHelper.countNotNull(soldItemStacks) == 0 ?
                             "gui.vendingBlock.isAccepting" : "gui.vendingBlock.for") : "gui.vendingBlock.and";
-            amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + " " + getCurrencyName(amountBought);
+
+            if (mc.player.isSneaking()){
+                amountStr = I18n.format(label).trim() + " " + amountBought + " " + getCurrencyName(amountBought);
+            } else {
+                amountStr = I18n.format(label).trim() + " " + Utils.format(amountBought) + " " + getCurrencyName(amountBought);
+            }
             labelBoughtCredits.setCaption(amountStr);
             labelBoughtCredits.hidden = amountBought == 0;
         }
