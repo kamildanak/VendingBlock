@@ -52,7 +52,8 @@ public class GuiAdvancedVendingMachine extends GuiVendingMachine implements IPic
                     container.entity.getInventoryWrapper().getBoughtItem(), this));
         }
         else if (button.id == 101) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBanknoteValue(player,this));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiPickBanknoteValue(player,this,
+                    container.entity.getInventoryWrapper().getBoughtItem()));
         }
     }
 
