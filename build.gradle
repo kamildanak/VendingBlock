@@ -51,11 +51,15 @@ if ( minecraftModdingEnv == "production" ) {
     dependencies {
         compile name: "foamflower", group: "com.kamildanak.minecraft.foamflower", version: "1.12.2-1.0.0.0-beta1", classifier: "deobf"
         compile name: "enderpay", group: "com.kamildanak.minecraft.enderpay", version: "1.12.2-1.0.1.0", classifier: "deobf"
+        testCompile 'org.mockito:mockito-core:2.7.22'
+        testCompile 'junit:junit:4.12'
     }
 } else {
     dependencies {
         compile project(':Foamflower')
         compile project(':EnderPay')
+        testCompile 'org.mockito:mockito-core:2.7.22'
+        testCompile 'junit:junit:4.12'
     }
 }
 
