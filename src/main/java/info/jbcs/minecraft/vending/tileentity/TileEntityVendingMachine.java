@@ -262,5 +262,19 @@ public class TileEntityVendingMachine extends TileEntityLockable implements IInv
     public VendingMachineInvWrapper getInventoryWrapper() {
         return itemHandler;
     }
+
+    @Override
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return (T) EmptyHandler.INSTANCE;
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public boolean hasCapability(@Nonnull net.minecraftforge.common.capabilities.Capability<?> capability, @javax.annotation.Nullable net.minecraft.util.EnumFacing facing) {
+        return (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ||
+                super.hasCapability(capability, facing));
+    }
 }
 
