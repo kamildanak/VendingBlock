@@ -2,7 +2,7 @@ def mcVersion         = "1.12.2" // Always matches the Minecraft version the mod
 def majorModVersion   = "3" // Removing item/blocks, changing mechanics, updating to a new Minecraft version.
 def majorApiModVersion     = "0" // Changing the order of enums, return types of methods, removing methods
 def minorModVersion   = "1" // Adding item, blocks, tile entities, Adding new mechanics., Deprecating public methods.
-def patchVersion = "1" //Bugfixes.
+def patchVersion = "2" //Bugfixes.
 def suffix = "" // "-final" - last release for that Minecraft, "-betaX" - Pre-releases, "-rcX"-Release Candidates
 version = mcVersion+"-"+majorModVersion+"."+majorApiModVersion+"."+minorModVersion+"."+patchVersion+suffix
 
