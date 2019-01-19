@@ -115,6 +115,13 @@ public class Vending {
 		blockMultipleVendingMachine.setCreativeTab(tabVending);
 		itemWrench.setCreativeTab(tabVending);
 
+
+		blockAdvancedVendingMachine = new BlockVendingMachine(supports,true).setBlockName("vendingMachineAdvanced");
+		GameRegistry.registerBlock(blockAdvancedVendingMachine, ItemMetaBlock.class, "vendingMachineAdvanced");
+
+		itemWrench = new Item().setUnlocalizedName("vendingMachineWrench").setCreativeTab(tabVending).setTextureName("Vending:wrench");
+		GameRegistry.registerItem(itemWrench, "vendingMachineWrench");
+		
         GameRegistry.registerTileEntity(TileEntityVendingMachine.class, "containerVendingMachine");
 		
 		guiVending=new GuiHandler("vending"){
