@@ -1,8 +1,5 @@
 package info.jbcs.minecraft.vending;
 
-import java.util.*;
-
-import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,10 +7,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameData;
+
+import java.util.*;
 
 public class General {
 	public static Random rand = new Random();
@@ -58,8 +58,7 @@ public class General {
 	}
 */
 	public static Item getItem(int itemId) {
-		Item item = GameData.getItemRegistry().getObjectById(itemId);
-		return item;
+		return GameData.getItemRegistry().getObjectById(itemId);
 	}
 
 	public static Integer getItemId(Item item){
@@ -110,14 +109,14 @@ public class General {
 	}
 	
 
-	public static MovingObjectPosition getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3) {
+	public static RayTraceResult getMovingObjectPositionFromPlayer(World par1World, EntityPlayer par2EntityPlayer, boolean par3) {
 		float var4 = 1.0F;
 		float var5 = par2EntityPlayer.prevRotationPitch + (par2EntityPlayer.rotationPitch - par2EntityPlayer.prevRotationPitch) * var4;
 		float var6 = par2EntityPlayer.prevRotationYaw + (par2EntityPlayer.rotationYaw - par2EntityPlayer.prevRotationYaw) * var4;
 		double var7 = par2EntityPlayer.prevPosX + (par2EntityPlayer.posX - par2EntityPlayer.prevPosX) * var4;
-		double var9 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * var4 + 1.62D - par2EntityPlayer.yOffset;
+		double var9 = par2EntityPlayer.prevPosY + (par2EntityPlayer.posY - par2EntityPlayer.prevPosY) * var4 + 1.62D - par2EntityPlayer.getYOffset();
 		double var11 = par2EntityPlayer.prevPosZ + (par2EntityPlayer.posZ - par2EntityPlayer.prevPosZ) * var4;
-		Vec3 var13 = Vec3.createVectorHelper(var7, var9, var11);
+		Vec3d var13 = new Vec3d(var7, var9, var11);
 		float var14 = MathHelper.cos(-var6 * 0.017453292F - (float) Math.PI);
 		float var15 = MathHelper.sin(-var6 * 0.017453292F - (float) Math.PI);
 		float var16 = -MathHelper.cos(-var5 * 0.017453292F);
@@ -127,12 +126,26 @@ public class General {
 		double var21 = 5.0D;
 
 		if (par2EntityPlayer instanceof EntityPlayerMP) {
-			var21 = ((EntityPlayerMP) par2EntityPlayer).theItemInWorldManager.getBlockReachDistance();
+			var21 = ((EntityPlayerMP) par2EntityPlayer).interactionManager.getBlockReachDistance();
 		}
 
-		Vec3 var23 = var13.addVector(var18 * var21, var17 * var21, var20 * var21);
+		Vec3d var23 = var13.addVector(var18 * var21, var17 * var21, var20 * var21);
 		return par1World.rayTraceBlocks(var13, var23, par3);
 		//return par1World.rayTraceBlocks_do_do(var13, var23, par3, !par3);
 	}
-
+	public static int countNotNull(ItemStack[] itemStacks){
+		int counter=0;
+		for (ItemStack itemStack: itemStacks) {
+			if(itemStack!=null) counter++;
+		}
+		return counter;
+	}
+	public static ItemStack getNotNull(ItemStack[] itemStacks, int num){
+		int counter=-1;
+		for (ItemStack itemStack: itemStacks) {
+			if(itemStack!=null) counter++;
+			if(counter==num) return itemStack;
+		}
+		return null;
+	}
 }

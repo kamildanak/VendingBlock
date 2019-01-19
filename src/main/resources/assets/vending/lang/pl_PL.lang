@@ -1,0 +1,21 @@
+﻿tile.vendingMachine.name=Automat sprzedający
+tile.vendingMachineAdvanced.name=Zaawansowany automat sprzedający
+tile.vendingMachineMultiple.name=Wielokrotny automat sprzedający
+item.vendingMachineWrench.name=Klucz do automatu sprzedającego
+itemGroup.tabVending=Automaty sprzedające
+
+# GUI
+gui.vendingBlock.select=Wybierz...
+gui.vendingBlock.storage=Magazyn
+gui.vendingBlock.selling=Sprzedaje
+gui.vendingBlock.buying=Kupuje
+gui.vendingBlock.settings=Ustawienia automatu
+gui.vendingBlock.owner=Właściciel
+gui.vendingBlock.infinite=Nieskończona
+gui.vendingBlock.yes=tak
+gui.vendingBlock.no=nie
+gui.vendingBlock.apply=Zapisz
+gui.vendingBlock.isSelling=sprzedaje
+gui.vendingBlock.for=za
+gui.vendingBlock.isGivingAway=rozdaje za darmo
+gui.vendingBlock.isAccepting=przyjmuje
