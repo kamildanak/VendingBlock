@@ -1,0 +1,45 @@
+tile.vendingMachine.name=Bloc de vente
+tile.vendingMachineAdvanced.name=Bloc de vente avancé
+tile.vendingMachineMultiple.name=Bloc de vente multiple
+item.vendingMachineWrench.name=Clé à bloc de vente
+itemGroup.tabVending=Vending
+tile.vendingStorageAttachment.name=Unité de stockage de vente
+
+# GUI
+gui.vendingBlock.select=Sélectionner...
+gui.vendingBlock.storage=Stockage
+gui.vendingBlock.selling=Vendre
+gui.vendingBlock.buying=Acheter
+gui.vendingBlock.settings=Paramètres du bloc de vente
+gui.vendingBlock.owner=Nom du propriétaire
+gui.vendingBlock.infinite=Infini
+gui.vendingBlock.yes=oui
+gui.vendingBlock.no=non
+gui.vendingBlock.apply=Appliquer
+gui.vendingBlock.isSelling=échange
+gui.vendingBlock.for=pour
+gui.vendingBlock.and=et
+gui.vendingBlock.isGivingAway=donne
+gui.vendingBlock.isAccepting=accepte
+gui.vendingBlock.closed=La boutique est fermée
+gui.vendingBlock.shopNotEnoughCredits=La boutique n'a pas assez de crédits
+gui.vendingBlock.ok=Ok
+gui.vendingBlock.cancel=Annuler
+gui.vendingBlock.number_of_credits=Nombre de crédits
+gui.vendingBlock.toInventory=Ajouter à l'inventaire
+gui.vendingBlock.buy_buffer=Acheter un tampon
+gui.vendingBlock.sell_buffer=Vendre un tampon
+gui.vendingBlock.inventory=Inventaire
+
+# Subtitles
+subtitles.block.vendingMachine.click=Clics de la machine de distributeur automatique
+subtitles.block.vendingMachine.dispense=Distributeur automatique donnant un objet
+subtitles.block.vendingMachineStorage.open=Ouverture du stockage d'un distributeur automatique
+subtitles.block.vendingMachineStorage.close=Fermeture du stockage d'un distributeur automatique
+
+gui.vendingBlock.banknoteInStorageRequiredToAcceptPayments=Placer un billet de banque dans le stockage pour accepter les paiements
+
+# Statsa
+vending:stat.vendingMachinesUsed=Nombre de distributeurs automatiques utilisés
+vending:stat.vendingMachinesOpened=Nombre de distributeurs automatiques ouverts
+vending:stat.storageAttachmentsOpened=Nombre d'unités de stockage ouvertes
