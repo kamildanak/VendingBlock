@@ -1,4 +1,21 @@
 tile.vendingMachine.name=自动售货机
 tile.vendingMachineAdvanced.name=高级自动售货机
+tile.vendingMachineMultiple.name=多重售货机
 item.vendingMachineWrench.name=售货机扳手
 itemGroup.tabVending=售货机
+
+# GUI
+gui.vendingBlock.select=选择…
+gui.vendingBlock.storage=储藏
+gui.vendingBlock.selling=出售
+gui.vendingBlock.buying=购买
+gui.vendingBlock.settings=售货机设置
+gui.vendingBlock.owner=主人的昵称
+gui.vendingBlock.infinite=无限
+gui.vendingBlock.yes=是
+gui.vendingBlock.no=否
+gui.vendingBlock.apply=应用
+gui.vendingBlock.isSelling=卖的是
+gui.vendingBlock.for=买入
+gui.vendingBlock.isGivingAway=是赠送
+gui.vendingBlock.isAccepting=是接受
